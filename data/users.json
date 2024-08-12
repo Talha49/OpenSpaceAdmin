@@ -1,0 +1,50 @@
+[
+  {
+    "fullName": "Talha Khan Ghauri",
+    "email": "ghaurit82@gmail.com",
+    "address": "House 12 G-7/2",
+    "city": "Rawalpindi",
+    "contact": "03218975579",
+    "id": "148b34a8-3049-41ff-9172-bc787efd7002"
+  },
+  {
+    "fullName": "Hussain",
+    "email": "Hussain@gmail.com",
+    "address": "House G112 G9/2",
+    "city": "Faislabad",
+    "contact": "0334676769778",
+    "id": "90747de4-bd9c-469d-8dcf-ca97d2ef7a4e"
+  },
+  {
+    "fullName": "SaleemBhai",
+    "email": "SaleemBhai@gmail.com",
+    "address": "House 12 G 122 FD",
+    "city": "Multan",
+    "contact": "0321678990",
+    "id": "e763a3dd-efb3-46c0-903a-291d9291e2c0"
+  },
+  {
+    "fullName": "Sheraz",
+    "email": "Sheraz@gmail.com",
+    "address": "House 112 G 12",
+    "city": "Sukkhhur",
+    "contact": "0356786543",
+    "id": "21db61d5-8c9b-446d-9384-8bfaf591b296"
+  },
+  {
+    "fullName": "Samad Khan",
+    "email": "SamadKhan@gmail.com",
+    "address": "House G-114-D",
+    "city": "Rawat",
+    "contact": "0321476434",
+    "id": "7ac24acb-a0da-416e-8096-0e713e8e5d58"
+  },
+  {
+    "fullName": "M Nadeem ",
+    "email": "MNadeem@gmail.com",
+    "address": "House G-112-6G",
+    "city": "Lala Musa",
+    "contact": "0345875421",
+    "id": "da99a15d-974b-4b72-8cc0-b72891ef278e"
+  }
+]
