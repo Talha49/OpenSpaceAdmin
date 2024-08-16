@@ -1,6 +1,6 @@
 [
   {
-    "fullName": "Saleem Bhai",
+    "fullName": "Saleem Bhais",
     "email": "Saleem@gmail.com",
     "address": "street 12 TK",
     "city": "Sawat",
@@ -38,5 +38,13 @@
     "city": "Sargodha",
     "contact": "0987654567",
     "id": "e06ec7ab-c6a0-45c3-b599-e8f952598454"
+  },
+  {
+    "fullName": "Ali Dilpazeer",
+    "email": "AliD@gmail.com",
+    "address": "House G-134-6io",
+    "city": "Dubai",
+    "contact": "0321476434",
+    "id": "b53631b4-641b-45bf-b2fe-f1142aaf0553"
   }
 ]

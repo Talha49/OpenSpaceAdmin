@@ -14,7 +14,7 @@ const Header = () => {
 
   return (
     
-      <div className='flex  w-full  justify-between leading-[60px] border-2  px-8 bg-white sticky  top-0 z-10 cursor-pointer'>
+      <div className='flex  w-full  justify-between leading-[60px] border-2  px-8 bg-white dark:bg-gray-800 text-black dark:text-white sticky  top-0 z-10 cursor-pointer'>
         <div className='flex gap-2 items-center'>
           <div><GiSpaceShuttle className='md:text-[35px] sm:text-sm  text-blue-400 ' /></div>
           <div className='md:text-[16px] sm:text-[12px]'>OpenSpace - Admin</div>                  

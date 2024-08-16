@@ -19,13 +19,13 @@ const Table = ({
 }) => {
 
   return (
-    <div className=" border rounded-lg shadow-lg">
+    <div className=" border rounded-lg shadow-lg ">
     <div className="overflow-x-auto">
   <table className="table-auto min-w-full text-xs md:text-sm border-collapse">
     <thead className="sticky top-0 bg-gray-200 z-10">
       <tr>
         {mode && (
-          <th className="py-3 px-2 md:px-4 bg-gray-300">
+          <th className="py-3 px-2 md:px-4 ">
             <input
               type="checkbox"
               onChange={onSelectAll}
@@ -54,7 +54,7 @@ const Table = ({
         </tr>
       ) : (
         data?.map((item) => (
-          <tr key={item.id} className="even:bg-gray-100 hover:bg-blue-50">
+          <tr key={item.id} className="hover:bg-blue-50 even:bg-slate-100">
             {mode && (
               <td className="py-3 px-2 md:px-4">
                 <input

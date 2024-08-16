@@ -72,7 +72,7 @@ const FormComp = () => {
       // Update user
       dispatch(updateUser({ ...formData, id: selectedUser.id }));
       try {
-        const response = await fetch('/api/updateUser', {
+        const response = await fetch('/api/Users/updateUser', {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -93,7 +93,7 @@ const FormComp = () => {
       // Add new user
       dispatch(addUser(formData));
       try {
-        const response = await fetch('/api/saveUser', {
+        const response = await fetch('/api/Users/saveUser', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

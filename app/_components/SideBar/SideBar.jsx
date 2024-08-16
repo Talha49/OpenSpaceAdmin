@@ -91,7 +91,7 @@ const Sidebar = () => {
   };
 
   return (
-    <div className="h-screen sticky top-16 bg-gray-100">
+    <div className="h-screen sticky top-16 ">
       <div
         className={`${
           open ? 'w-48' : 'w-16'

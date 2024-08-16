@@ -1,5 +1,8 @@
+"use client"
+import { toggleTheme } from '@/lib/Feature/ThemeSlice';
 import React from 'react';
 import { FaCheck, FaCircle, FaEllipsisH, FaUser, FaCode, FaUsers } from 'react-icons/fa';
+import { useDispatch, useSelector } from 'react-redux';
 
 const cardsData = [
   {
@@ -35,18 +38,20 @@ const cardsData = [
 ];
 
 const HomeP = () => {
+  const dispatch = useDispatch();
+  const isDarkMode = useSelector((state) => state.theme.isDarkMode);
   return (
-    <div className="bg-gray-100 min-h-screen p-6">
+    <div className="bg-white min-h-screen p-6">
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-6 bg-white p-4 rounded-lg shadow">
           <h1 className="text-xl font-semibold text-gray-800">peritus.ae</h1>
           <div className="flex items-center space-x-4">
-            <button className="text-gray-600 hover:text-gray-800 flex items-center">
-              <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-              </svg>
-              Dark mode
-            </button>
+          <button
+      onClick={() => dispatch(toggleTheme())}
+      className="p-2 rounded-md bg-gray-200 dark:bg-gray-700"
+    >
+      {isDarkMode ? '☀️ Light' : '🌙 Dark'}
+    </button>
             <button className="text-blue-600 hover:text-blue-800 flex items-center">
               <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -68,7 +73,7 @@ const HomeP = () => {
 
 const Card = ({ data }) => {
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col">
+    <div className="bg-white dark:bg-gray-800 text-black dark:text-white rounded-lg shadow-md overflow-hidden flex flex-col">
       <div className="p-6 flex-grow">
         <div className="flex justify-between items-start mb-4 pb-4 border-b">
           <h2 className="text-base font-semibold text-gray-600">{data.title}</h2>
