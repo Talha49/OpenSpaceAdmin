@@ -35,11 +35,11 @@ const Menus = [
   {
     title: 'Groups',
     icon: <MdGroup />,
-    link: '/groups',
+    link: '/group',
     subMenus: [
-      { title: 'Active groups', link: '/groups/active' },
+      { title: 'Active groups', link: '/group/ActiveGroups' },
       { title: 'Deleted groups', link: '/groups/deleted' },
-      { title: 'Shared mailboxes', link: '/groups/shared-mailboxes' },
+     
     ],
   },
   {
@@ -109,7 +109,7 @@ const Sidebar = () => {
           {Menus.map((Menu, index) => (
             <div key={index}>
               <li
-                className={`flex items-center rounded-md p-2 cursor-pointer hover:bg-gray-300 text-gray-600 text-sm gap-x-4 ${
+                className={`flex items-center rounded-md p-2  cursor-pointer hover:bg-gray-300 text-gray-600 text-sm gap-x-4 ${
                   Menu.gap ? 'mt-9' : 'mt-2'
                 }`}
                 data-tooltip-id={index}
@@ -133,7 +133,7 @@ const Sidebar = () => {
                   />
                 )}
               </li>
-              {!open && <Tooltip id={index.toString()}>{Menu.title}</Tooltip>}
+              {!open && <Tooltip  id={index.toString()}>{Menu.title}</Tooltip>}
               {Menu.subMenus && subMenuOpen[index] && open && (
                 <ul>
                   {Menu.subMenus.map((subMenuItem, idx) => (

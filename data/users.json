@@ -1,50 +1,42 @@
 [
   {
-    "fullName": "Talha Khan Ghauri",
-    "email": "ghaurit82@gmail.com",
-    "address": "House 12 G-7/2",
-    "city": "Rawalpindi",
-    "contact": "03218975579",
-    "id": "148b34a8-3049-41ff-9172-bc787efd7002"
+    "fullName": "Saleem Bhai",
+    "email": "Saleem@gmail.com",
+    "address": "street 12 TK",
+    "city": "Sawat",
+    "contact": "0987654309",
+    "id": "7e538773-b3e5-4641-bb0d-88df36811ab4"
   },
   {
-    "fullName": "Hussain",
-    "email": "Hussain@gmail.com",
-    "address": "House G112 G9/2",
-    "city": "Faislabad",
-    "contact": "0334676769778",
-    "id": "90747de4-bd9c-469d-8dcf-ca97d2ef7a4e"
+    "fullName": "Usama Bin Ladin",
+    "email": "siged71997@minhlun.com",
+    "address": "G898 ty",
+    "city": "Sawat",
+    "contact": "0356786542",
+    "id": "716986c4-03f4-4faa-b309-2fcd185faf3f"
   },
   {
-    "fullName": "SaleemBhai",
-    "email": "SaleemBhai@gmail.com",
-    "address": "House 12 G 122 FD",
-    "city": "Multan",
-    "contact": "0321678990",
-    "id": "e763a3dd-efb3-46c0-903a-291d9291e2c0"
+    "fullName": "Usman Bin Khaled",
+    "email": "UsamaBK@gmail.com",
+    "address": "House G-182-6io",
+    "city": "Dubai",
+    "contact": "3456654322",
+    "id": "1e2d1a67-37d9-4a72-9e29-91f4013d1192"
   },
   {
-    "fullName": "Sheraz",
-    "email": "Sheraz@gmail.com",
-    "address": "House 112 G 12",
+    "fullName": "Musab G",
+    "email": "MusabG@gmail.com",
+    "address": "House 1672 G 12",
     "city": "Sukkhhur",
-    "contact": "0356786543",
-    "id": "21db61d5-8c9b-446d-9384-8bfaf591b296"
+    "contact": "9876545982",
+    "id": "cf7473e6-adf3-4ce0-8be7-408946f33315"
   },
   {
-    "fullName": "Samad Khan",
-    "email": "SamadKhan@gmail.com",
-    "address": "House G-114-D",
-    "city": "Rawat",
-    "contact": "0321476434",
-    "id": "7ac24acb-a0da-416e-8096-0e713e8e5d58"
-  },
-  {
-    "fullName": "M Nadeem ",
-    "email": "MNadeem@gmail.com",
-    "address": "House G-112-6G",
-    "city": "Lala Musa",
-    "contact": "0345875421",
-    "id": "da99a15d-974b-4b72-8cc0-b72891ef278e"
+    "fullName": "Hummair Cheema",
+    "email": "HummairCheema@gmail.com",
+    "address": "House G878 4D",
+    "city": "Sargodha",
+    "contact": "0987654567",
+    "id": "e06ec7ab-c6a0-45c3-b599-e8f952598454"
   }
 ]

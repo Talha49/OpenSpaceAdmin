@@ -15,6 +15,7 @@ const Table = ({
   currentPage,
   totalPages,
   onPageChange,
+  mode
 }) => {
 
   return (
@@ -23,7 +24,7 @@ const Table = ({
   <table className="table-auto min-w-full text-xs md:text-sm border-collapse">
     <thead className="sticky top-0 bg-gray-200 z-10">
       <tr>
-        {deleteMode && (
+        {mode && (
           <th className="py-3 px-2 md:px-4 bg-gray-300">
             <input
               type="checkbox"
@@ -45,16 +46,16 @@ const Table = ({
       </tr>
     </thead>
     <tbody>
-      {data.length === 0 ? (
+      {data?.length === 0 ? (
         <tr>
-          <td colSpan={columns.length + (deleteMode ? 1 : 0)} className="text-center py-4">
+          <td colSpan={columns.length + (mode ? 1 : 0)} className="text-center py-4">
             No data for users
           </td>
         </tr>
       ) : (
-        data.map((item) => (
+        data?.map((item) => (
           <tr key={item.id} className="even:bg-gray-100 hover:bg-blue-50">
-            {deleteMode && (
+            {mode && (
               <td className="py-3 px-2 md:px-4">
                 <input
                   type="checkbox"
