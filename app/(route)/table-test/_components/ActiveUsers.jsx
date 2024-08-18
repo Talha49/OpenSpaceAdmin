@@ -269,6 +269,10 @@ const TableRoute = () => {
               <tr
                 key={user.id}
                 className="border-b hover:bg-blue-50 cursor-pointer relative even:bg-gray-100"
+                onClick={() => {
+                  setClickedUser(user);
+                  setShowInfoModal(true);
+                }}
               >
                 {isSelectable && (
                   <td>
@@ -287,10 +291,7 @@ const TableRoute = () => {
                 )}
                 <td
                   className="p-3 text-gray-700"
-                  onClick={() => {
-                    setClickedUser(user);
-                    setShowInfoModal(true);
-                  }}
+                  
                 >
                   <div className="flex items-center justify-between ">
                     <span className="hover:text-blue-600">{user.fullName}</span>

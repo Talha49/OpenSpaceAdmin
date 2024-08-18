@@ -53,7 +53,7 @@ const FormComp = () => {
 
     if (!formData.contact) {
       newErrors.contact = 'Contact number is required';
-    } else if (!/^\d{10}$/.test(formData.contact)) {
+    } else if (!/^\d{11}$/.test(formData.contact)) {
       newErrors.contact = 'Contact number is invalid';
     }
 
