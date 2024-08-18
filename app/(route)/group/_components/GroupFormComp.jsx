@@ -30,7 +30,7 @@ const GroupFormComp = () => {
     switch (activeStep) {
       case 0:
         return (
-          <div>
+          <div className="">
             <h1 className="text-2xl font-bold">Choose a group type</h1>
             <p className="my-7">
               Choose the group type that best meets your team's needs.
