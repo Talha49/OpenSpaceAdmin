@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import React, { useState, useEffect } from "react";
 import {
   FaEllipsisH,
@@ -15,6 +15,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   deleteUserAsync,
   fetchUsers,
+  setSelectedGroupUsers,
   setSelectedUseruniquely,
   storeDeletedUser,
 } from "@/lib/Feature/UserSlice";
@@ -85,10 +86,13 @@ const TableRoute = () => {
   const rowsPerPage = 5; // Limit the rows per page to 5
   const [isSelectable, setIsSelectable] = useState(false);
   const [selectedUsers, setSelectedUsers] = useState([]);
+  const [isGroupSelection, setIsGroupSelection] = useState(false);
 
   const users = useSelector((state) => state.user.users);
   const dispatch = useDispatch();
   const searchTerm = useSelector((state) => state.user.searchTerm);
+
+  const router = useRouter();
 
   useEffect(() => {
     dispatch(fetchUsers());
@@ -155,7 +159,7 @@ const TableRoute = () => {
     },
     {
       icon: <FaUserFriends />,
-      label: "Add Multiple Users",
+      label: "Group",
     },
     {
       icon: <FaShieldAlt />,
@@ -190,6 +194,10 @@ const TableRoute = () => {
               onClick={() => {
                 if (item.label === "Delete User") {
                   setIsSelectable(!isSelectable);
+                  setIsGroupSelection(false)
+                } else if (item.label === "Group") {
+                  setIsGroupSelection(!isGroupSelection);
+                  setIsSelectable(false)
                 }
               }}
             >
@@ -219,7 +227,7 @@ const TableRoute = () => {
               } else {
                 selectedUsers.forEach((user) => {
                   dispatch(deleteUserAsync(user.id)); // Dispatch delete action for selected users
-                  dispatch(storeDeletedUser(user))
+                  dispatch(storeDeletedUser(user));
                   setSelectedUsers([]); // Clear selection after deletion
                   setIsSelectable(false); // Exit selection mode
                 });
@@ -230,10 +238,29 @@ const TableRoute = () => {
           </button>
         </div>
       )}
+      {isGroupSelection && (
+        <div className="px-10 w-full flex items-center justify-end gap-2">
+          <button
+            className="px-3 py-2 rounded-lg bg-blue-500"
+            onClick={() => {
+              if (selectedUsers.length < 2) {
+                alert("Please select multiple users.")
+              } else {
+                router.push('/group')
+                dispatch(setSelectedGroupUsers(selectedUsers))
+              }
+              
+
+            }}
+          >
+            Group
+          </button>
+        </div>
+      )}
       <div className="m-10 relative shadow-md rounded-lg">
         <NewTableComponent
           tableColumns={[
-            isSelectable ? (
+            isSelectable || isGroupSelection ? (
               <th className={`flex items-center justify-between `}>
                 <input
                   type="checkbox"
@@ -270,7 +297,7 @@ const TableRoute = () => {
                 key={user.id}
                 className="border-b hover:bg-blue-50 cursor-pointer relative even:bg-gray-100"
               >
-                {isSelectable && (
+                {isSelectable || isGroupSelection ? (
                   <td>
                     <input
                       type="checkbox"
@@ -284,7 +311,7 @@ const TableRoute = () => {
                       }}
                     />
                   </td>
-                )}
+                ) : null}
                 <td
                   className="p-3 text-gray-700"
                   onClick={() => {
