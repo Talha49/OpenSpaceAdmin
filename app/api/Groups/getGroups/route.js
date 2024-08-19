@@ -4,7 +4,7 @@ import path from 'path';
 
 export async function GET() {
   try {
-    const filePath = path.join(process.cwd(), 'DataGroup', 'groups.json');
+    const filePath = path.join(process.cwd(), 'data', 'groups.json');
     const fileContents = fs.readFileSync(filePath, 'utf8');
     const groups = JSON.parse(fileContents);
     return NextResponse.json(groups);

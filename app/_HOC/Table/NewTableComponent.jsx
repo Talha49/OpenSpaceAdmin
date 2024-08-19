@@ -21,7 +21,7 @@ const NewTableComponent = ({
           <tr className="text-left">
             {filteredColumns.map((column, index) => (
               <th key={index} className="p-3">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between gap-4">
                   {column}
                 </div>
               </th>

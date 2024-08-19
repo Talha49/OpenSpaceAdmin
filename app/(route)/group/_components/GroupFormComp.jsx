@@ -6,6 +6,7 @@ import { FaPlus } from "react-icons/fa";
 import { fetchUsers } from "@/lib/Feature/UserSlice";
 import { IoMdClose } from "react-icons/io";
 import { createGroup } from "@/lib/Feature/GroupSlice";
+import { useRouter } from "next/navigation";
 
 const Dialog = ({ children, onClose }) => {
   return (
@@ -40,6 +41,8 @@ const GroupFormComp = () => {
   });
 
   const dispatch = useDispatch();
+
+  const router = useRouter();
 
   useEffect(() => {
     dispatch(fetchUsers());
@@ -105,22 +108,45 @@ const GroupFormComp = () => {
 
   const handleUserSelection = (user, type) => {
     setStepperFormData((prevData) => {
-      const updatedList = prevData[type].includes(user)
-        ? prevData[type].filter((userObj) => userObj !== user)
-        : [...prevData[type], user];
-
-      return {
-        ...prevData,
-        [type]: updatedList,
-      };
+      if (type === "owners") {
+        // Allow only one owner; if another is selected, replace the previous one
+        return {
+          ...prevData,
+          owners: [user], // Always replace with the new selected owner
+        };
+      } else {
+        // Handle multiple members selection
+        const updatedList = prevData[type].includes(user)
+          ? prevData[type].filter((userObj) => userObj !== user)
+          : [...prevData[type], user];
+  
+        return {
+          ...prevData,
+          [type]: updatedList,
+        };
+      }
     });
   };
+  
 
-  const handleCreateGroup = () => {
-    dispatch(createGroup(stepperFormData))
-
-    // alert("group created");
-    // console.log(stepperFormData);
+  const handleCreateGroup = async () => {
+    const res = await dispatch(createGroup(stepperFormData));
+    if (!res) {
+      alert("failed to create group");
+    } else {
+      alert("group created successfully");
+      router.push("/group/ActiveGroups");
+      setActiveStep(0);
+      setStepperFormData({
+        groupType: "Type 1",
+        basics: {
+          name: "",
+          description: "",
+        },
+        owners: [],
+        members: [],
+      });
+    }
   };
 
   const renderContent = () => {

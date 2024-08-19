@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 export async function POST(req) {
   try {
     const group = await req.json();
-    const filePath = path.join(process.cwd(), 'DataGroup', 'groups.json');
+    const filePath = path.join(process.cwd(), 'data', 'groups.json');
     
     let groups = [];
     if (fs.existsSync(filePath)) {
