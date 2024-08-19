@@ -1,50 +1,26 @@
 [
   {
-    "fullName": "Abdul Samad",
-    "email": "abdulsamad18090@gmail.com",
-    "address": "House D-237, Block D, Street 54, PAEC ECHS, Rawat, Islamabad",
-    "city": "Islamabad",
-    "contact": "3345455964",
-    "id": "889f6fdc-49f3-4d76-b4db-1c07dc59db79"
-  },
-  {
-    "fullName": "Talha Khan Ghori",
-    "email": "ghaurit84@gmail.com",
-    "address": "Raja Bazar",
+    "fullName": "Talha Khan Ghauri",
+    "email": "ghaurit82@gmail.com",
+    "address": "Islamabad",
     "city": "Rawalpindi",
-    "contact": "3306910025",
-    "id": "881b675c-231f-4d55-adad-b94bc290b375"
+    "contact": "03265420488",
+    "id": "3bea9c35-408b-43b7-a12c-31a1c5d5a8f3"
   },
   {
-    "fullName": "Saleem Bro",
-    "email": "Saleembhai@gmail.com",
-    "address": "abc",
-    "city": "Islamabad",
-    "contact": "3345455964",
-    "id": "2451fdb1-a699-4e59-8ad4-38fb16543293"
+    "fullName": "Sheraz",
+    "email": "Sheraz@gmail.com",
+    "address": "House 112 G 12",
+    "city": "Sukkhhur",
+    "contact": "09876543234",
+    "id": "9306b3ff-8625-49b2-be9a-de9df3eb01b8"
   },
   {
-    "fullName": "Ahmad Ali",
-    "email": "ahmadbaig7072@gmail.com",
-    "address": "abc",
-    "city": "Bakhar",
-    "contact": "3306910025",
-    "id": "abfa8b98-7400-485c-aecf-063e2b8e011e"
-  },
-  {
-    "fullName": "Nadeem Khokar",
-    "email": "nadeem@gmail.com",
-    "address": "H8/4",
-    "city": "Islamabad",
-    "contact": "3306910025",
-    "id": "09e966e1-27d4-4e64-a98f-0130502de161"
-  },
-  {
-    "fullName": "waseem Bhai",
-    "email": "abdulsamad18090@gmail.com",
-    "address": "House D-237, Block D, Street 54, PAEC ECHS, Rawat, Islamabad",
-    "city": "Islamabad",
-    "contact": "3306910025",
-    "id": "506e6207-d8b2-4105-a7c5-d84d1636a91a"
+    "fullName": "xanay fgy",
+    "email": "xanay36209@em2lab.com",
+    "address": "House G-182-6io",
+    "city": "Dubai",
+    "contact": "03214764347",
+    "id": "53b06e26-5a4a-4bce-8adf-9bc93b8082bb"
   }
 ]

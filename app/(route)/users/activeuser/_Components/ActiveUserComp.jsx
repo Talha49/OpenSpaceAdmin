@@ -95,7 +95,7 @@ const ActiveUserComp = () => {
     dispatch(setSelectedUseruniquely(selectedUser));
     router.push("/users");
   };
-
+  
   const handleUserClick = (user) => setDialogUser(user);
   const closeDialog = () => setDialogUser(null);
 
