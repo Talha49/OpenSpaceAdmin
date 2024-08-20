@@ -1,1 +1,46 @@
-[]
+[
+  {
+    "groupType": "Type 1",
+    "basics": {
+      "name": "FYP group",
+      "description": "FYP related updates here"
+    },
+    "owners": [
+      {
+        "fullName": "Saleem Bro",
+        "email": "Saleembhai@gmail.com",
+        "address": "abc",
+        "city": "Turkey",
+        "contact": "03345455964",
+        "id": "698380a9-859a-4d85-85c8-53e24a8a02eb"
+      }
+    ],
+    "members": [
+      {
+        "fullName": "Abdul Samad",
+        "email": "abdulsamad18090@gmail.com",
+        "address": "House D-237, Block D, Street 54, PAEC ECHS, Rawat, Islamabad",
+        "city": "Islamabad",
+        "contact": "03345455964",
+        "id": "2838c0ca-4ef3-450d-8469-21564a47858f"
+      },
+      {
+        "fullName": "Talha Khan Ghori",
+        "email": "ghaurit84@gmail.com",
+        "address": "Raja Bazar",
+        "city": "Rawalpindi",
+        "contact": "03345455964",
+        "id": "0fd6fdfb-3da2-4351-8abf-64721dadc3f9"
+      },
+      {
+        "fullName": "Ahmad Ali",
+        "email": "ahmadbaig7072@gmail.com",
+        "address": "abc",
+        "city": "Bakhar",
+        "contact": "03345455964",
+        "id": "5fff8b76-8eca-49a6-af0a-037cdeb417fe"
+      }
+    ],
+    "id": "087e8885-d524-48a9-83aa-1e3453dacf07"
+  }
+]
