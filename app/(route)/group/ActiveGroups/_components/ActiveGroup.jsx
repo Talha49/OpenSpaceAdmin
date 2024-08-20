@@ -1,7 +1,8 @@
 "use client";
+import GroupDetailDialog from "@/app/_components/GroupDetailDialog/GroupDetailDialog";
 import NewHeader from "@/app/_HOC/NewHeader/NewHeader";
 import NewTableComponent from "@/app/_HOC/Table/NewTableComponent";
-import { fetchGroups } from "@/lib/Feature/GroupSlice";
+import { deleteGroups, fetchGroups } from "@/lib/Feature/GroupSlice";
 import React, { useState, useEffect } from "react";
 import { FaFileExport, FaUserFriends, FaSort } from "react-icons/fa";
 import { IoMdRefresh } from "react-icons/io";
@@ -32,37 +33,31 @@ const ActiveGroup = () => {
   const searchTerm = useSelector((state) => state.user.searchTerm);
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [isOpen, setIsOpen] = useState(false);
+  const [clickedGroup, setClickedGroup] = useState(null);
+
+  const groups = useSelector((state) => state.group.groups);
 
   useEffect(() => {
     dispatch(fetchGroups());
   }, [dispatch]);
 
-  const groups = useSelector((state) => state.group.groups);
-
-  const handleSelectAll = (e) => {
-    if (e.target.checked) {
-      setSelectedGroups(groups.map((group) => group.id));
-    } else {
-      setSelectedGroups([]);
+  // Check and delete empty groups after fetching
+  useEffect(() => {
+    if (groups?.length) {
+      groups.forEach((group) => {
+        if (group.members.length === 0) {
+          dispatch(deleteGroups(group.id));
+        }
+      });
     }
-  };
-
-  const handleSort = (key) => {
-    // Implement sorting logic based on key
-  };
+  }, [groups, dispatch]);
 
   // Pagination Logic
   const paginatedGroups = groups.slice(
     (currentPage - 1) * rowsPerPage,
     currentPage * rowsPerPage
   );
-
-  const tableColumns = [
-    { label: "Group Name", key: "groupName" },
-    // { label: "Group Owners", key: "groupOwners" },
-    { label: "Type", key: "type" },
-    { label: "groupMembers", key: "groupMembers" },
-  ];
 
   return (
     <div>
@@ -81,9 +76,7 @@ const ActiveGroup = () => {
       </NewHeader>
       <div>
         <NewTableComponent
-          tableColumns={[
-            'Group Name', 'Owner', 'Type', 'Members'
-          ]} // Filters out any `null` or `undefined` columns
+          tableColumns={["Group Name", "Owner", "Type", "Members"]}
           rowsPerPage={rowsPerPage}
           totalRows={groups.length}
           currentPage={currentPage}
@@ -95,16 +88,29 @@ const ActiveGroup = () => {
             )
             .map((group) => (
               <tr
-                key={groups.id}
+                key={group.id}
                 className="border-b hover:bg-blue-50 cursor-pointer relative even:bg-gray-100"
+                onClick={() => {
+                  setIsOpen(true);
+                  setClickedGroup(group);
+                }}
               >
-                <td className="p-3 text-gray-700">{group.basics.name}</td>
-                <td className="p-3 text-gray-700">{group.owners[0].fullName}</td>
-                <td className="p-3 text-gray-700">{group.groupType}</td>
-                <td className="p-3 text-gray-700">{groups.length}</td>
+                <td className="p-3 text-gray-700">{group?.basics.name}</td>
+                <td className="p-3 text-gray-700">
+                  {group?.owners[0]?.fullName}
+                </td>
+                <td className="p-3 text-gray-700">{group?.groupType}</td>
+                <td className="p-3 text-gray-700">{group?.members.length}</td>
               </tr>
             ))}
         </NewTableComponent>
+        <GroupDetailDialog
+          isOpen={isOpen}
+          onClose={() => {
+            setIsOpen(false);
+          }}
+          group={clickedGroup}
+        />
       </div>
     </div>
   );

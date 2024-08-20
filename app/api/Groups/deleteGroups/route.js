@@ -5,7 +5,7 @@ import path from 'path';
 export async function DELETE(req) {
   try {
     const { ids } = await req.json();
-    const filePath = path.join(process.cwd(), 'DataGroup', 'groups.json');
+    const filePath = path.join(process.cwd(), 'data', 'groups.json');
     
     if (!fs.existsSync(filePath)) {
       return NextResponse.json({ error: 'No groups found' }, { status: 404 });
