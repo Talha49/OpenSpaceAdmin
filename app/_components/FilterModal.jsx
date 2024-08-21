@@ -9,7 +9,7 @@ const FilterModal = ({ onClose, onApplyFilter }) => {
     // Fetch unique addresses, cities, contacts, and emails to populate dropdowns
     const fetchFilterData = async () => {
       try {
-        const response = await fetch("/api/getUser");
+        const response = await fetch("/api/Users/getUser");
         if (response.ok) {
           const data = await response.json();
           setCities([...new Set(data.map((user) => user.city))]);

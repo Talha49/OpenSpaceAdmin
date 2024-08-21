@@ -12,14 +12,14 @@ const NewTableComponent = ({
   const totalPages = Math.ceil(totalRows / rowsPerPage);
 
   // Filter out null or undefined elements in tableColumns
-  const filteredColumns = tableColumns.filter((column) => column !== null && column !== undefined);
+  const filteredColumns = tableColumns?.filter((column) => column !== null && column !== undefined);
 
   return (
     <div>
       <table className="table-auto min-w-full text-xs md:text-sm border-collapse border">
         <thead className="sticky top-0 bg-gray-200 z-0">
           <tr className="text-left">
-            {filteredColumns.map((column, index) => (
+            {filteredColumns?.map((column, index) => (
               <th key={index} className="p-3">
                 <div className="flex items-center justify-between gap-4">
                   {column}
