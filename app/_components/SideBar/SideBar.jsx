@@ -26,7 +26,7 @@ const Menus = [
     icon: <MdPeople />,
     link: '/users',
     subMenus: [
-      { title: 'Active users', link: '/users/activeuser' },
+      { title: 'Active users', link: '/table-test' },
       { title: 'Contacts', link: '/users/contacts' },
       { title: 'Guest users', link: '/users/guest' },
       { title: 'Deleted users', link: '/users/deleteuser' },

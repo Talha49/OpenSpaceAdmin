@@ -8,9 +8,9 @@ const NewHeader = ({ children }) => {
     const dispatch = useDispatch()
     console.log(searchTerm)
   return (
-    <div className="flex items-center justify-between gap-4 p-2 m-10 shadow-md">
+    <div className="gap-4 py-8  ">
       {children}
-      <div className="flex items-center gap-4 w-[250px]">
+      {/* <div className="flex items-center gap-4 w-[250px]">
         <span className="flex items-center text-sm gap-1">
           <FaFilter />
           <p>Filter</p>
@@ -22,7 +22,7 @@ const NewHeader = ({ children }) => {
             value={searchTerm}
           className="w-full p-1 border border-gray-300 rounded placeholder:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
-      </div>
+      </div> */}
     </div>
   );
 };

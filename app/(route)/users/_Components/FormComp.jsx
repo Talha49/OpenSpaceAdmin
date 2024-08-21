@@ -121,7 +121,7 @@ const FormComp = () => {
     });
 
     dispatch(clearSelectedUser()); // Clear selected user after submitting
-    router.push('/users/activeuser');
+    router.push('/table-test');
   };
 
   const handleChange = (e) => {
@@ -144,8 +144,8 @@ const FormComp = () => {
             <h3 className="text-lg font-semibold text-gray-700 mb-1">Personal Details</h3>
             <p className="text-sm text-gray-500 mb-4">Please fill out all the fields.</p>
             <div className="space-y-2">
-              <button className="w-full py-2 px-4 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400">Delete</button>
-              <button className="w-full py-2 px-4 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400">Edit</button>
+              <button className="w-full py-2 px-4  text-gray-700 rounded-md blue-button focus:outline-none focus:ring-2 focus:ring-gray-400">Delete</button>
+              <button className="w-full py-2 px-4  text-gray-700 rounded-md blue-button focus:outline-none focus:ring-2 focus:ring-gray-400">Edit</button>
             </div>
           </div>
 

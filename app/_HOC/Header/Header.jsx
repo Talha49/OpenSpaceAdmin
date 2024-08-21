@@ -15,6 +15,7 @@ const Header = ({
   onRefresh,
   mode,
   actionMode
+  
 }) => {
   return (
     <div className="bg-white p-4">
