@@ -38,7 +38,7 @@ const Menus = [
     link: '/group',
     subMenus: [
       { title: 'Active groups', link: '/group/ActiveGroups' },
-      { title: 'Deleted groups', link: '/groups/deleted' },
+      { title: 'Deleted groups', link: '/group/DeleteGroups' },
      
     ],
   },

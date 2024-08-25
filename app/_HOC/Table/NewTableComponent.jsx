@@ -28,7 +28,9 @@ const NewTableComponent = ({
             ))}
           </tr>
         </thead>
-        <tbody>{children}</tbody>
+        <tbody>{children}
+     
+        </tbody>
       </table>
 
       {/* Pagination Controls */}

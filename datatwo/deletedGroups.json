@@ -1,0 +1,182 @@
+[
+  {
+    "groupType": "Type 2",
+    "basics": {
+      "name": "Hummair Cheema",
+      "description": "Hs;kj"
+    },
+    "owners": [
+      {
+        "fullName": "TaimoorR",
+        "email": "Taimor@gmail.com",
+        "address": "House 789 9i ",
+        "city": "Kharian",
+        "contact": "77346789869",
+        "id": "5d895502-cd3f-4334-9cb8-c5fcd2d496f7"
+      }
+    ],
+    "members": [
+      {
+        "fullName": "Talal",
+        "email": "TL@gmail.com",
+        "address": "House g257 89",
+        "city": "MB Din",
+        "contact": "80073278097",
+        "id": "da5bce50-410e-4585-8f11-b54acbd26b17"
+      },
+      {
+        "fullName": "Usama Binte Ladin",
+        "email": "Usama879@gmail.com",
+        "address": "House Ghju8 4D",
+        "city": "Karachi",
+        "contact": "09876543234",
+        "id": "a9ccebde-42d0-4b37-898a-cd1b3def6799"
+      }
+    ],
+    "id": "1de862c4-ab3a-4993-b0ab-29b1619a4e37"
+  },
+  {
+    "groupType": "Type 2",
+    "basics": {
+      "name": "IPS",
+      "description": "ipps"
+    },
+    "owners": [
+      {
+        "fullName": "Abdullah Chisti",
+        "email": "Chisti@gmail.com",
+        "address": "House 112 G 12",
+        "city": "Dubai",
+        "contact": "09545678900",
+        "id": "ac951d16-5abc-48a1-a8f4-f83f193eb34f"
+      }
+    ],
+    "members": [
+      {
+        "fullName": "Ali Tas",
+        "email": "AliT@gmail.com",
+        "address": "house g6778 h",
+        "city": "Islamabad",
+        "contact": "09865347899",
+        "id": "4b0eac35-7e3d-4840-8f26-39d462fc4816"
+      },
+      {
+        "fullName": "Usama Binte Ladin",
+        "email": "Usama879@gmail.com",
+        "address": "House Ghju8 4D",
+        "city": "Karachi",
+        "contact": "09876543234",
+        "id": "a9ccebde-42d0-4b37-898a-cd1b3def6799"
+      }
+    ],
+    "id": "1777ab89-e3f9-42fb-aa47-03caac44e53f"
+  },
+  {
+    "groupType": "Type 3",
+    "basics": {
+      "name": "Samad",
+      "description": "Smad Gando"
+    },
+    "owners": [
+      {
+        "fullName": "Ali Khan",
+        "email": "ALiK@gmail.com",
+        "address": "House G678 G",
+        "city": "Gujrat",
+        "contact": "03458735213",
+        "id": "9ac6328c-3d14-41a0-b409-fc2f86f8a917"
+      }
+    ],
+    "members": [
+      {
+        "fullName": "Usama Binte Ladin",
+        "email": "Usama879@gmail.com",
+        "address": "House Ghju8 4D",
+        "city": "Karachi",
+        "contact": "09876543234",
+        "id": "a9ccebde-42d0-4b37-898a-cd1b3def6799"
+      },
+      {
+        "fullName": "Usman Bin Khaled",
+        "email": "UsamaBK@gmail.com",
+        "address": "House G-182-6io",
+        "city": "Dubai",
+        "contact": "03452754213",
+        "id": "fb59733a-f5c9-474b-be9c-0fc72ea06748"
+      }
+    ],
+    "id": "0a613849-7f5c-4a06-a375-55d878f0ae21"
+  },
+  {
+    "groupType": "Type 3",
+    "basics": {
+      "name": "IPS",
+      "description": "fetchGroupsfetchGroupsfetchGroupsfetchGroupsfetchGroupsfetchGroupsfetchGroupsfetchGroups"
+    },
+    "owners": [
+      {
+        "fullName": "Abdullah Chisti",
+        "email": "Chisti@gmail.com",
+        "address": "House 112 G 12",
+        "city": "Dubai",
+        "contact": "09545678900",
+        "id": "ac951d16-5abc-48a1-a8f4-f83f193eb34f"
+      }
+    ],
+    "members": [
+      {
+        "fullName": "Ali Khan",
+        "email": "ALiK@gmail.com",
+        "address": "House G678 G",
+        "city": "Gujrat",
+        "contact": "03458735213",
+        "id": "9ac6328c-3d14-41a0-b409-fc2f86f8a917"
+      },
+      {
+        "fullName": "TaimoorR",
+        "email": "Taimor@gmail.com",
+        "address": "House 789 9i ",
+        "city": "Kharian",
+        "contact": "77346789869",
+        "id": "5d895502-cd3f-4334-9cb8-c5fcd2d496f7"
+      }
+    ],
+    "id": "9c9aefd1-0bbe-4045-90fd-784b902be697"
+  },
+  {
+    "groupType": "Type 2",
+    "basics": {
+      "name": "Machine Learning",
+      "description": "Computer Vision"
+    },
+    "owners": [
+      {
+        "fullName": "Hanif 4G",
+        "email": "Hanif@gmail.com",
+        "address": "House 258 H",
+        "city": "Rawat",
+        "contact": "08735982902",
+        "id": "445f38a0-43de-478f-8d4e-e262b9d063f9"
+      }
+    ],
+    "members": [
+      {
+        "fullName": "Taha Sheikh",
+        "email": "TahaS@gmail.com",
+        "address": "House GH78 ",
+        "city": "Islamabad",
+        "contact": "23456789233",
+        "id": "3ecf6f8a-889e-48e3-8947-8d9f4713ad84"
+      },
+      {
+        "fullName": "Taha Sheikh G",
+        "email": "TahaSGHJ@gmail.com",
+        "address": "House GH78 ",
+        "city": "Islamabad",
+        "contact": "23456789233",
+        "id": "94de6777-0ab3-4666-b445-5a9ead07c80a"
+      }
+    ],
+    "id": "66fb826d-9d98-41d9-90f4-411a1877a80e"
+  }
+]

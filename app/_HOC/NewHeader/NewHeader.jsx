@@ -8,7 +8,7 @@ const NewHeader = ({ children }) => {
     const dispatch = useDispatch()
     console.log(searchTerm)
   return (
-    <div className="gap-4 py-8  ">
+    <div className="gap-4 py-8 ">
       {children}
       {/* <div className="flex items-center gap-4 w-[250px]">
         <span className="flex items-center text-sm gap-1">

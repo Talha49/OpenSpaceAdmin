@@ -36,8 +36,8 @@ import { useRouter } from "next/navigation";
 
 import Link from "next/link";
 import Table from "@/app/_components/TableComponent/TableComponent";
-import UserDetailDialog from "@/app/_components/UserDetailDilaog/UserDetailDilaog";
-import FilterModal from "@/app/_components/FilterModal";
+import UserDetailDialog from "@/app/_components/UserDetailDilaog&Modal/UserDetailDilaog";
+import FilterModal from "@/app/_components/UserDetailDilaog&Modal/FilterModal";
 import Header from "@/app/_HOC/Header/Header";
 
 const ActiveUserComp = () => {

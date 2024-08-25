@@ -1,122 +1,74 @@
 [
   {
-    "groupType": "Type 3",
+    "groupType": "Type 2",
     "basics": {
-      "name": "OPENSPACE",
-      "description": "This is our FYP Project."
+      "name": "OpenSpace",
+      "description": "OpenSpace is our FYp"
     },
     "owners": [
       {
-        "fullName": "SaleemBhai",
-        "email": "SaleemBhai@gmail.com",
-        "address": "House 12 G 122 FD",
-        "city": "Multan",
-        "contact": "0321678990",
-        "id": "e763a3dd-efb3-46c0-903a-291d9291e2c0"
+        "fullName": "TaimoorR",
+        "email": "Taimor@gmail.com",
+        "address": "House 789 9i ",
+        "city": "Kharian",
+        "contact": "77346789869",
+        "id": "5d895502-cd3f-4334-9cb8-c5fcd2d496f7"
       }
     ],
     "members": [
       {
-        "fullName": "Talha Khan Ghauri",
-        "email": "ghaurit82@gmail.com",
-        "address": "House 12 G-7/2",
-        "city": "Rawalpindi",
-        "contact": "03218975579",
-        "id": "148b34a8-3049-41ff-9172-bc787efd7002"
+        "fullName": "Usama Binte Ladin",
+        "email": "Usama879@gmail.com",
+        "address": "House Ghju8 4D",
+        "city": "Karachi",
+        "contact": "09876543234",
+        "id": "a9ccebde-42d0-4b37-898a-cd1b3def6799"
       },
       {
-        "fullName": "Samad Khan",
-        "email": "SamadKhan@gmail.com",
-        "address": "House G-114-D",
-        "city": "Rawat",
-        "contact": "0321476434",
-        "id": "7ac24acb-a0da-416e-8096-0e713e8e5d58"
-      },
-      {
-        "fullName": "Abdul Samad",
-        "email": "abdulsamad18090@gmail.com",
-        "address": "abc",
+        "fullName": "Ali Tas",
+        "email": "AliT@gmail.com",
+        "address": "house g6778 h",
         "city": "Islamabad",
-        "contact": "3345455964",
-        "id": "3a044f69-8b31-4647-97f7-1641772c144a"
-      },
-      {
-        "fullName": "Ahmad Ali",
-        "email": "ahmadbaig7072@gmail.com",
-        "address": "street 54",
-        "city": "Bakhar",
-        "contact": "3345455964",
-        "id": "3d67d121-f71f-42e8-ac17-1fc886ac31c1"
-      },
-      {
-        "fullName": "Samad Hanif 4G",
-        "email": "Samad4G@gmail.com",
-        "address": "GH 1234 9E",
-        "city": "Multan",
-        "contact": "0987654323",
-        "id": "85015b8a-6037-4b9f-9234-add9a038dd05"
+        "contact": "09865347899",
+        "id": "4b0eac35-7e3d-4840-8f26-39d462fc4816"
       }
     ],
-    "id": "25b41a88-8ec9-4dff-8b5e-423685a0591b"
+    "id": "1aab0256-3c87-4b6c-b7c3-4277a629f59d"
   },
   {
-    "groupType": "Type 3",
+    "groupType": "Type 1",
     "basics": {
-      "name": "OPENSPACE",
-      "description": "This is our FYP Project."
+      "name": "Heart Det",
+      "description": "Heart Detection"
     },
     "owners": [
       {
-        "fullName": "SaleemBhai",
-        "email": "SaleemBhai@gmail.com",
-        "address": "House 12 G 122 FD",
-        "city": "Multan",
-        "contact": "0321678990",
-        "id": "e763a3dd-efb3-46c0-903a-291d9291e2c0"
+        "fullName": "Taha Sheikh G",
+        "email": "TahaSGHJ@gmail.com",
+        "address": "House GH78 ",
+        "city": "Islamabad",
+        "contact": "23456789233",
+        "id": "94de6777-0ab3-4666-b445-5a9ead07c80a"
       }
     ],
     "members": [
       {
-        "fullName": "Talha Khan Ghauri",
-        "email": "ghaurit82@gmail.com",
-        "address": "House 12 G-7/2",
-        "city": "Rawalpindi",
-        "contact": "03218975579",
-        "id": "148b34a8-3049-41ff-9172-bc787efd7002"
-      },
-      {
-        "fullName": "Samad Khan",
-        "email": "SamadKhan@gmail.com",
-        "address": "House G-114-D",
-        "city": "Rawat",
-        "contact": "0321476434",
-        "id": "7ac24acb-a0da-416e-8096-0e713e8e5d58"
-      },
-      {
-        "fullName": "Abdul Samad",
-        "email": "abdulsamad18090@gmail.com",
-        "address": "abc",
+        "fullName": "Taha Sheikh",
+        "email": "TahaS@gmail.com",
+        "address": "House GH78 ",
         "city": "Islamabad",
-        "contact": "3345455964",
-        "id": "3a044f69-8b31-4647-97f7-1641772c144a"
+        "contact": "23456789233",
+        "id": "3ecf6f8a-889e-48e3-8947-8d9f4713ad84"
       },
       {
-        "fullName": "Ahmad Ali",
-        "email": "ahmadbaig7072@gmail.com",
-        "address": "street 54",
-        "city": "Bakhar",
-        "contact": "3345455964",
-        "id": "3d67d121-f71f-42e8-ac17-1fc886ac31c1"
-      },
-      {
-        "fullName": "Samad Hanif 4G",
-        "email": "Samad4G@gmail.com",
-        "address": "GH 1234 9E",
-        "city": "Multan",
-        "contact": "0987654323",
-        "id": "85015b8a-6037-4b9f-9234-add9a038dd05"
+        "fullName": "TaimoorR",
+        "email": "Taimor@gmail.com",
+        "address": "House 789 9i ",
+        "city": "Kharian",
+        "contact": "77346789869",
+        "id": "5d895502-cd3f-4334-9cb8-c5fcd2d496f7"
       }
     ],
-    "id": "087e8885-d524-48a9-83aa-1e3453dacf07"
+    "id": "c983990f-b2bc-4e0b-b94b-8e6394287eb5"
   }
 ]

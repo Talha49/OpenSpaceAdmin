@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useMemo } from "react";
 import {
   FaEllipsisH,
   FaUserEdit,
@@ -17,12 +17,11 @@ import {
   deleteUserAsync,
   fetchUsers,
   setFilterCriteria,
-  setSearchTerm,
   setSelectedGroupUsers,
   setSelectedUseruniquely,
   storeDeletedUser,
 } from "@/lib/Feature/UserSlice";
-import UserDetailDialog from "@/app/_components/UserDetailDilaog/UserDetailDilaog";
+import UserDetailDialog from "@/app/_components/UserDetailDilaog&Modal/UserDetailDilaog";
 import { useRouter } from "next/navigation";
 import NewHeader from "@/app/_HOC/NewHeader/NewHeader";
 import { HiUserAdd } from "react-icons/hi";
@@ -31,7 +30,7 @@ import { FaUserFriends } from "react-icons/fa";
 import { FiRefreshCcw } from "react-icons/fi";
 import { BsThreeDots } from "react-icons/bs";
 import Link from "next/link";
-import FilterModal from "@/app/_components/FilterModal";
+import FilterModal from "@/app/_components/UserDetailDilaog&Modal/FilterModal";
 
 const Modal = ({ user }) => {
   const dispatch = useDispatch();
@@ -93,15 +92,14 @@ const TableRoute = () => {
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [isGroupSelection, setIsGroupSelection] = useState(false);
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  const [filterCriteria, setFilterCriteria] = useState({});
+  const [searchTerm, setSearchTerm] = useState("")
 
   const users = useSelector((state) => state.user.users);
   const dispatch = useDispatch();
-  const searchTerm = useSelector((state) => state.user.searchTerm);
-  const filterCriteria = useSelector((state) => state.user.filterCriteria);
-
   const handleOpenFilterModal = () => setIsFilterModalOpen(true);
   const handleCloseFilterModal = () => setIsFilterModalOpen(false);
-  const handleApplyFilter = (criteria) => dispatch(setFilterCriteria(criteria));
+  const handleApplyFilter = (criteria) => setFilterCriteria(criteria);
 
   const router = useRouter();
 
@@ -121,7 +119,7 @@ const TableRoute = () => {
     setSortConfig({ key, direction });
   };
 
-  const sortedUsers = React.useMemo(() => {
+  const sortedUsers = useMemo(() => {
     if (sortConfig.key) {
       return [...users].sort((a, b) => {
         if (a[sortConfig.key] < b[sortConfig.key]) {
@@ -136,10 +134,13 @@ const TableRoute = () => {
     return users;
   }, [users, sortConfig]);
 
-  const sortedFilteredUsers = React.useMemo(() => {
+  const sortedFilteredUsers = useMemo(() => {
     return sortedUsers.filter((user) =>
       user.fullName.toLowerCase().includes(searchTerm.toLowerCase()) &&
-      (filterCriteria.city === "" || user.city === filterCriteria.city)
+      (!filterCriteria.city || user.city === filterCriteria.city) &&
+      (!filterCriteria.address || user.address === filterCriteria.address) &&
+      (!filterCriteria.contact || user.contact === filterCriteria.contact) &&
+      (!filterCriteria.email || user.email === filterCriteria.email)
     );
   }, [sortedUsers, searchTerm, filterCriteria]);
 
@@ -201,8 +202,9 @@ const TableRoute = () => {
   return (
     <>
       <NewHeader>
+         
         <div className="flex flex-col px-4">
-          <div className="mb-4 flex flex-col gap-4">
+        <div className="mb-4 flex flex-col gap-4">
             <h1 className="text-xl font-semibold tracking-wider">Talha.ae</h1>
             <h2 className="text-lg font-semibold tracking-wider">Active Users</h2>
           </div>
@@ -249,8 +251,8 @@ const TableRoute = () => {
               <input
                 type="text"
                 placeholder="Search users list"
-                onChange={(e) => {
-                  dispatch(setSearchTerm(e.target.value));
+                onChange={(e) => {setSearchTerm(e.target.value)
+                 setCurrentPage(1)
                 }}
                 value={searchTerm}
                 className="w-full p-1 border border-gray-300 rounded placeholder:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -398,6 +400,7 @@ const TableRoute = () => {
           <FilterModal
             onClose={handleCloseFilterModal}
             onApplyFilter={handleApplyFilter}
+            
           />
         )}
       </div>
