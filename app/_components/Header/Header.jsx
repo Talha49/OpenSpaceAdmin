@@ -22,7 +22,7 @@ const Header = () => {
         <div className='flex items-center gap-2 relative' onClick={handleDialog}>
           <p><FaQuestion /></p>
           <div className='bg-slate-400 rounded-full p-1'>
-            <Image src='/avatar.png' width={35} height={35} alt="Profile" />
+            <Image src='/images/avatar.png' width={35} height={35} alt="Profile" />
           </div>    
           {showDialog && (
           <div className='absolute top-12 right-0 w-[340px]  z-[-10] bg-white shadow-lg border py-2 border-gray-200 rounded-md px-4'>

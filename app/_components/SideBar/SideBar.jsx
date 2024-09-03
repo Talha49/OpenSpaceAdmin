@@ -105,21 +105,21 @@ const Sidebar = () => {
             {open ? <LuChevronFirst /> : <LuChevronLast />}
           </button>
         </div>
-        <ul className="pt-2">
+        <ul className="">
           {Menus.map((Menu, index) => (
             <div key={index}>
               <li
-                className={`flex items-center rounded-md p-2  cursor-pointer hover:bg-gray-300 text-gray-600 text-sm gap-x-4 ${
+                className={`flex items-center p-2 cursor-pointer hover:bg-blue-200 text-gray-600 text-sm gap-x-4 ${
                   Menu.gap ? 'mt-9' : 'mt-2'
                 }`}
                 data-tooltip-id={index}
               >
                 <Link href={Menu.link} passHref>
                   <div className="flex items-center gap-x-4">
-                    <div className="flex-shrink-0 text-[20px]">{Menu.icon}</div>
+                    <div className="flex-shrink-0 text-[20px] text-blue-500">{Menu.icon}</div>
                     <span
                       className={`${
-                        open ? 'block text-[15px]' : 'hidden'
+                        open ? 'block text-sm' : 'hidden'
                       } flex-1 duration-300`}
                     >
                       {Menu.title}
@@ -129,7 +129,7 @@ const Sidebar = () => {
                 {Menu.subMenus && (
                   <BsChevronDown
                     onClick={() => handleSubMenuToggle(index)}
-                    className={`ml-auto  ${subMenuOpen[index] && 'rotate-180 '}`}
+                    className={`ml-auto ${subMenuOpen[index] && 'rotate-180'} transition-all`}
                   />
                 )}
               </li>
@@ -140,7 +140,7 @@ const Sidebar = () => {
                     <Link href={subMenuItem.link} key={idx} passHref>
                       <li
                         key={idx}
-                        className="flex px-5 cursor-pointer text-center text-sm text-gray-500 py-1"
+                        className="flex px-5 cursor-pointer text-center text-sm text-gray-500 hover:bg-blue-200 py-1"
                       >
                         {subMenuItem.title}
                       </li>
