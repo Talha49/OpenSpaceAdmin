@@ -91,11 +91,11 @@ const Sidebar = () => {
   };
 
   return (
-    <div className="h-screen  sticky top-0 ">
+    <div className="h-screen sticky top-0 ">
       <div
         className={`${
           open ? 'w-48' : 'w-16'
-        } bg-white h-full relative duration-500 border-r border-gray-300`}
+        } bg-white h-full overflow-y-auto relative duration-500 border-r border-gray-300`}
       >
         <div className="p-4 flex justify-end items-center">
           <button

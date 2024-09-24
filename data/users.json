@@ -78,5 +78,13 @@
     "city": "Rawat",
     "contact": "08735982902",
     "id": "445f38a0-43de-478f-8d4e-e262b9d063f9"
+  },
+  {
+    "fullName": "Abdul Samad",
+    "email": "abdulsamad18090@gmail.com",
+    "address": "House D-237, Block D, Street 54, PAEC ECHS, Rawat, Islamabad",
+    "city": "Islamabad",
+    "contact": "03345455964",
+    "id": "a472852c-b37a-4840-a0b1-7f21c2658897"
   }
 ]

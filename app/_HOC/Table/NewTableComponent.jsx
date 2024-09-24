@@ -20,7 +20,7 @@ const NewTableComponent = ({
         <thead className="sticky top-0 bg-gray-200 z-0">
           <tr className="text-left">
             {filteredColumns?.map((column, index) => (
-              <th key={index} className="p-3">
+              <th key={index} className="py-3 px-2">
                 <div className="flex items-center justify-between gap-4">
                   {column}
                 </div>
