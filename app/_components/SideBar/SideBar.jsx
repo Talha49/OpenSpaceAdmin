@@ -133,7 +133,7 @@ const Sidebar = () => {
                   />
                 )}
               </li>
-              {!open && <Tooltip  id={index.toString()}>{Menu.title}</Tooltip>}
+              {!open && <Tooltip id={index.toString()}>{Menu.title}</Tooltip>}
               {Menu.subMenus && subMenuOpen[index] && open && (
                 <ul>
                   {Menu.subMenus.map((subMenuItem, idx) => (
