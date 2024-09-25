@@ -6,6 +6,15 @@ import { administratorPermissions } from "../AdministratorPermissions";
 import PermissionDialog from "../PermissionDialog/page";
 import NewTableComponent from "@/app/_HOC/Table/NewTableComponent";
 
+const CustomPermissionComponent = ({ permission }) => {
+  return (
+    <div className="p-2 bg-blue-50 rounded">
+      <h2 className="font-semibold">Custom Permission:</h2>
+      <p>{permission} requires special handling.</p>
+    </div>
+  );
+};
+
 const PermissionSettingsDialog = ({ onClose }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isUserPermissionsOpen, setIsUserPermissionsOpen] = useState(false);
@@ -35,6 +44,64 @@ const PermissionSettingsDialog = ({ onClose }) => {
   const paginatedPermissions =
     selectedPermission?.permissions?.slice(startRow, startRow + rowsPerPage) ||
     [];
+
+  const renderPermissions = () => {
+    if (selectedPermission?.renderAsTable) {
+      // Render the table for permissions
+      return (
+        <NewTableComponent
+          tableColumns={["Permissions", "View", "Create", "Update", "Delete"]}
+          currentPage={currentPage}
+          onPageChange={handlePageChange}
+          rowsPerPage={rowsPerPage}
+          totalRows={selectedPermission?.permissions?.length || 0}
+        >
+          {paginatedPermissions.map((permission, index) => (
+            <tr key={index} className="border-t">
+              <td className="p-2">{permission.toLowerCase()}</td>
+              <td className="p-2">
+                <input
+                  type="checkbox"
+                  checked={false}
+                  className="cursor-pointer"
+                />
+              </td>
+              <td className="p-2">
+                <input
+                  type="checkbox"
+                  checked={false}
+                  className="cursor-pointer"
+                />
+              </td>
+              <td className="p-2">
+                <input
+                  type="checkbox"
+                  checked={false}
+                  className="cursor-pointer"
+                />
+              </td>
+              <td className="p-2">
+                <input
+                  type="checkbox"
+                  checked={false}
+                  className="cursor-pointer"
+                />
+              </td>
+            </tr>
+          ))}
+        </NewTableComponent>
+      );
+    } else {
+      // Render custom components for the permissions
+      return (
+        <>
+          {selectedPermission?.permissions?.map((permission, index) => (
+            <CustomPermissionComponent key={index} permission={permission} />
+          ))}
+        </>
+      );
+    }
+  };
 
   return (
     <PermissionDialog
@@ -73,7 +140,7 @@ const PermissionSettingsDialog = ({ onClose }) => {
 
       <div className="flex gap-2">
         <div
-          className={`w-[350px] h-[300px] py-2 overflow-y-auto bg-gray-100 md:static absolute z-50 ${
+          className={`w-[350px] h-[300px] py-2 overflow-y-auto bg-gray-100 lg:static absolute z-50 ${
             !isSidebarOpen && "hidden"
           }`}
         >
@@ -95,13 +162,14 @@ const PermissionSettingsDialog = ({ onClose }) => {
           {isUserPermissionsOpen && (
             <>
               {Object.entries(userPermissions).map(
-                ([category, permissions], index) => (
+                ([category, { renderAsTable, permissions }], index) => (
                   <div
                     key={index}
                     onClick={() => {
                       setSelectedPermission({
                         title: "User Permissions",
                         category: category,
+                        renderAsTable: renderAsTable,
                         permissions: permissions,
                       });
                     }}
@@ -120,6 +188,7 @@ const PermissionSettingsDialog = ({ onClose }) => {
               )}
             </>
           )}
+
           <div
             className={`flex gap-2 items-center font-bold cursor-pointer py-1 ${
               isAdminPermissionsOpen && "text-blue-500 bg-blue-200 rounded"
@@ -138,13 +207,14 @@ const PermissionSettingsDialog = ({ onClose }) => {
           {isAdminPermissionsOpen && (
             <>
               {Object.entries(administratorPermissions).map(
-                ([category, permissions], index) => (
+                ([category, { renderAsTable, permissions }], index) => (
                   <div
                     key={index}
                     onClick={() => {
                       setSelectedPermission({
                         title: "Administrator Permissions",
                         category: category,
+                        renderAsTable: renderAsTable,
                         permissions: permissions,
                       });
                     }}
@@ -176,55 +246,7 @@ const PermissionSettingsDialog = ({ onClose }) => {
                 </span>
               </h1>
               <div className="overflow-x-auto">
-                <div className="min-w-[600px]">
-                  <NewTableComponent
-                    tableColumns={[
-                      "Permissions",
-                      "View",
-                      "Create",
-                      "Update",
-                      "Delete",
-                    ]}
-                    currentPage={currentPage}
-                    onPageChange={handlePageChange}
-                    rowsPerPage={rowsPerPage}
-                    totalRows={selectedPermission?.permissions?.length || 0}
-                  >
-                    {paginatedPermissions.map((permission, index) => (
-                      <tr key={index} className="border-t">
-                        <td className="p-2">{permission.toLowerCase()}</td>
-                        <td className="p-2">
-                          <input
-                            type="checkbox"
-                            checked={false}
-                            className="cursor-pointer"
-                          />
-                        </td>
-                        <td className="p-2">
-                          <input
-                            type="checkbox"
-                            checked={false}
-                            className="cursor-pointer"
-                          />
-                        </td>
-                        <td className="p-2">
-                          <input
-                            type="checkbox"
-                            checked={false}
-                            className="cursor-pointer"
-                          />
-                        </td>
-                        <td className="p-2">
-                          <input
-                            type="checkbox"
-                            checked={false}
-                            className="cursor-pointer"
-                          />
-                        </td>
-                      </tr>
-                    ))}
-                  </NewTableComponent>
-                </div>
+                <div className="min-w-[600px]">{renderPermissions()}</div>
               </div>
             </>
           ) : (
