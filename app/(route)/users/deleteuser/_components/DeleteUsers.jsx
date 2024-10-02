@@ -2,7 +2,13 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { IoMdRefresh } from "react-icons/io";
-import { FaEllipsisH, FaFileExport, FaFilter, FaSort, FaUserFriends } from "react-icons/fa";
+import {
+  FaEllipsisH,
+  FaFileExport,
+  FaFilter,
+  FaSort,
+  FaUserFriends,
+} from "react-icons/fa";
 import NewHeader from "@/app/_HOC/NewHeader/NewHeader";
 import NewTableComponent from "@/app/_HOC/Table/NewTableComponent";
 import { fetchDeletedUsers } from "@/lib/Feature/UserSlice";
@@ -13,10 +19,13 @@ const DeletedUsers = () => {
   const [deletedUsers, setDeletedUsers] = useState([]);
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
+  const [sortConfig, setSortConfig] = useState({
+    key: null,
+    direction: "ascending",
+  });
   const [searchTerm, setSearchTerm] = useState("");
   const [filterCriteria, setFilterCriteria] = useState({});
-  const rowsPerPage = 5;
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const handleOpenFilterModal = () => setIsFilterModalOpen(true);
   const handleCloseFilterModal = () => setIsFilterModalOpen(false);
@@ -31,57 +40,68 @@ const DeletedUsers = () => {
     setDeletedUsers(res.payload);
   };
 
+  const handleRowsPerPageChange = (e) => {
+    setRowsPerPage(Number(e.target.value));
+    setCurrentPage(1); // Reset to first page when rows per page changes
+  };
+
   useEffect(() => {
     getDeletedUsers();
   }, [dispatch]);
 
   const handleSort = (key) => {
-    let direction = 'ascending';
-    if (sortConfig.key === key && sortConfig.direction === 'ascending') {
-      direction = 'descending';
+    let direction = "ascending";
+    if (sortConfig.key === key && sortConfig.direction === "ascending") {
+      direction = "descending";
     }
     setSortConfig({ key, direction });
   };
 
   const filteredAndSortedUsers = useMemo(() => {
     let result = [...deletedUsers];
-    
+
     // Apply search term filter
     if (searchTerm) {
-      result = result.filter(user => 
+      result = result.filter((user) =>
         user.fullName.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
-    
+
     // Apply filter criteria
     if (Object.keys(filterCriteria).length > 0) {
-      result = result.filter(user => 
-        (!filterCriteria.city || user.city === filterCriteria.city) &&
-        (!filterCriteria.address || user.address === filterCriteria.address) &&
-        (!filterCriteria.contact || user.contact === filterCriteria.contact) &&
-        (!filterCriteria.email || user.email === filterCriteria.email)
+      result = result.filter(
+        (user) =>
+          (!filterCriteria.city || user.city === filterCriteria.city) &&
+          (!filterCriteria.address ||
+            user.address === filterCriteria.address) &&
+          (!filterCriteria.contact ||
+            user.contact === filterCriteria.contact) &&
+          (!filterCriteria.email || user.email === filterCriteria.email)
       );
     }
-    
+
     // Apply sorting
     if (sortConfig.key !== null) {
       result.sort((a, b) => {
         if (a[sortConfig.key] < b[sortConfig.key]) {
-          return sortConfig.direction === 'ascending' ? -1 : 1;
+          return sortConfig.direction === "ascending" ? -1 : 1;
         }
         if (a[sortConfig.key] > b[sortConfig.key]) {
-          return sortConfig.direction === 'ascending' ? 1 : -1;
+          return sortConfig.direction === "ascending" ? 1 : -1;
         }
         return 0;
       });
     }
-    
+
     return result;
   }, [deletedUsers, searchTerm, filterCriteria, sortConfig]);
 
   const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
-  const paginatedDeletedUsers = filteredAndSortedUsers.slice(indexOfFirstRow, indexOfLastRow);
+  const paginatedDeletedUsers = filteredAndSortedUsers.slice(
+    indexOfFirstRow,
+    indexOfLastRow
+  );
 
   const headerItems = [
     { icon: <IoMdRefresh />, label: "Refresh" },
@@ -120,8 +140,8 @@ const DeletedUsers = () => {
               ))}
             </div>
             <div className="flex items-center gap-4 w-[250px] mr-6">
-              <span 
-                className="flex items-center text-sm gap-1 cursor-pointer hover:text-blue-500" 
+              <span
+                className="flex items-center text-sm gap-1 cursor-pointer hover:text-blue-500"
                 onClick={handleOpenFilterModal}
               >
                 <FaFilter />
@@ -153,11 +173,12 @@ const DeletedUsers = () => {
         totalRows={filteredAndSortedUsers.length}
         currentPage={currentPage}
         onPageChange={(page) => setCurrentPage(page)}
+        handleRowsPerPageChange={handleRowsPerPageChange}
       >
         {paginatedDeletedUsers.map((user) => (
           <tr
             key={user.id}
-            className="border-b hover:bg-blue-50 cursor-pointer relative even:bg-gray-100"
+            className="border-b cursor-pointer relative bg-gray-100 hover:bg-gray-200"
           >
             <td className="p-3 text-gray-700">
               <div className="flex items-center justify-between ">

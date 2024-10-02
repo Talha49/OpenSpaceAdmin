@@ -8,9 +8,10 @@ import NewTableComponent from "@/app/_HOC/Table/NewTableComponent";
 
 const CustomPermissionComponent = ({ permission }) => {
   return (
-    <div className="p-2 bg-blue-50 rounded">
-      <h2 className="font-semibold">Custom Permission:</h2>
-      <p>{permission} requires special handling.</p>
+    <div className="p-2 bg-blue-200 rounded-lg">
+      <div className="flex items-center gap-2">
+        {permission.toLowerCase()} <input type="checkbox" name="" id="" />
+      </div>
     </div>
   );
 };
@@ -22,7 +23,7 @@ const PermissionSettingsDialog = ({ onClose }) => {
   const [selectedPermission, setSelectedPermission] = useState(null);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const handlePageChange = (newPage) => {
     if (
@@ -55,9 +56,10 @@ const PermissionSettingsDialog = ({ onClose }) => {
           onPageChange={handlePageChange}
           rowsPerPage={rowsPerPage}
           totalRows={selectedPermission?.permissions?.length || 0}
+          handleRowsPerPageChange={handleRowsPerPageChange}
         >
           {paginatedPermissions.map((permission, index) => (
-            <tr key={index} className="border-t">
+            <tr key={index} className="border-t bg-gray-100 hover:bg-gray-200">
               <td className="p-2">{permission.toLowerCase()}</td>
               <td className="p-2">
                 <input
@@ -94,11 +96,13 @@ const PermissionSettingsDialog = ({ onClose }) => {
     } else {
       // Render custom components for the permissions
       return (
-        <>
-          {selectedPermission?.permissions?.map((permission, index) => (
-            <CustomPermissionComponent key={index} permission={permission} />
-          ))}
-        </>
+        <div className="h-[270px] overflow-y-auto bg-gray-100 rounded p-2">
+          <div className="flex items-center gap-4 flex-wrap">
+            {selectedPermission?.permissions?.map((permission, index) => (
+              <CustomPermissionComponent key={index} permission={permission} />
+            ))}
+          </div>
+        </div>
       );
     }
   };
@@ -235,10 +239,10 @@ const PermissionSettingsDialog = ({ onClose }) => {
             </>
           )}
         </div>
-        <div className="h-[300px] w-full rounded border-gray-300">
+        <div className=" w-full rounded border-gray-300">
           {selectedPermission ? (
             <>
-              <h1 className="text-base font-semibold mb-1">
+              <h1 className="text-base font-semibold">
                 {selectedPermission.title}{" "}
                 <span className="text-blue-500">
                   {"-> "}

@@ -40,7 +40,7 @@
 //   const handleCloseFilterModal = () => setIsFilterModalOpen(false);
 //   const handleApplyFilter = (criteria) => {
 //     setFilterCriteria(criteria);
-//     setCurrentPage(1); 
+//     setCurrentPage(1);
 //     handleCloseFilterModal();
 //   };
 
@@ -68,7 +68,7 @@
 
 //   const filteredAndSortedGroups = useMemo(() => {
 //     let result = [...groups];
-    
+
 //     // Apply search filter
 //     result = result.filter((group) =>
 //       group.basics.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -78,7 +78,7 @@
 //     if (filterCriteria.groupType) {
 //       result = result.filter(group => group.groupType === filterCriteria.groupType);
 //     }
-    
+
 //     // Apply sorting
 //     if (sortConfig.key !== null) {
 //       result.sort((a, b) => {
@@ -114,7 +114,7 @@
 //         return 0;
 //       });
 //     }
-    
+
 //     return result;
 //   }, [groups, searchTerm, filterCriteria, sortConfig]);
 
@@ -139,9 +139,9 @@
 //             <h1 className="text-xl font-semibold tracking-wider">Talha.ae</h1>
 //             <h2 className="text-lg font-semibold tracking-wider">Active Groups</h2>
 //           </div>
-          
+
 //           <div className="flex flex-col sm:flex-row sm:gap-0 gap-6 sm:items-center justify-between border-t-2 pt-2">
-//             <div className="flex items-center sm:gap-x-6 gap-x-4 text-[8px]">        
+//             <div className="flex items-center sm:gap-x-6 gap-x-4 text-[8px]">
 //               {headerItems.map((item, i) => (
 //                 <div
 //                   key={i}
@@ -151,7 +151,7 @@
 //                   <p>{item.label}</p>
 //                 </div>
 //               ))}
-//             </div> 
+//             </div>
 //             <div className="flex items-center gap-4 w-[250px] mr-6">
 //               <span className="flex items-center text-sm gap-1 cursor-pointer" onClick={handleOpenFilterModal}>
 //                 <FaFilter />
@@ -160,7 +160,7 @@
 //               <input
 //                 type="text"
 //                 placeholder="Search users list"
-//                 onChange={(e) => { 
+//                 onChange={(e) => {
 //                   setSearchTerm(e.target.value);
 //                   setCurrentPage(1)
 //                 }}
@@ -177,13 +177,13 @@
 //             <div
 //               key={col.key}
 //               className="flex items-center justify-between cursor-pointer w-full"
-            
+
 //             >
 //               <span>{col.label}</span>
 //               <FaSort className="ml-1"   onClick={() => handleSort(col.key)} />
 //             </div>
 //           ))}
-//           rowsPerPage={rowsPerPage}    
+//           rowsPerPage={rowsPerPage}
 //           totalRows={filteredAndSortedGroups.length}
 //           currentPage={currentPage}
 //           onPageChange={(page) => setCurrentPage(page)}
@@ -227,31 +227,43 @@
 
 // export default ActiveGroup;
 
-
 "use client";
 import GroupDetailDialog from "@/app/_components/GroupDetailDialog/GroupDetailDialog";
 import GenericFilterModal from "@/app/_components/UserDetailDilaog&Modal/GerenicFilterModal";
 import GroupFilterModal from "@/app/_components/UserDetailDilaog&Modal/GroupFilterModal";
 import NewHeader from "@/app/_HOC/NewHeader/NewHeader";
 import NewTableComponent from "@/app/_HOC/Table/NewTableComponent";
-import { deleteGroups, fetchGroups, storeDeletedGroups } from "@/lib/Feature/GroupSlice";
+import {
+  deleteGroups,
+  fetchGroups,
+  storeDeletedGroups,
+} from "@/lib/Feature/GroupSlice";
+import { useRouter } from "next/navigation";
 import React, { useState, useEffect, useMemo } from "react";
-import { FaFileExport, FaUserFriends, FaSort, FaFilter } from "react-icons/fa";
+import {
+  FaFileExport,
+  FaUserFriends,
+  FaSort,
+  FaFilter,
+  FaUsers,
+} from "react-icons/fa";
 import { IoMdRefresh } from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
 
-
-
 const ActiveGroup = () => {
+  const router = useRouter()
   const dispatch = useDispatch();
   const [currentPage, setCurrentPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [isOpen, setIsOpen] = useState(false);
   const [clickedGroup, setClickedGroup] = useState(null);
   const [filterCriteria, setFilterCriteria] = useState({ groupType: "" });
-  const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
+  const [sortConfig, setSortConfig] = useState({
+    key: null,
+    direction: "ascending",
+  });
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [isSelectable, setIsSelectable] = useState(false);
   const [selectedGroups, setSelectedGroups] = useState([]);
   const groups = useSelector((state) => state.group.groups);
@@ -260,8 +272,14 @@ const ActiveGroup = () => {
   const handleCloseFilterModal = () => setIsFilterModalOpen(false);
   const handleApplyFilter = (criteria) => {
     setFilterCriteria(criteria);
-    setCurrentPage(1); 
+    setCurrentPage(1);
     handleCloseFilterModal();
+  };
+
+  // Handle items per page change
+  const handleRowsPerPageChange = (e) => {
+    setRowsPerPage(Number(e.target.value));
+    setCurrentPage(1); // Reset to first page when rows per page changes
   };
 
   useEffect(() => {
@@ -269,16 +287,16 @@ const ActiveGroup = () => {
   }, [dispatch]);
 
   const handleSort = (key) => {
-    let direction = 'ascending';
-    if (sortConfig.key === key && sortConfig.direction === 'ascending') {
-      direction = 'descending';
+    let direction = "ascending";
+    if (sortConfig.key === key && sortConfig.direction === "ascending") {
+      direction = "descending";
     }
     setSortConfig({ key, direction });
   };
 
   const filteredAndSortedGroups = useMemo(() => {
     let result = [...groups];
-    
+
     // Apply search filter
     result = result.filter((group) =>
       group.basics.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -286,27 +304,29 @@ const ActiveGroup = () => {
 
     // Apply type filter
     if (filterCriteria.groupType) {
-      result = result.filter(group => group.groupType === filterCriteria.groupType);
+      result = result.filter(
+        (group) => group.groupType === filterCriteria.groupType
+      );
     }
-    
+
     // Apply sorting
     if (sortConfig.key !== null) {
       result.sort((a, b) => {
         let aValue, bValue;
         switch (sortConfig.key) {
-          case 'fullName':
+          case "fullName":
             aValue = a.basics.name.toLowerCase();
             bValue = b.basics.name.toLowerCase();
             break;
-          case 'owner':
+          case "owner":
             aValue = a.owners[0]?.fullName.toLowerCase();
             bValue = b.owners[0]?.fullName.toLowerCase();
             break;
-          case 'type':
+          case "type":
             aValue = a.groupType.toLowerCase();
             bValue = b.groupType.toLowerCase();
             break;
-          case 'members':
+          case "members":
             aValue = a.members.length;
             bValue = b.members.length;
             break;
@@ -316,15 +336,15 @@ const ActiveGroup = () => {
         }
 
         if (aValue < bValue) {
-          return sortConfig.direction === 'ascending' ? -1 : 1;
+          return sortConfig.direction === "ascending" ? -1 : 1;
         }
         if (aValue > bValue) {
-          return sortConfig.direction === 'ascending' ? 1 : -1;
+          return sortConfig.direction === "ascending" ? 1 : -1;
         }
         return 0;
       });
     }
-    
+
     return result;
   }, [groups, searchTerm, filterCriteria, sortConfig]);
 
@@ -361,14 +381,14 @@ const ActiveGroup = () => {
     if (selectedGroups.length === 0) {
       alert("Please select groups to delete.");
     } else {
-      const groupIds = selectedGroups.map(group => group.id);
+      const groupIds = selectedGroups.map((group) => group.id);
       try {
         // First, delete the groups
         await dispatch(deleteGroups(groupIds)).unwrap();
-        
+
         // Then, store the deleted groups
         await dispatch(storeDeletedGroups(selectedGroups)).unwrap();
-        
+
         setSelectedGroups([]);
         setIsSelectable(false);
         alert("Groups deleted and stored successfully.");
@@ -377,26 +397,28 @@ const ActiveGroup = () => {
       }
     }
   };
-  
+
   const headerItems = [
-  {
-    icon: <FaUserFriends />,
-    label: "Add Group",
-  },
-  {
-    icon: <IoMdRefresh />,
-    label: "Refresh",
-  },
-  {
-    icon: <FaFileExport />,
-    label: "Export Groups",
-  },
-  {
-    icon: <FaFileExport />,
-    label: "Delete Groups",
-    onClick: () => {setIsSelectable(!isSelectable)},
-  },
-];
+    {
+      icon: <FaUserFriends />,
+      label: "Add Group",
+    },
+    {
+      icon: <IoMdRefresh />,
+      label: "Refresh",
+    },
+    {
+      icon: <FaFileExport />,
+      label: "Export Groups",
+    },
+    {
+      icon: <FaFileExport />,
+      label: "Delete Groups",
+      onClick: () => {
+        setIsSelectable(!isSelectable);
+      },
+    },
+  ];
 
   return (
     <div>
@@ -404,34 +426,38 @@ const ActiveGroup = () => {
         <div className="flex flex-col px-4">
           <div className="mb-4 flex flex-col gap-4">
             <h1 className="text-xl font-semibold tracking-wider">Talha.ae</h1>
-            <h2 className="text-lg font-semibold tracking-wider">Active Groups</h2>
+            <h2 className="text-lg font-semibold tracking-wider">
+              Active Groups
+            </h2>
           </div>
-          
+
           <div className="flex flex-col sm:flex-row sm:gap-0 gap-6 sm:items-center justify-between border-t-2 pt-2">
-            <div className="flex items-center sm:gap-x-6 gap-x-4 text-[8px]">        
+            <div className="flex items-center sm:gap-x-6 gap-x-4 text-[8px]">
               {headerItems.map((item, i) => (
                 <div
                   key={i}
                   className="flex items-center gap-1 cursor-pointer hover:text-blue-500 transition-all"
                   onClick={item.onClick}
-               >
+                >
                   <span className="text-lg">{item.icon}</span>
                   <p>{item.label}</p>
                 </div>
               ))}
-           
-            </div> 
+            </div>
             <div className="flex items-center gap-4 w-[250px] mr-6">
-              <span className="flex items-center text-sm gap-1 cursor-pointer" onClick={handleOpenFilterModal}>
+              <span
+                className="flex items-center text-sm gap-1 cursor-pointer"
+                onClick={handleOpenFilterModal}
+              >
                 <FaFilter />
                 <p>Filter</p>
               </span>
               <input
                 type="text"
                 placeholder="Search groups list"
-                onChange={(e) => { 
+                onChange={(e) => {
                   setSearchTerm(e.target.value);
-                  setCurrentPage(1)
+                  setCurrentPage(1);
                 }}
                 value={searchTerm}
                 className="w-full p-1 border border-gray-300 rounded placeholder:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -441,11 +467,8 @@ const ActiveGroup = () => {
         </div>
       </NewHeader>
 
-      {isSelectable && groups.length >0 && (
+      {isSelectable && groups.length > 0 && (
         <div className="px-10 w-full flex items-center justify-end gap-2 mb-4">
-          
-         
-        
           <button
             className="px-3 py-2 rounded-lg border"
             onClick={() => {
@@ -460,7 +483,7 @@ const ActiveGroup = () => {
             className="bg-red-500 px-3 py-2 rounded-lg text-white"
             onClick={handleDeleteGroups}
           >
-            Delete 
+            Delete
           </button>
         </div>
       )}
@@ -469,8 +492,6 @@ const ActiveGroup = () => {
         <NewTableComponent
           tableColumns={[
             isSelectable ? (
-              
-               
               <th className="flex items-center justify-between">
                 <input
                   type="checkbox"
@@ -490,17 +511,31 @@ const ActiveGroup = () => {
                 <span>{col.label}</span>
                 <FaSort className="ml-1" onClick={() => handleSort(col.key)} />
               </div>
-            ))
+            )),
           ]}
-          rowsPerPage={rowsPerPage}    
+          buttons={
+            <>
+              <button
+                className="flex items-center gap-2 px-2 py-1 rounded hover:bg-blue-200"
+                onClick={() => {
+                  router.push("/group");
+                }}
+              >
+                <FaUsers className="text-blue-500" />
+                <span className="text-sm">Create New Group</span>
+              </button>
+            </>
+          }
+          rowsPerPage={rowsPerPage}
           totalRows={filteredAndSortedGroups.length}
           currentPage={currentPage}
           onPageChange={(page) => setCurrentPage(page)}
+          handleRowsPerPageChange={handleRowsPerPageChange}
         >
           {paginatedGroups.map((group) => (
             <tr
               key={group.id}
-              className="border-b hover:bg-blue-50 cursor-pointer relative even:bg-gray-100"
+              className="border-b cursor-pointer relative bg-gray-100 hover:bg-gray-200"
               onClick={() => {
                 if (!isSelectable) {
                   setIsOpen(true);
@@ -546,34 +581,9 @@ const ActiveGroup = () => {
             onApplyFilter={handleApplyFilter}
           />
         )}
-
-    
       </div>
     </div>
   );
 };
 
 export default ActiveGroup;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

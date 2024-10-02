@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect,useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   FaEllipsisH,
   FaUserEdit,
@@ -11,7 +11,7 @@ import {
 } from "react-icons/fa";
 import NewTableComponent from "@/app/_HOC/Table/NewTableComponent";
 import { MdDelete, MdEventNote, MdManageAccounts } from "react-icons/md";
-import { IoIosClose, IoMdRefresh } from "react-icons/io";
+import { IoIosClose, IoMdPersonAdd, IoMdRefresh } from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
 import {
   deleteUserAsync,
@@ -87,19 +87,20 @@ const TableRoute = () => {
   const [clickedUser, setClickedUser] = useState(null);
   const [sortConfig, setSortConfig] = useState({ key: "", direction: "" });
   const [currentPage, setCurrentPage] = useState(1);
-  const rowsPerPage = 5; // Limit the rows per page to 5
+  // const rowsPerPage = 5; // Limit the rows per page to 5
   const [isSelectable, setIsSelectable] = useState(false);
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [isGroupSelection, setIsGroupSelection] = useState(false);
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [filterCriteria, setFilterCriteria] = useState({});
-  const [searchTerm, setSearchTerm] = useState("")
+  const [searchTerm, setSearchTerm] = useState("");
 
   const users = useSelector((state) => state.user.users);
   const dispatch = useDispatch();
   const handleOpenFilterModal = () => setIsFilterModalOpen(true);
   const handleCloseFilterModal = () => setIsFilterModalOpen(false);
   const handleApplyFilter = (criteria) => setFilterCriteria(criteria);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const router = useRouter();
 
@@ -135,19 +136,23 @@ const TableRoute = () => {
   }, [users, sortConfig]);
 
   const sortedFilteredUsers = useMemo(() => {
-    return sortedUsers.filter((user) =>
-      user.fullName.toLowerCase().includes(searchTerm.toLowerCase()) &&
-      (!filterCriteria.city || user.city === filterCriteria.city) &&
-      (!filterCriteria.address || user.address === filterCriteria.address) &&
-      (!filterCriteria.contact || user.contact === filterCriteria.contact) &&
-      (!filterCriteria.email || user.email === filterCriteria.email)
+    return sortedUsers.filter(
+      (user) =>
+        user.fullName.toLowerCase().includes(searchTerm.toLowerCase()) &&
+        (!filterCriteria.city || user.city === filterCriteria.city) &&
+        (!filterCriteria.address || user.address === filterCriteria.address) &&
+        (!filterCriteria.contact || user.contact === filterCriteria.contact) &&
+        (!filterCriteria.email || user.email === filterCriteria.email)
     );
   }, [sortedUsers, searchTerm, filterCriteria]);
 
   // Pagination Logic
   const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
-  const paginatedUsers = sortedFilteredUsers.slice(indexOfFirstRow, indexOfLastRow);
+  const paginatedUsers = sortedFilteredUsers.slice(
+    indexOfFirstRow,
+    indexOfLastRow
+  );
 
   const handleCheckboxChange = (user) => {
     setSelectedUsers((prevSelected) =>
@@ -165,6 +170,11 @@ const TableRoute = () => {
       // Otherwise, select all users on the current page
       setSelectedUsers(paginatedUsers);
     }
+  };
+
+  const handleRowsPerPageChange = (e) => {
+    setRowsPerPage(Number(e.target.value));
+    setCurrentPage(1); // Reset to first page when rows per page changes
   };
 
   const headerItems = [
@@ -202,11 +212,12 @@ const TableRoute = () => {
   return (
     <>
       <NewHeader>
-         
         <div className="flex flex-col px-4">
-        <div className="mb-4 flex flex-col gap-4">
+          <div className="mb-4 flex flex-col gap-4">
             <h1 className="text-xl font-semibold tracking-wider">Talha.ae</h1>
-            <h2 className="text-lg font-semibold tracking-wider">Active Users</h2>
+            <h2 className="text-lg font-semibold tracking-wider">
+              Active Users
+            </h2>
           </div>
           <div className="flex flex-col sm:flex-row sm:gap-0 gap-6 sm:items-center justify-between border-t-2 pt-2">
             <div className="flex items-center sm:gap-x-6 gap-x-4 text-[8px]">
@@ -231,7 +242,9 @@ const TableRoute = () => {
                     </Link>
                   ) : (
                     <div className="flex items-center gap-1">
-                      <span className="text-sm text-blue-400 ">{item.icon}</span>
+                      <span className="text-sm text-blue-400 ">
+                        {item.icon}
+                      </span>
                       <p className="hidden lg:inline">{item.label}</p>
                     </div>
                   )}
@@ -244,15 +257,19 @@ const TableRoute = () => {
             </div>
 
             <div className="flex items-center gap-4 w-[250px] mr-6">
-              <span onClick={handleOpenFilterModal} className="flex items-center text-sm gap-1">
+              <span
+                onClick={handleOpenFilterModal}
+                className="flex items-center text-sm gap-1"
+              >
                 <FaFilter />
                 <p>Filter</p>
               </span>
               <input
                 type="text"
                 placeholder="Search users list"
-                onChange={(e) => {setSearchTerm(e.target.value)
-                 setCurrentPage(1)
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setCurrentPage(1);
                 }}
                 value={searchTerm}
                 className="w-full p-1 border border-gray-300 rounded placeholder:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -301,7 +318,7 @@ const TableRoute = () => {
               if (selectedUsers.length < 2) {
                 alert("Please select multiple users.");
               } else {
-                router.push('/group');
+                router.push("/group");
                 dispatch(setSelectedGroupUsers(selectedUsers));
               }
             }}
@@ -337,15 +354,29 @@ const TableRoute = () => {
               </div>
             )),
           ]}
+          buttons={
+            <>
+              <button
+                className="flex items-center gap-2 px-2 py-1 rounded hover:bg-blue-200"
+                onClick={() => {
+                  router.push("/users");
+                }}
+              >
+                <IoMdPersonAdd className="text-blue-500" />
+                <span className="text-sm">Add User</span>
+              </button>
+            </>
+          }
           rowsPerPage={rowsPerPage}
           totalRows={sortedFilteredUsers.length}
           currentPage={currentPage}
           onPageChange={(page) => setCurrentPage(page)}
+          handleRowsPerPageChange={handleRowsPerPageChange}
         >
           {paginatedUsers.map((user) => (
             <tr
               key={user.id}
-              className="border-b hover:bg-blue-50 cursor-pointer relative even:bg-gray-100"
+              className="border-b cursor-pointer relative bg-gray-100 hover:bg-gray-200"
               onClick={() => {
                 setClickedUser(user);
                 setShowInfoModal(true);
@@ -400,7 +431,6 @@ const TableRoute = () => {
           <FilterModal
             onClose={handleCloseFilterModal}
             onApplyFilter={handleApplyFilter}
-            
           />
         )}
       </div>

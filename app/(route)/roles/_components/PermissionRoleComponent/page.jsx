@@ -132,7 +132,7 @@ const PermissionRolesComponent = () => {
         />
         <CiSearch />
       </div>
-      <div className="bg-blue-100 mt-4 rounded p-2">
+      {/* <div className="bg-blue-100 mt-4 rounded p-2">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-1">
           <div className="flex flex-col sm:flex-row md:items-center gap-4">
             <p className="flex items-center gap-1 hover:bg-blue-200 p-1 rounded cursor-pointer text-sm transition-all">
@@ -191,55 +191,73 @@ const PermissionRolesComponent = () => {
               />
             </div>
           </div>
-        </div>
-        {/* Table Wrapper for Horizontal Scrolling */}
-        <div className="overflow-x-auto">
-          <div className="bg-white border border-gray-300 min-w-[1000px]">
-            <NewTableComponent
-              tableColumns={[
-                "ID",
-                "Permission Role",
-                "User Type",
-                "Description",
-                "Status",
-                "RBP-Only",
-                "Created From",
-                "Last Modified",
-                "Action",
-              ]}
-              currentPage={currentPage}
-              onPageChange={handlePageChange}
-              rowsPerPage={rowsPerPage}
-              totalRows={filteredRoles.length}
-            >
-              {paginatedRoles.map((role) => (
-                <tr key={role.id} className="border-t">
-                  <td className="p-2">{role.id}</td>
-                  <td className="p-2 text-blue-500">{role.permissionRole}</td>
-                  <td className="p-2">{role.userType}</td>
-                  <td className="p-2">{role.description}</td>
-                  <td className="p-2">{role.status}</td>
-                  <td className="p-2">
-                    <input
-                      type="checkbox"
-                      checked={role.rbpOnly}
-                      readOnly
-                      className="cursor-pointer"
-                    />
-                  </td>
-                  <td className="p-2">{role.createdFrom}</td>
-                  <td className="p-2">{role.lastModified}</td>
-                  <td className="p-2">
-                    <button className="text-blue-500 hover:underline">
-                      Edit
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </NewTableComponent>
-          </div>
+        </div> */}
+      {/* Table Wrapper for Horizontal Scrolling */}
+      <div className="overflow-x-auto">
+        <div className="bg-white min-w-[1000px]">
+          <NewTableComponent
+            tableColumns={[
+              "ID",
+              "Permission Role",
+              "User Type",
+              "Description",
+              "Status",
+              "RBP-Only",
+              "Created From",
+              "Last Modified",
+              "Action",
+            ]}
+            buttons={
+              <>
+                <p className="flex items-center gap-1 hover:bg-blue-200 p-1 rounded cursor-pointer text-sm transition-all">
+                  <IoIosAddCircleOutline className="text-xl text-blue-600" />
+                  <span>Create New</span>
+                </p>
+                <p
+                  className="flex items-center gap-1 hover:bg-blue-200 p-1 rounded cursor-pointer text-sm transition-all"
+                  onClick={() => {
+                    setIsOpen(true);
+                  }}
+                >
+                  <IoIosAddCircleOutline className="text-xl text-blue-600" />
+                  <span>Create New Role for External User</span>
+                </p>
+              </>
+            }
+            currentPage={currentPage}
+            onPageChange={handlePageChange}
+            rowsPerPage={rowsPerPage}
+            totalRows={filteredRoles.length}
+            handleRowsPerPageChange={handleRowsPerPageChange}
+          >
+            {paginatedRoles.map((role) => (
+              <tr key={role.id} className="border-t bg-gray-100">
+                <td className="p-2">{role.id}</td>
+                <td className="p-2 text-blue-500">{role.permissionRole}</td>
+                <td className="p-2">{role.userType}</td>
+                <td className="p-2">{role.description}</td>
+                <td className="p-2">{role.status}</td>
+                <td className="p-2">
+                  <input
+                    type="checkbox"
+                    checked={role.rbpOnly}
+                    readOnly
+                    className="cursor-pointer"
+                  />
+                </td>
+                <td className="p-2">{role.createdFrom}</td>
+                <td className="p-2">{role.lastModified}</td>
+                <td className="p-2">
+                  <button className="text-blue-500 hover:underline">
+                    Edit
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </NewTableComponent>
         </div>
       </div>
+      {/* </div> */}
       <>
         {isOpen && (
           <MainPermissionDialog
