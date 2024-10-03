@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import PermissionDialog from "../PermissionDialog/page";
 
-const MainPermissionDialog = ({
+const CreateNewPermissionForExternalUserDialog = ({
   onClose,
   handleOpenPermissionSettingsDialog,
+  handleOpenGrantRoleDialog,
 }) => {
   return (
     <PermissionDialog onClose={onClose}>
@@ -56,7 +57,10 @@ const MainPermissionDialog = ({
             Select the group where you want to grant this role. You may have a
             group of users.
           </p>
-          <button className="bg-blue-500 hover:bg-blue-600 text-white transition-all px-2 py-1 my-2 rounded">
+          <button
+            className="bg-blue-500 hover:bg-blue-600 text-white transition-all px-2 py-1 my-2 rounded"
+            onClick={handleOpenGrantRoleDialog}
+          >
             Add...
           </button>
         </div>
@@ -65,4 +69,4 @@ const MainPermissionDialog = ({
   );
 };
 
-export default MainPermissionDialog;
+export default CreateNewPermissionForExternalUserDialog;

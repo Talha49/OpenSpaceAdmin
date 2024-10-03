@@ -27,7 +27,7 @@ const PermissionDialog = ({ children, onClose, classes }) => {
             Cancel
           </button>
           <button className="px-4 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition-all">
-            Save Changes
+            Create
           </button>
         </div>
       </div>

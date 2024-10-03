@@ -10,7 +10,9 @@ import { userPermissions } from "../UserPermissions";
 import { administratorPermissions } from "../AdministratorPermissions";
 import PermissionDialog from "../PermissionDialog/page";
 import PermissionSettingsDialog from "../PermissionSettingsDialogComponent/page";
-import MainPermissionDialog from "../PermissionMainDialogComponent/page";
+import GrantRoleDialog from "../GrantRoleDialog/page";
+import CreateNewPermissionForExternalUserDialog from "../CreateNewPermissionForExternalUserDialog/page";
+import CreateNewDialog from "../CreateNewDialog/page";
 
 // Function to generate mock role data
 const generateRoles = () => {
@@ -34,6 +36,9 @@ const PermissionRolesComponent = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isOpenPermissionSettingsDialog, setIsOpenPermissionSettingsDialog] =
     useState(false);
+
+  const [isOpenGrantRoleDialog, setIsOpenGrantRoleDialog] = useState(false);
+  const [isOpenCreateNewDialog, setIsOpenCreateNewDialog] = useState(false);
 
   const [isUserPermissionsOpen, setIsUserPermissionsOpen] = useState(false);
   const [isAdminPermissionsOpen, setIsAdminPermissionsOpen] = useState(false);
@@ -209,7 +214,12 @@ const PermissionRolesComponent = () => {
             ]}
             buttons={
               <>
-                <p className="flex items-center gap-1 hover:bg-blue-200 p-1 rounded cursor-pointer text-sm transition-all">
+                <p
+                  className="flex items-center gap-1 hover:bg-blue-200 p-1 rounded cursor-pointer text-sm transition-all"
+                  onClick={() => {
+                    setIsOpenCreateNewDialog(true);
+                  }}
+                >
                   <IoIosAddCircleOutline className="text-xl text-blue-600" />
                   <span>Create New</span>
                 </p>
@@ -259,15 +269,27 @@ const PermissionRolesComponent = () => {
       </div>
       {/* </div> */}
       <>
+        {isOpenCreateNewDialog && (
+          <CreateNewDialog
+            onClose={() => {
+              setIsOpenCreateNewDialog(false);
+            }}
+          ></CreateNewDialog>
+        )}
+      </>
+      <>
         {isOpen && (
-          <MainPermissionDialog
+          <CreateNewPermissionForExternalUserDialog
             onClose={() => {
               setIsOpen(false);
             }}
             handleOpenPermissionSettingsDialog={() => {
               setIsOpenPermissionSettingsDialog(true);
             }}
-          ></MainPermissionDialog>
+            handleOpenGrantRoleDialog={() => {
+              setIsOpenGrantRoleDialog(true);
+            }}
+          ></CreateNewPermissionForExternalUserDialog>
         )}
       </>
       <>
@@ -279,6 +301,13 @@ const PermissionRolesComponent = () => {
           ></PermissionSettingsDialog>
         )}
       </>
+      {isOpenGrantRoleDialog && (
+        <GrantRoleDialog
+          onClose={() => {
+            setIsOpenGrantRoleDialog(false);
+          }}
+        ></GrantRoleDialog>
+      )}
     </div>
   );
 };
