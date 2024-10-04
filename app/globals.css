@@ -2,7 +2,31 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Sidebar container */
+/* For WebKit Browsers */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 5px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+/* For Firefox */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+}
+
+.custom-scrollbar:hover {
+  scrollbar-color: rgba(0, 0, 0, 0.4) transparent;
+}
+
+
 
 /* Base styles for the button */
 .blue-button {

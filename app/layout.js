@@ -21,7 +21,7 @@ export default function RootLayout({ children }) {
 
           <div className="flex gap-4  ">
             <Sidebar />
-            <main className="w-full">{children}</main>
+            <main className="w-full ml-20">{children}</main>
           </div>
         </body>
       </ClientProvider>
