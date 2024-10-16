@@ -11,9 +11,9 @@ import { useRouter } from "next/navigation";
 const Dialog = ({ children, onClose }) => {
   return (
     <div className="absolute top-0 h-screen w-[91vw] flex items-center justify-center">
-      <div className="bg-white p-4 rounded-lg shadow-lg border relative">
+      <div className="bg-white dark:bg-neutral-800 p-4 rounded-lg shadow-lg border dark:border-neutral-800 relative">
         <div
-          className="text-xl cursor-pointer absolute top-2 right-2"
+          className="text-xl cursor-pointer absolute top-2 right-2 scale-110 z-50"
           onClick={onClose}
         >
           <IoMdClose />
@@ -119,7 +119,7 @@ const GroupFormComp = () => {
         const updatedList = prevData[type].includes(user)
           ? prevData[type].filter((userObj) => userObj !== user)
           : [...prevData[type], user];
-  
+
         return {
           ...prevData,
           [type]: updatedList,
@@ -127,7 +127,6 @@ const GroupFormComp = () => {
       }
     });
   };
-  
 
   const handleCreateGroup = async () => {
     const res = await dispatch(createGroup(stepperFormData));
@@ -258,117 +257,118 @@ const GroupFormComp = () => {
       case 2:
         return (
           <div>
-  <h1 className="text-2xl font-bold">Assign owners</h1>
-  <p className="my-7">
-    Select the users who will be assigned as owners of this group.
-  </p>
+            <h1 className="text-2xl font-bold">Assign owners</h1>
+            <p className="my-7">
+              Select the users who will be assigned as owners of this group.
+            </p>
 
-  <div className="mt-8 h-[1px] w-full" />
+            <div className="mt-8 h-[1px] w-full" />
 
-  <button
-    className="flex items-center gap-2 blue-button text-lg my-2"
-    onClick={() => {
-      setDialogType("owners");
-      setIsDialogOpen(true);
-    }}
-  >
-    <FaPlus className="text-blue-500" />
-    <p>Assign owners</p>
-  </button>
+            <button
+              className="flex items-center gap-2 blue-button text-lg my-2"
+              onClick={() => {
+                setDialogType("owners");
+                setIsDialogOpen(true);
+              }}
+            >
+              <FaPlus className="text-blue-500" />
+              <p>Assign owners</p>
+            </button>
 
-  <div className="grid grid-cols-2 mt-7">
-    <div className="flex items-center gap-10">
-      <input type="radio" />
-      <p>Display Name</p>
-    </div>
-  </div>
-
-  <ul className="mt-4">
-    {stepperFormData.owners.length > 0 ? (
-      stepperFormData.owners.map((owner) => {
-        const myOwner = users.find((user) => user.id === owner.id);
-        return (
-          <li
-            key={myOwner.id}
-            className="border rounded-md p-2 my-2 bg-gray-100"
-          >
-            {myOwner.fullName} - {myOwner.email}
-          </li>
-        );
-      })
-    ) : (
-      <div className="text-center">
-        <h1 className="text-xl font-bold">Add group owners</h1>
-        <p>New owners will receive an email when you add them.</p>
-      </div>
-    )}
-  </ul>
-
-  <div className="mt-8 h-[1px] w-full bg-gray-300" />
-</div>
-
-        );
-      case 3:
-        return (
-          <div>
-          <h1 className="text-2xl font-bold">Add members</h1>
-          <p className="my-7">
-            Select the users who will be members of this group.
-          </p>
-        
-          <div className="mt-8 h-[1px] w-full" />
-          
-          <button
-            className="flex items-center gap-2 blue-button text-lg my-2"
-            onClick={() => {
-              setDialogType("members");
-              setIsDialogOpen(true);
-            }}
-          >
-            <FaPlus className="text-blue-500" />
-            <p>Add members</p>
-          </button>
-        
-          <div className="grid grid-cols-2 mt-7">
-            <div className="flex items-center gap-10">
-              <input type="radio" />
-              <p>Display Name</p>
+            <div className="grid grid-cols-2 mt-7">
+              <div className="flex items-center gap-10">
+                <input type="radio" />
+                <p>Display Name</p>
+              </div>
             </div>
-          </div>
-        
-          <div className="mt-4 p-2 bg-gray-50 overflow-auto h-40">
-            <ul>
-              {stepperFormData.members.length > 0 ? (
-                stepperFormData.members.map((member) => {
-                  const myMember = users.find((user) => user.id === member.id);
+
+            <ul className="mt-4">
+              {stepperFormData.owners.length > 0 ? (
+                stepperFormData.owners.map((owner) => {
+                  const myOwner = users.find((user) => user.id === owner.id);
                   return (
                     <li
-                      key={myMember.id}
-                      className="border rounded-md p-2 my-2 bg-gray-100"
+                      key={myOwner.id}
+                      className="border dark:border-neutral-600 rounded-md p-2 my-2 bg-gray-100 dark:bg-neutral-800"
                     >
-                      {myMember.fullName} - {myMember.email}
+                      {myOwner.fullName} - {myOwner.email}
                     </li>
                   );
                 })
               ) : (
                 <div className="text-center">
-                  <h1 className="text-xl font-bold">Add group members</h1>
-                  <p>New members will receive an email when you add them.</p>
+                  <h1 className="text-xl font-bold">Add group owners</h1>
+                  <p>New owners will receive an email when you add them.</p>
                 </div>
               )}
             </ul>
+
+            <div className="mt-8 h-[1px] w-full bg-gray-300" />
           </div>
-        </div>
-        
+        );
+      case 3:
+        return (
+          <div>
+            <h1 className="text-2xl font-bold">Add members</h1>
+            <p className="my-7">
+              Select the users who will be members of this group.
+            </p>
+
+            <div className="mt-8 h-[1px] w-full" />
+
+            <button
+              className="flex items-center gap-2 blue-button text-lg my-2"
+              onClick={() => {
+                setDialogType("members");
+                setIsDialogOpen(true);
+              }}
+            >
+              <FaPlus className="text-blue-500" />
+              <p>Add members</p>
+            </button>
+
+            <div className="grid grid-cols-2 mt-7">
+              <div className="flex items-center gap-10">
+                <input type="radio" />
+                <p>Display Name</p>
+              </div>
+            </div>
+
+            <div className="mt-4 p-2 overflow-auto h-40">
+              <ul>
+                {stepperFormData.members.length > 0 ? (
+                  stepperFormData.members.map((member) => {
+                    const myMember = users.find(
+                      (user) => user.id === member.id
+                    );
+                    return (
+                      <li
+                        key={myMember.id}
+                        className="border dark:border-neutral-600 rounded-md p-2 my-2 bg-gray-100 dark:bg-neutral-800"
+                      >
+                        {myMember.fullName} - {myMember.email}
+                      </li>
+                    );
+                  })
+                ) : (
+                  <div className="text-center">
+                    <h1 className="text-xl font-bold">Add group members</h1>
+                    <p>New members will receive an email when you add them.</p>
+                  </div>
+                )}
+              </ul>
+            </div>
+          </div>
         );
       case 4:
         return (
           <div className="flex items-center justify-between">
             <img
-              src="/images/Checklist.jpg"
+              src="/images/Checklist.png"
               width={"50%"}
               height={400}
               alt="Checklist"
+              className="mix-blend-multiply"
             />
             <div className="flex flex-col w-full items-center justify-center">
               <h1 className="text-gray-600 text-xl font-bold mb-5">
@@ -389,9 +389,9 @@ const GroupFormComp = () => {
   };
 
   return (
-    <div>
+    <div className="pl-4">
       <div className="flex w-full pr-4">
-        <aside className="w-[30%] h-full border-r border-r-gray-300">
+        <aside className="w-[30%] h-full border-r border-r-gray-300 dark:border-neutral-800">
           <Stepper
             steps={["Group Type", "Basics", "Owners", "Members", "Finish"]}
             activeStep={activeStep}
@@ -399,10 +399,10 @@ const GroupFormComp = () => {
           />
         </aside>
         <div className="w-full p-10 flex flex-col justify-between">
-        {renderContent()} 
+          {renderContent()}
         </div>
       </div>
-      <div className="flex justify-between items-center py-4 w-full border-t border-gray-300">
+      <div className="flex justify-between items-center py-4 w-full border-t border-gray-300 dark:border-neutral-800">
         <div className="flex gap-4">
           <button
             onClick={handleBack}
@@ -444,7 +444,7 @@ const GroupFormComp = () => {
       {isDialogOpen && (
         <Dialog onClose={() => setIsDialogOpen(false)}>
           <ul className="w-fit h-[400px] overflow-y-auto relative">
-            <div className="w-fit flex items-center justify-between sticky top-0 bg-white">
+            <div className="w-full flex items-center justify-between sticky top-0 bg-white dark:bg-neutral-800">
               <h1 className="text-2xl font-bold">
                 Select {dialogType === "owners" ? "Owners" : "Members"}
               </h1>
@@ -452,7 +452,7 @@ const GroupFormComp = () => {
             {users?.map((user) => (
               <li
                 key={user.id}
-                className="border rounded-md even:bg-gray-100 my-2 text-xs"
+                className="border dark:border-neutral-700 rounded-md even:bg-gray-100 dark:even:bg-neutral-700 my-2 text-xs"
               >
                 <div className="grid grid-cols-3 p-2 gap-4">
                   <div className="flex items-center gap-4">

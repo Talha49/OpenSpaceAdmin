@@ -29,19 +29,19 @@ const GroupFilterModal = ({ onClose, onApplyFilter }) => {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-80">
-        <h2 className="text-lg font-semibold mb-4">Filter Groups</h2>
+      <div className="bg-white dark:bg-neutral-800 p-6 rounded-lg shadow-lg w-80">
+        <h2 className="text-lg font-semibold mb-4 text-neutral-500">Filter Groups</h2>
        
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700">Group Type</label>
+          <label className="block text-sm font-medium text-neutral-500">Group Type</label>
           <select
-            className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none max-h-40 overflow-y-auto"
+            className="mt-1 block w-full py-2 px-3 border border-gray-300 dark:border-neutral-600 bg-white dark:bg-neutral-900 rounded-md shadow-sm focus:outline-none max-h-40 overflow-y-auto"
             value={groupType}
             onChange={(e) => setGroupType(e.target.value)}
           >
             <option value="">All</option>
             {groupTypes.map((type, index) => (
-              <option key={index} value={type}>
+              <option key={index} value={type} className="dark:hover:bg-neutral-800">
                 {type}
               </option>
             ))}

@@ -8,9 +8,9 @@ const CreateNewPermissionForExternalUserDialog = ({
 }) => {
   return (
     <PermissionDialog onClose={onClose}>
-      <h1 className="text-2xl font-semibold my-4">Permission Role Details</h1>
-      <div className="shadow-md w-full px-4 py-2 border rounded">
-        <h1 className="text-lg font-semibold">1. Name & Description</h1>
+      <h1 className="text-2xl font-semibold my-4 dark:text-neutral-500">Permission Role Details</h1>
+      <div className="shadow-md w-full px-4 py-2 border dark:border-neutral-800 rounded">
+        <h1 className="text-lg font-semibold dark:text-neutral-500">1. Name & Description</h1>
         <form className="flex flex-col gap-4 mt-2">
           <div className="flex flex-col gap-1">
             <label htmlFor="roleName" className="font-medium">
@@ -38,9 +38,9 @@ const CreateNewPermissionForExternalUserDialog = ({
           </div>
         </form>
       </div>
-      <div className="shadow-md w-full px-4 py-1 my-2 border rounded">
-        <h1 className="text-lg font-semibold">2. Permission Settings</h1>
-        <div className="">
+      <div className="shadow-md w-full px-4 py-1 my-2 border dark:border-neutral-800 rounded">
+        <h1 className="text-lg font-semibold dark:text-neutral-500">2. Permission Settings</h1>
+        <div className="dark:text-neutral-700">
           <p>Specify what permissions users in this role should have</p>
           <button
             className="bg-blue-500 hover:bg-blue-600 text-white transition-all px-2 py-1 my-2 rounded"
@@ -50,9 +50,9 @@ const CreateNewPermissionForExternalUserDialog = ({
           </button>
         </div>
       </div>
-      <div className="shadow-md w-full px-4 py-1 my-2 border rounded">
-        <h1 className="text-lg font-semibold">3. Grant This Role To...</h1>
-        <div className="">
+      <div className="shadow-md w-full px-4 py-1 my-2 border dark:border-neutral-800 rounded">
+        <h1 className="text-lg font-semibold dark:text-neutral-500">3. Grant This Role To...</h1>
+        <div className="dark:text-neutral-700">
           <p>
             Select the group where you want to grant this role. You may have a
             group of users.

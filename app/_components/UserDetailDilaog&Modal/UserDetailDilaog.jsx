@@ -51,10 +51,10 @@ const UserDetailDialog = ({ user, onClose }) => {
       leaveTo="translate-x-full"
       className="fixed top-[4rem] right-0 h-screen z-50"
     >
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-md h-full overflow-y-auto fixed top-0 right-0 flex flex-col">
-        <div className="flex justify-between items-center p-4 border-b">
+      <div className="bg-white dark:bg-neutral-900 shadow-xl w-full max-w-md h-full overflow-y-auto fixed top-0 right-0 flex flex-col">
+        <div className="flex justify-between items-center p-4 border-b border-neutral-500">
           <h2 className="text-lg font-semibold">User Details</h2>
-          <button onClick={handleClose} className="text-gray-500 hover:text-gray-700">
+          <button onClick={handleClose} className="text-neutral-500 hover:text-neutral-700">
           <FaTimes className="w-5 h-5" />
           </button>
         </div>
@@ -78,7 +78,7 @@ const UserDetailDialog = ({ user, onClose }) => {
                 </div>
               )}
             </div>
-            <div className="mt-4 ml-5">
+            <div className="mt-4 ml-5 text-neutral-500">
             <h3 className="text-xl font-semibold mb-4">{user.fullName}</h3>
               <input
                 type="file"
@@ -97,7 +97,7 @@ const UserDetailDialog = ({ user, onClose }) => {
           </div>
           {/* User Details Section */}
           <div>
-            <div className="space-y-3">
+            <div className="space-y-3 text-neutral-500">
               <p><strong>Email:</strong> {user.email}</p>
               <p><strong>Address:</strong> {user.address}</p>
               <p><strong>City:</strong> {user.city}</p>

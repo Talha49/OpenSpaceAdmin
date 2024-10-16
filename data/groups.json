@@ -70,5 +70,49 @@
       }
     ],
     "id": "c983990f-b2bc-4e0b-b94b-8e6394287eb5"
+  },
+  {
+    "groupType": "Type 1",
+    "basics": {
+      "name": "wdw",
+      "description": "weewe"
+    },
+    "owners": [
+      {
+        "fullName": "Usman Bin Khaled",
+        "email": "UsamaBK@gmail.com",
+        "address": "House G-182-6io",
+        "city": "Dubai",
+        "contact": "03452754213",
+        "id": "fb59733a-f5c9-474b-be9c-0fc72ea06748"
+      }
+    ],
+    "members": [
+      {
+        "fullName": "Abdullah Chisti",
+        "email": "Chisti@gmail.com",
+        "address": "House 112 G 12",
+        "city": "Dubai",
+        "contact": "09545678900",
+        "id": "ac951d16-5abc-48a1-a8f4-f83f193eb34f"
+      },
+      {
+        "fullName": "Usman Bin Khaled",
+        "email": "UsamaBK@gmail.com",
+        "address": "House G-182-6io",
+        "city": "Dubai",
+        "contact": "03452754213",
+        "id": "fb59733a-f5c9-474b-be9c-0fc72ea06748"
+      },
+      {
+        "fullName": "Usama Binte Ladin",
+        "email": "Usama879@gmail.com",
+        "address": "House Ghju8 4D",
+        "city": "Karachi",
+        "contact": "09876543234",
+        "id": "a9ccebde-42d0-4b37-898a-cd1b3def6799"
+      }
+    ],
+    "id": "95af0c59-1ca4-4c1a-80bf-5acfe1ff34b5"
   }
 ]

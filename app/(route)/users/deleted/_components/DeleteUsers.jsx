@@ -121,13 +121,13 @@ const DeletedUsers = () => {
       <NewHeader>
         <div className="flex flex-col px-4">
           <div className="mb-4 flex flex-col gap-4">
-            <h1 className="text-xl font-semibold tracking-wider">Talha.ae</h1>
-            <h2 className="text-lg font-semibold tracking-wider">
+            <h1 className="text-xl font-semibold tracking-wider dark:text-neutral-500">Talha.ae</h1>
+            <h2 className="text-lg font-semibold tracking-wider dark:text-neutral-500">
               Delete Users
             </h2>
           </div>
 
-          <div className="flex flex-col sm:flex-row sm:gap-0 gap-6 sm:items-center justify-between border-t-2 pt-2">
+          <div className="flex flex-col sm:flex-row sm:gap-0 gap-6 sm:items-center justify-between border-t-2 dark:border-neutral-600 pt-2">
             <div className="flex items-center sm:gap-x-6 gap-x-4 text-[8px]">
               {headerItems.map((item, i) => (
                 <div
@@ -158,6 +158,7 @@ const DeletedUsers = () => {
           </div>
         </div>
       </NewHeader>
+      <div className="pl-4 pr-2">
       <NewTableComponent
         tableColumns={tableColumns.map((col) => (
           <div
@@ -178,20 +179,21 @@ const DeletedUsers = () => {
         {paginatedDeletedUsers.map((user) => (
           <tr
             key={user.id}
-            className="border-b cursor-pointer relative bg-gray-100 hover:bg-gray-200"
+            className="border-b dark:border-neutral-700 cursor-pointer relative bg-gray-100 dark:bg-neutral-800 hover:bg-gray-200"
           >
-            <td className="p-3 text-gray-700">
+            <td className="p-3 text-gray-700 dark:text-neutral-400">
               <div className="flex items-center justify-between ">
                 <span className="hover:text-blue-600">{user.fullName}</span>
               </div>
             </td>
-            <td className="p-3 text-gray-700">{user.email}</td>
-            <td className="p-3 text-gray-700">{user.address}</td>
-            <td className="p-3 text-gray-700">{user.city}</td>
-            <td className="p-3 text-gray-700">{user.contact}</td>
+            <td className="p-3 text-gray-700 dark:text-neutral-400">{user.email}</td>
+            <td className="p-3 text-gray-700 dark:text-neutral-400">{user.address}</td>
+            <td className="p-3 text-gray-700 dark:text-neutral-400">{user.city}</td>
+            <td className="p-3 text-gray-700 dark:text-neutral-400">{user.contact}</td>
           </tr>
         ))}
       </NewTableComponent>
+      </div>
       {isFilterModalOpen && (
         <DeleteFilterModal
           onClose={handleCloseFilterModal}

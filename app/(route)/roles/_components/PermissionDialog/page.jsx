@@ -5,7 +5,7 @@ const PermissionDialog = ({ children, onClose, classes }) => {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4 md:p-10 transition-opacity duration-300 ease-in-out">
       {/* Dialog Box */}
       <div
-        className={`relative bg-white rounded-lg shadow-lg w-full max-w-full min-h-[500px] max-h-[500px] overflow-y-auto mx-auto p-4 ${classes}`}
+        className={`relative bg-white dark:bg-neutral-900 rounded-lg shadow-lg w-full max-w-full min-h-[500px] max-h-[500px] overflow-y-auto mx-auto p-4 ${classes}`}
       >
         {/* Close Button */}
         <button

@@ -36,21 +36,21 @@ const Modal = ({ user }) => {
   const dispatch = useDispatch();
   const router = useRouter();
   return (
-    <div className="absolute bg-white border rounded-lg shadow-md p-2 z-10 w-[240px]">
+    <div className="absolute bg-white dark:bg-neutral-950 border dark:border-neutral-800 rounded-lg shadow-md p-2 z-10 w-[240px]">
       <div className="w-full flex justify-end items-center text-2xl">
-        <IoIosClose />
+        <IoIosClose className="text-neutral-500" />
       </div>
       <ul>
-        <li className="cursor-pointer hover:bg-gray-100 p-2 rounded-md flex items-center gap-2">
+        <li className="cursor-pointer hover:bg-gray-100 dark:hover:bg-neutral-700 text-neutral-500 p-2 rounded-md flex items-center gap-2">
           <MdEventNote className="text-lg" />
           <h1>Manage Product Licences</h1>
         </li>
-        <li className="cursor-pointer hover:bg-gray-100 p-2 rounded-md flex items-center gap-2">
+        <li className="cursor-pointer hover:bg-gray-100 dark:hover:bg-neutral-700 text-neutral-500 p-2 rounded-md flex items-center gap-2">
           <MdManageAccounts className="text-lg" />
           <h1>Manage Groups</h1>
         </li>
         <li
-          className="cursor-pointer hover:bg-gray-100 p-2 rounded-md flex items-center gap-2"
+          className="cursor-pointer hover:bg-gray-100 dark:hover:bg-neutral-700 text-neutral-500 p-2 rounded-md flex items-center gap-2"
           onClick={() => {
             dispatch(deleteUserAsync(user.id));
             dispatch(storeDeletedUser(user));
@@ -60,7 +60,7 @@ const Modal = ({ user }) => {
           <h1>Delete User</h1>
         </li>
         <li
-          className="cursor-pointer hover:bg-gray-100 p-2 rounded-md flex items-center gap-2"
+          className="cursor-pointer hover:bg-gray-100 dark:hover:bg-neutral-700 text-neutral-500 p-2 rounded-md flex items-center gap-2"
           onClick={() => {
             dispatch(setSelectedUseruniquely(user));
             router.push("/users");
@@ -210,16 +210,16 @@ const TableRoute = () => {
   ];
 
   return (
-    <>
+    <div className="">
       <NewHeader>
-        <div className="flex flex-col px-4">
+        <div className="flex flex-col px-4 ">
           <div className="mb-4 flex flex-col gap-4">
-            <h1 className="text-xl font-semibold tracking-wider">Talha.ae</h1>
-            <h2 className="text-lg font-semibold tracking-wider">
+            <h1 className="text-xl font-semibold tracking-wider text-neutral-500">Talha.ae</h1>
+            <h2 className="text-lg font-semibold tracking-wider text-neutral-500">
               Active Users
             </h2>
           </div>
-          <div className="flex flex-col sm:flex-row sm:gap-0 gap-6 sm:items-center justify-between border-t-2 pt-2">
+          <div className="flex flex-col sm:flex-row sm:gap-0 gap-6 sm:items-center justify-between border-t-2 dark:border-neutral-500 pt-2">
             <div className="flex items-center sm:gap-x-6 gap-x-4 text-[8px]">
               {headerItems.map((item, i) => (
                 <div
@@ -328,7 +328,7 @@ const TableRoute = () => {
         </div>
       )}
 
-      <div className="m-2 relative shadow-md rounded-lg">
+      <div className="pl-4 pr-2 relative shadow-md rounded-lg">
         <NewTableComponent
           tableColumns={[
             isSelectable || isGroupSelection ? (
@@ -357,7 +357,7 @@ const TableRoute = () => {
           buttons={
             <>
               <button
-                className="flex items-center gap-2 px-2 py-1 rounded hover:bg-blue-200"
+                className="flex items-center gap-2 px-2 py-1 rounded hover:bg-blue-200 dark:hover:bg-neutral-800"
                 onClick={() => {
                   router.push("/users");
                 }}
@@ -376,7 +376,7 @@ const TableRoute = () => {
           {paginatedUsers.map((user) => (
             <tr
               key={user.id}
-              className="border-b cursor-pointer relative bg-gray-100 hover:bg-gray-200"
+              className="border-b dark:border-neutral-700 cursor-pointer relative bg-gray-100 dark:bg-neutral-800 hover:bg-gray-200 dark:hover:bg-neutral-600"
               onClick={() => {
                 setClickedUser(user);
                 setShowInfoModal(true);
@@ -397,7 +397,7 @@ const TableRoute = () => {
                   />
                 </td>
               ) : null}
-              <td className="p-3 text-gray-700">
+              <td className="p-3 text-gray-700 dark:text-neutral-400">
                 <div className="flex items-center justify-between ">
                   <span className="hover:text-blue-600">{user.fullName}</span>
                   <span
@@ -416,10 +416,10 @@ const TableRoute = () => {
                   </span>
                 </div>
               </td>
-              <td className="p-3 text-gray-700">{user.email}</td>
-              <td className="p-3 text-gray-700">{user.address}</td>
-              <td className="p-3 text-gray-700">{user.city}</td>
-              <td className="p-3 text-gray-700">{user.contact}</td>
+              <td className="p-3 text-gray-700 dark:text-neutral-400">{user.email}</td>
+              <td className="p-3 text-gray-700 dark:text-neutral-400">{user.address}</td>
+              <td className="p-3 text-gray-700 dark:text-neutral-400">{user.city}</td>
+              <td className="p-3 text-gray-700 dark:text-neutral-400">{user.contact}</td>
             </tr>
           ))}
         </NewTableComponent>
@@ -434,7 +434,7 @@ const TableRoute = () => {
           />
         )}
       </div>
-    </>
+    </div>
   );
 };
 

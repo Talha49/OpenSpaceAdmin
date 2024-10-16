@@ -112,11 +112,11 @@ const CreateNewDialog = ({ onClose }) => {
                 setIsSidebarOpen(!isSidebarOpen);
               }}
             >
-              <span className="flex items-center justify-center bg-blue-100 w-8 h-8 rounded-lg hover:bg-blue-200 transition-all">
+              <span className="flex items-center justify-center bg-blue-100 dark:bg-neutral-800 w-8 h-8 rounded-lg hover:bg-blue-200 transition-all">
                 <CiMenuFries />
               </span>
             </div>
-            <div className="flex items-center gap-2 border border-blue-500 shadow-md bg-slate-50 w-full sm:w-fit px-2 py-1 rounded-lg my-2">
+            <div className="flex items-center gap-2 border border-blue-500 shadow-md bg-slate-50 dark:bg-neutral-800 w-full sm:w-fit px-2 py-1 rounded-lg my-2">
               <input
                 type="search"
                 name="search"
@@ -134,13 +134,14 @@ const CreateNewDialog = ({ onClose }) => {
 
           <div className="flex gap-2">
             <div
-              className={`w-[350px] h-[400px] py-2 overflow-y-auto bg-gray-100 lg:static absolute z-50 ${
+              className={`w-[350px] h-[400px] py-2 overflow-y-auto bg-gray-100 dark:bg-neutral-800 lg:static absolute z-50 ${
                 !isSidebarOpen && "hidden"
               }`}
             >
               <div
                 className={`flex gap-2 items-center font-bold cursor-pointer py-1 ${
-                  isUserPermissionsOpen && "text-blue-500 bg-blue-200 rounded"
+                  isUserPermissionsOpen &&
+                  "text-blue-500 bg-blue-200 dark:bg-neutral-900 rounded"
                 }`}
                 onClick={() => {
                   setIsUserPermissionsOpen(!isUserPermissionsOpen);
@@ -173,7 +174,7 @@ const CreateNewDialog = ({ onClose }) => {
                           }}
                         >
                           <h3
-                            className={`ml-5 mr-1 text-sm p-1 hover:bg-blue-100 rounded cursor-pointer ${
+                            className={`ml-5 mr-1 text-sm p-1 hover:bg-blue-100 dark:hover:bg-neutral-700 rounded cursor-pointer ${
                               selectedPermission?.category === category &&
                               selectedPermission.title === "User Permissions" &&
                               "text-blue-500"
@@ -189,7 +190,8 @@ const CreateNewDialog = ({ onClose }) => {
 
               <div
                 className={`flex gap-2 items-center font-bold cursor-pointer py-1 ${
-                  isAdminPermissionsOpen && "text-blue-500 bg-blue-200 rounded"
+                  isAdminPermissionsOpen &&
+                  "text-blue-500 bg-blue-200 dark:bg-neutral-900 rounded"
                 }`}
                 onClick={() => {
                   setIsAdminPermissionsOpen(!isAdminPermissionsOpen);
@@ -222,7 +224,7 @@ const CreateNewDialog = ({ onClose }) => {
                           }}
                         >
                           <h3
-                            className={`ml-5 mr-1 text-sm p-1 hover:bg-blue-100 rounded cursor-pointer ${
+                            className={`ml-5 mr-1 text-sm p-1 hover:bg-blue-100 dark:hover:bg-neutral-700 rounded cursor-pointer ${
                               selectedPermission?.category === category &&
                               selectedPermission.title ===
                                 "Administrator Permissions" &&
@@ -241,7 +243,9 @@ const CreateNewDialog = ({ onClose }) => {
               {selectedPermission ? (
                 <>
                   <h1 className="text-base font-semibold">
-                    {selectedPermission.title}{" "}
+                    <span className="dark:text-neutral-500">
+                      {selectedPermission.title}{" "}
+                    </span>
                     <span className="text-blue-500">
                       {"-> "}
                       {selectedPermission.category}
@@ -252,7 +256,7 @@ const CreateNewDialog = ({ onClose }) => {
                     {selectedPermission.permissions.map((permission, index) => (
                       <div
                         key={index}
-                        className="flex items-center gap-2 my-1 p-2 border-b hover:bg-gray-100"
+                        className="flex items-center gap-2 my-1 p-2 border-b hover:bg-gray-100 dark:hover:bg-neutral-700"
                       >
                         <input
                           type="checkbox"
@@ -284,16 +288,21 @@ const CreateNewDialog = ({ onClose }) => {
       label: "Preview",
       description: (
         <div>
-          <h1 className="font-semibold mt-4 text-blue-600">
+          <h1 className="font-semibold mt-4 dark:text-blue-600">
             Basic Information:
           </h1>
 
-          <div className="border border-blue-300 px-2 rounded-lg bg-blue-50 shadow-md">
+          <div className="border border-blue-300 dark:border-neutral-700 px-2 rounded-lg bg-blue-50 dark:bg-neutral-800 shadow-md">
             <p className="mt-2">
-              <h1 className="font-semibold">Role Name:</h1> {roleName}
+              <h1 className="font-semibold dark:text-neutral-500">
+                Role Name:
+              </h1>{" "}
+              {roleName}
             </p>
             <p>
-              <h1 className="font-semibold">Role Description:</h1>{" "}
+              <h1 className="font-semibold dark:text-neutral-500">
+                Role Description:
+              </h1>{" "}
               {roleDescription}
             </p>
           </div>
@@ -301,13 +310,13 @@ const CreateNewDialog = ({ onClose }) => {
             Selected Permissions:
           </h1>
 
-          <div className="border border-blue-300 p-2 rounded-lg bg-blue-50 shadow-md">
+          <div className="border border-blue-300 dark:border-neutral-700 p-2 rounded-lg bg-blue-50 dark:bg-neutral-800 shadow-md">
             <ul className="flex items-center flex-wrap gap-2 ">
               {selectedPermissionsList.length > 0 ? (
                 selectedPermissionsList.map((permission, index) => (
                   <li
                     key={index}
-                    className="px-4 py-1 bg-blue-100 border border-blue-300 text-blue-600 rounded"
+                    className="px-4 py-1 bg-blue-100 dark:bg-neutral-900 border border-blue-300 dark:border-neutral-700 text-blue-600 dark:text-neutral-500 rounded"
                   >
                     {permission.toLowerCase()}
                   </li>
@@ -324,8 +333,10 @@ const CreateNewDialog = ({ onClose }) => {
 
   return (
     <PermissionDialog onClose={onClose}>
-      <h1 className="text-2xl font-semibold my-4">Create Role</h1>
-      <div className="w-full bg-white shadow-md border rounded flex items-center justify-between gap-1 p-2">
+      <h1 className="text-2xl font-semibold my-4 dark:text-neutral-500">
+        Create Role
+      </h1>
+      <div className="w-full bg-white dark:bg-neutral-800 shadow-md border dark:border-neutral-700 rounded flex items-center justify-between gap-1 p-2">
         {stepContent.map((step, index) => (
           <React.Fragment key={index}>
             <div className="flex items-center gap-2">
@@ -336,7 +347,7 @@ const CreateNewDialog = ({ onClose }) => {
                     ? "bg-blue-500 text-white"
                     : activeStep > index
                     ? "bg-blue-500 text-white"
-                    : "bg-gray-200"
+                    : "bg-gray-200 dark:bg-neutral-600 dark:text-neutral-800"
                 } 
                 rounded-full 
                 h-8 min-w-8`} // Fixed height and width for the steps
@@ -351,7 +362,7 @@ const CreateNewDialog = ({ onClose }) => {
                 className={`text-xs ${
                   activeStep === index || activeStep > index
                     ? "text-blue-500"
-                    : "text-gray-600"
+                    : "text-neutral-500"
                 }`}
               >
                 {step.label}
@@ -360,7 +371,9 @@ const CreateNewDialog = ({ onClose }) => {
             {index < 2 && (
               <div
                 className={`w-full h-[2px] ${
-                  activeStep > index ? "bg-blue-500" : "bg-gray-200"
+                  activeStep > index
+                    ? "bg-blue-500"
+                    : "bg-gray-200 dark:bg-neutral-500"
                 }`}
               ></div>
             )}
@@ -371,7 +384,7 @@ const CreateNewDialog = ({ onClose }) => {
         <button
           onClick={handlePrevious}
           disabled={activeStep === 0}
-          className={`px-4 py-1 bg-blue-100 text-blue-600 rounded border border-blue-500 ${
+          className={`px-4 py-1 bg-blue-100 text-blue-600 rounded border dark:border-none border-blue-500 ${
             activeStep === 0 ? "cursor-not-allowed" : "hover:bg-blue-200"
           }`}
         >
@@ -388,7 +401,7 @@ const CreateNewDialog = ({ onClose }) => {
         </button>
       </div>
       <div className="mt-4">
-        <h2 className="text-lg font-semibold">
+        <h2 className="text-lg font-semibold dark:text-neutral-500">
           {stepContent[activeStep].label}
         </h2>
         <div>

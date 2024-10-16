@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { IoIosArrowForward } from "react-icons/io";
+import { IoIosArrowForward, IoMdArrowBack } from "react-icons/io";
 import { CiMenuFries } from "react-icons/ci";
 import { userPermissions } from "../UserPermissions";
 import { administratorPermissions } from "../AdministratorPermissions";
@@ -8,7 +8,7 @@ import NewTableComponent from "@/app/_HOC/Table/NewTableComponent";
 
 const CustomPermissionComponent = ({ permission }) => {
   return (
-    <div className="p-2 bg-blue-200 rounded-lg">
+    <div className="p-2 bg-blue-200 dark:bg-neutral-900 dark:text-neutral-500 rounded-lg">
       <div className="flex items-center gap-2">
         {permission.toLowerCase()} <input type="checkbox" name="" id="" />
       </div>
@@ -59,7 +59,10 @@ const PermissionSettingsDialog = ({ onClose }) => {
           handleRowsPerPageChange={handleRowsPerPageChange}
         >
           {paginatedPermissions.map((permission, index) => (
-            <tr key={index} className="border-t bg-gray-100 hover:bg-gray-200">
+            <tr
+              key={index}
+              className="border-t dark:border-neutral-700 bg-gray-100 dark:bg-neutral-800 hover:bg-gray-200 dark:hover:bg-neutral-700"
+            >
               <td className="p-2">{permission.toLowerCase()}</td>
               <td className="p-2">
                 <input
@@ -96,7 +99,7 @@ const PermissionSettingsDialog = ({ onClose }) => {
     } else {
       // Render custom components for the permissions
       return (
-        <div className="h-[270px] overflow-y-auto bg-gray-100 rounded p-2">
+        <div className="h-[270px] overflow-y-auto bg-gray-100 dark:bg-neutral-800 rounded p-2">
           <div className="flex items-center gap-4 flex-wrap">
             {selectedPermission?.permissions?.map((permission, index) => (
               <CustomPermissionComponent key={index} permission={permission} />
@@ -116,15 +119,17 @@ const PermissionSettingsDialog = ({ onClose }) => {
         className="flex items-center gap-2 absolute top-3 left-3 text-blue-500 cursor-pointer"
         onClick={onClose}
       >
-        <span className="flex items-center justify-center bg-blue-100 w-8 h-8 rounded-full hover:bg-blue-200 transition-all">
-          {"<-"}
+        <span className="flex items-center justify-center bg-blue-100 dark:bg-neutral-800 w-8 h-8 rounded-full hover:bg-blue-200 dark:hover:bg-neutral-700 transition-all">
+          <IoMdArrowBack />
         </span>
-        <span className="text-sm">Permission Role Details</span>
+        <span className="text-sm ">Permission Role Details</span>
       </div>
 
       <div className="text-center mt-2">
-        <h1 className="text-xl font-semibold">Permission Settings</h1>
-        <p>
+        <h1 className="text-xl font-semibold dark:text-neutral-500">
+          Permission Settings
+        </h1>
+        <p className="dark:text-neutral-700">
           Specify what permissions users in this role should have. Access period
           can be defined at the granting rule level.
         </p>
@@ -137,20 +142,21 @@ const PermissionSettingsDialog = ({ onClose }) => {
           setIsSidebarOpen(!isSidebarOpen);
         }}
       >
-        <span className="flex items-center justify-center bg-blue-100 w-8 h-8 rounded-lg hover:bg-blue-200 transition-all">
+        <span className="flex items-center justify-center bg-blue-100 dark:bg-neutral-800 w-8 h-8 rounded-lg hover:bg-blue-200 transition-all">
           <CiMenuFries />
         </span>
       </div>
 
       <div className="flex gap-2">
         <div
-          className={`w-[350px] h-[300px] py-2 overflow-y-auto bg-gray-100 lg:static absolute z-50 ${
+          className={`w-[350px] h-[300px] py-2 overflow-y-auto bg-gray-100 dark:bg-neutral-800 lg:static absolute z-50 ${
             !isSidebarOpen && "hidden"
           }`}
         >
           <div
             className={`flex gap-2 items-center font-bold cursor-pointer py-1 ${
-              isUserPermissionsOpen && "text-blue-500 bg-blue-200 rounded"
+              isUserPermissionsOpen &&
+              "text-blue-500 bg-blue-200 dark:bg-neutral-900 rounded"
             }`}
             onClick={() => {
               setIsUserPermissionsOpen(!isUserPermissionsOpen);
@@ -179,7 +185,7 @@ const PermissionSettingsDialog = ({ onClose }) => {
                     }}
                   >
                     <h3
-                      className={`ml-5 mr-1 text-sm p-1 hover:bg-blue-100 rounded cursor-pointer ${
+                      className={`ml-5 mr-1 text-sm p-1 hover:bg-blue-100 dark:hover:bg-neutral-700 rounded cursor-pointer ${
                         selectedPermission?.category === category &&
                         selectedPermission.title === "User Permissions" &&
                         "text-blue-500"
@@ -195,7 +201,8 @@ const PermissionSettingsDialog = ({ onClose }) => {
 
           <div
             className={`flex gap-2 items-center font-bold cursor-pointer py-1 ${
-              isAdminPermissionsOpen && "text-blue-500 bg-blue-200 rounded"
+              isAdminPermissionsOpen &&
+              "text-blue-500 bg-blue-200 dark:bg-neutral-900 rounded"
             }`}
             onClick={() => {
               setIsAdminPermissionsOpen(!isAdminPermissionsOpen);
@@ -224,7 +231,7 @@ const PermissionSettingsDialog = ({ onClose }) => {
                     }}
                   >
                     <h3
-                      className={`ml-5 mr-1 text-sm p-1 hover:bg-blue-100 rounded cursor-pointer ${
+                      className={`ml-5 mr-1 text-sm p-1 hover:bg-blue-100 dark:hover:bg-neutral-700 rounded cursor-pointer ${
                         selectedPermission?.category === category &&
                         selectedPermission.title ===
                           "Administrator Permissions" &&
@@ -243,7 +250,9 @@ const PermissionSettingsDialog = ({ onClose }) => {
           {selectedPermission ? (
             <>
               <h1 className="text-base font-semibold">
-                {selectedPermission.title}{" "}
+                <span className="dark:text-neutral-500">
+                  {selectedPermission.title}{" "}
+                </span>
                 <span className="text-blue-500">
                   {"-> "}
                   {selectedPermission.category}

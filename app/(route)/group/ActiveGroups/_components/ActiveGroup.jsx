@@ -425,13 +425,13 @@ const ActiveGroup = () => {
       <NewHeader>
         <div className="flex flex-col px-4">
           <div className="mb-4 flex flex-col gap-4">
-            <h1 className="text-xl font-semibold tracking-wider">Talha.ae</h1>
-            <h2 className="text-lg font-semibold tracking-wider">
+            <h1 className="text-xl font-semibold tracking-wider text-neutral-500">Talha.ae</h1>
+            <h2 className="text-lg font-semibold tracking-wider text-neutral-500  ">
               Active Groups
             </h2>
           </div>
 
-          <div className="flex flex-col sm:flex-row sm:gap-0 gap-6 sm:items-center justify-between border-t-2 pt-2">
+          <div className="flex flex-col sm:flex-row sm:gap-0 gap-6 sm:items-center justify-between border-t-2 dark:border-neutral-700 pt-2">
             <div className="flex items-center sm:gap-x-6 gap-x-4 text-[8px]">
               {headerItems.map((item, i) => (
                 <div
@@ -488,7 +488,7 @@ const ActiveGroup = () => {
         </div>
       )}
 
-      <div>
+      <div className="pl-4 pr-2">
         <NewTableComponent
           tableColumns={[
             isSelectable ? (
@@ -516,7 +516,7 @@ const ActiveGroup = () => {
           buttons={
             <>
               <button
-                className="flex items-center gap-2 px-2 py-1 rounded hover:bg-blue-200"
+                className="flex items-center gap-2 px-2 py-1 rounded hover:bg-blue-200 dark:hover:bg-neutral-800"
                 onClick={() => {
                   router.push("/group");
                 }}
@@ -535,7 +535,7 @@ const ActiveGroup = () => {
           {paginatedGroups.map((group) => (
             <tr
               key={group.id}
-              className="border-b cursor-pointer relative bg-gray-100 hover:bg-gray-200"
+              className="border-b dark:border-neutral-700 cursor-pointer relative bg-gray-100 dark:bg-neutral-800 hover:bg-gray-200"
               onClick={() => {
                 if (!isSelectable) {
                   setIsOpen(true);
@@ -558,12 +558,12 @@ const ActiveGroup = () => {
                   />
                 </td>
               )}
-              <td className="p-3 text-gray-700">{group?.basics.name}</td>
-              <td className="p-3 text-gray-700">
+              <td className="p-3 text-gray-700 dark:text-neutral-400">{group?.basics.name}</td>
+              <td className="p-3 text-gray-700 dark:text-neutral-400">
                 {group?.owners[0]?.fullName}
               </td>
-              <td className="p-3 text-gray-700">{group?.groupType}</td>
-              <td className="p-3 text-gray-700">{group?.members.length}</td>
+              <td className="p-3 text-gray-700 dark:text-neutral-400">{group?.groupType}</td>
+              <td className="p-3 text-gray-700 dark:text-neutral-400">{group?.members.length}</td>
             </tr>
           ))}
         </NewTableComponent>

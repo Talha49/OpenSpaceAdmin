@@ -11,8 +11,8 @@ const Stepper = ({ steps, activeStep, onStepChange }) => {
             // onClick={() => onStepChange(i)}
           >
             <span
-              className={`rounded-full w-5 h-5 flex items-center justify-center text-white ${
-                i <= activeStep ? "bg-blue-500" : "bg-gray-400"
+              className={`rounded-full w-5 h-5 flex items-center justify-center text-white dark:text-neutral-800 ${
+                i <= activeStep ? "bg-blue-500" : "bg-neutral-500"
               }`}
             >
               {i <= activeStep ? <TiTick /> : i + 1}

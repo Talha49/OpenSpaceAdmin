@@ -83,9 +83,9 @@ const PermissionRolesComponent = () => {
   const paginatedRoles = filteredRoles.slice(startRow, startRow + rowsPerPage);
 
   return (
-    <div className="mt-3 mr-4 sm:mr-2 md:mr-6">
+    <div className="pl-4 pr-2 py-2 dark:bg-neutral-950">
       <div className="flex flex-col md:flex-row md:items-center justify-between w-full gap-2">
-        <p className="text-sm sm:text-base">
+        <p className="text-sm sm:text-base dark:text-neutral-500">
           Back to{" "}
           <Link
             href="/"
@@ -115,17 +115,17 @@ const PermissionRolesComponent = () => {
           </Link>
         </div>
       </div>
-      <h1 className="text-2xl sm:text-3xl font-semibold my-2">
+      <h1 className="text-2xl sm:text-3xl font-semibold my-2 dark:text-neutral-500">
         Permission Role List
       </h1>
-      <p className="text-sm sm:text-base">
+      <p className="text-sm sm:text-base dark:text-neutral-700">
         Different users should have different access to the information in the
         application. A role controls the access rights a user (or a group) has
         in the application or employee data. Each role has its own set of access
         permissions that you define. You can also limit exactly what a group can
         access.
       </p>
-      <div className="flex items-center gap-2 border border-blue-500 shadow-md bg-slate-50 w-full sm:w-fit px-2 py-1 rounded-lg mt-6">
+      <div className="flex items-center gap-2 border border-blue-500 shadow-md bg-slate-50 dark:bg-neutral-800 w-full sm:w-fit px-2 py-1 rounded-lg mt-6">
         <input
           type="search"
           name="search"
@@ -133,73 +133,12 @@ const PermissionRolesComponent = () => {
           placeholder="Type role name..."
           value={searchTerm}
           onChange={handleSearchChange}
-          className="focus:outline-none bg-transparent w-full sm:w-auto"
+          className="focus:outline-none bg-transparent  w-full sm:w-auto"
         />
         <CiSearch />
       </div>
-      {/* <div className="bg-blue-100 mt-4 rounded p-2">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-1">
-          <div className="flex flex-col sm:flex-row md:items-center gap-4">
-            <p className="flex items-center gap-1 hover:bg-blue-200 p-1 rounded cursor-pointer text-sm transition-all">
-              <IoIosAddCircleOutline className="text-xl text-blue-600" />
-              <span>Create New</span>
-            </p>
-            <p
-              className="flex items-center gap-1 hover:bg-blue-200 p-1 rounded cursor-pointer text-sm transition-all"
-              onClick={() => {
-                setIsOpen(true);
-              }}
-            >
-              <IoIosAddCircleOutline className="text-xl text-blue-600" />
-              <span>Create New Role for External User</span>
-            </p>
-          </div>
-          <div className="flex flex-col sm:flex-row md:items-center gap-2">
-            <div className="flex items-center gap-2 p-1 rounded">
-              <p className="text-sm">Items per page</p>
-              <select
-                value={rowsPerPage}
-                onChange={handleRowsPerPageChange}
-                className="bg-transparent border rounded border-blue-500 p-1"
-              >
-                <option value="10">10</option>
-                <option value="30">30</option>
-                <option value="50">50</option>
-              </select>
-            </div>
-            <div className="flex items-center gap-1">
-              <LuChevronFirst
-                onClick={() => handlePageChange(1)}
-                className="cursor-pointer"
-              />
-              <MdNavigateBefore
-                onClick={() => handlePageChange(currentPage - 1)}
-                className="cursor-pointer text-lg"
-              />
-              <p className="text-sm">
-                Page <span className="p-1">{currentPage}</span> of{" "}
-                <span className="p-1">
-                  {Math.ceil(filteredRoles.length / rowsPerPage)}
-                </span>
-              </p>
-              <MdNavigateNext
-                onClick={() => handlePageChange(currentPage + 1)}
-                className="cursor-pointer text-lg"
-              />
-              <LuChevronLast
-                onClick={() =>
-                  handlePageChange(
-                    Math.ceil(filteredRoles.length / rowsPerPage)
-                  )
-                }
-                className="cursor-pointer"
-              />
-            </div>
-          </div>
-        </div> */}
-      {/* Table Wrapper for Horizontal Scrolling */}
       <div className="overflow-x-auto">
-        <div className="bg-white min-w-[1000px]">
+        <div className="bg-white dark:bg-neutral-900 min-w-[1000px]">
           <NewTableComponent
             tableColumns={[
               "ID",
@@ -215,7 +154,7 @@ const PermissionRolesComponent = () => {
             buttons={
               <>
                 <p
-                  className="flex items-center gap-1 hover:bg-blue-200 p-1 rounded cursor-pointer text-sm transition-all"
+                  className="flex items-center gap-1 hover:bg-blue-200 dark:hover:bg-neutral-800 p-1 rounded cursor-pointer text-sm transition-all"
                   onClick={() => {
                     setIsOpenCreateNewDialog(true);
                   }}
@@ -224,7 +163,7 @@ const PermissionRolesComponent = () => {
                   <span>Create New</span>
                 </p>
                 <p
-                  className="flex items-center gap-1 hover:bg-blue-200 p-1 rounded cursor-pointer text-sm transition-all"
+                  className="flex items-center gap-1 hover:bg-blue-200 dark:hover:bg-neutral-800 p-1 rounded cursor-pointer text-sm transition-all"
                   onClick={() => {
                     setIsOpen(true);
                   }}
@@ -241,7 +180,7 @@ const PermissionRolesComponent = () => {
             handleRowsPerPageChange={handleRowsPerPageChange}
           >
             {paginatedRoles.map((role) => (
-              <tr key={role.id} className="border-t bg-gray-100">
+              <tr key={role.id} className="border-t dark:border-neutral-700 bg-gray-100 dark:bg-neutral-800">
                 <td className="p-2">{role.id}</td>
                 <td className="p-2 text-blue-500">{role.permissionRole}</td>
                 <td className="p-2">{role.userType}</td>

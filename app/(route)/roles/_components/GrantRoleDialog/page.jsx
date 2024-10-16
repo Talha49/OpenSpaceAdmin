@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import PermissionDialog from "../PermissionDialog/page";
 import Image from "next/image";
+import { IoMdArrowBack } from "react-icons/io";
 
 const GrantRoleDialog = ({ onClose }) => {
   return (
@@ -9,21 +10,25 @@ const GrantRoleDialog = ({ onClose }) => {
         className="flex items-center gap-2 absolute top-3 left-3 text-blue-500 cursor-pointer"
         onClick={onClose}
       >
-        <span className="flex items-center justify-center bg-blue-100 w-8 h-8 rounded-full hover:bg-blue-200 transition-all">
-          {"<-"}
+        <span className="flex items-center justify-center bg-blue-100 dark:bg-neutral-800 w-8 h-8 rounded-full hover:bg-blue-200 dark:hover:bg-neutral-700 transition-all">
+          <IoMdArrowBack />
         </span>
         <span className="text-sm">Permission Role Details</span>
       </div>
-      <div className="text-center bg-gray-200 rounded border mt-10">
+      <div className="text-center bg-gray-200 dark:bg-neutral-800 rounded border dark:border-neutral-700 dark:text-neutral-500 mt-10">
         <h1 className="text-lg font-semibold p-2">Grant This Role To...</h1>
       </div>
       <div className="my-2">
-        <h1 className="font-bold">
+        <h1 className="font-bold dark:text-neutral-500">
           1. Define whome you want to grant this role permission to.
         </h1>
         <div className="flex gap-3 my-4">
           <div className="px-10">
-            <Image src="/images/add-user.gif" width={100} height={100} />
+            <Image
+              src="/images/output-onlinegiftools.gif"
+              width={100}
+              height={100}
+            />
           </div>
           <div className="flex flex-col">
             <label>Grant Role To</label>
@@ -54,13 +59,13 @@ const GrantRoleDialog = ({ onClose }) => {
           </div>
         </div>
         <div className="w-full h-[2px] bg-gray-200"></div>
-        <h1 className="font-bold">
+        <h1 className="font-bold dark:text-neutral-500">
           2. Specify the target population whome the above granted users have
           permisssion to access.
         </h1>
         <div className="flex gap-3 my-4">
           <div className="px-10">
-            <Image src="/images/group.gif" width={100} height={100} />
+            <Image src="/images/group-no-bg.gif" width={100} height={100} />
           </div>
           <div className="flex flex-col">
             <label>Target Population</label>

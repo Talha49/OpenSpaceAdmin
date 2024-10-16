@@ -10,7 +10,6 @@ const GroupDetailDialog = ({ group, isOpen, onClose }) => {
   const [showDetail, setShowDetail] = useState(false);
   const [showMembers, setShowMembers] = useState(false);
 
-
   return (
     <Transition
       show={isOpen}
@@ -22,36 +21,44 @@ const GroupDetailDialog = ({ group, isOpen, onClose }) => {
       leaveTo="translate-x-full"
       className="fixed top-[4rem] right-0 h-screen z-50"
     >
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-md h-full overflow-y-auto fixed top-0 right-0 flex flex-col">
+      <div className="bg-white dark:bg-neutral-900 rounded-lg shadow-xl w-full max-w-md h-full overflow-y-auto fixed top-0 right-0 flex flex-col">
         <div className="flex justify-between items-center p-4 border-b">
-          <h2 className="text-lg font-semibold">Group Details</h2>
+          <h2 className="text-lg font-semibold dark:text-neutral-500">
+            Group Details
+          </h2>
           <button
             onClick={() => {
               onClose();
               setShowDetail(false);
               setShowMembers(false);
             }}
-            className="text-gray-500 hover:text-gray-700"
+            className="text-neutral-500 hover:text-neutral-700"
           >
             <FaTimes className="w-5 h-5" />
           </button>
         </div>
         <div className="p-4">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-semibold">{group?.basics.name}</h1>
+            <h1 className="text-2xl font-semibold dark:text-neutral-500">
+              {group?.basics.name}
+            </h1>
             <span className="text-sm bg-blue-500 px-3 py-1 rounded-full text-white">
               {group?.groupType}
             </span>
           </div>
-          <div className='bg-gray-300 p-2 rounded-lg my-5 flex items-center gap-4 text-white'>
-            <span className='px-2 py-1 rounded-full bg-gray-500'>Owner</span>
-            <span className='px-2 py-1 rounded-full bg-gray-500'>{group?.owners[0]?.fullName}</span>
+          <div className="bg-gray-300 dark:bg-neutral-800 p-2 rounded-lg my-5 flex items-center gap-4 text-white">
+            <span className="px-2 py-1 rounded-full bg-gray-500 dark:bg-neutral-900">
+              Owner
+            </span>
+            <span className="px-2 py-1 rounded-full bg-gray-500 dark:bg-neutral-900">
+              {group?.owners[0]?.fullName}
+            </span>
           </div>
           <div className="my-5">
             <h1
-              className={`flex items-center justify-between text-xl bg-gray-300 py-2 px-4 ${
+              className={`flex items-center justify-between text-xl bg-gray-300 dark:bg-neutral-800 py-2 px-4 ${
                 showDetail ? "rounded-t-lg" : "rounded-lg"
-              } border cursor-pointer`}
+              } border dark:border-neutral-600 cursor-pointer`}
               onClick={() => {
                 setShowDetail(!showDetail);
               }}
@@ -65,7 +72,7 @@ const GroupDetailDialog = ({ group, isOpen, onClose }) => {
             </h1>
             {showDetail && (
               <p
-                className={`text-gray-600 p-2 bg-gray-100 ${
+                className={`text-neutral-500 p-2 bg-gray-100 dark:bg-neutral-800 ${
                   showDetail ? "rounded-b-lg" : "rounded-lg"
                 }`}
               >
@@ -75,9 +82,9 @@ const GroupDetailDialog = ({ group, isOpen, onClose }) => {
           </div>
           <div className="my-5">
             <h1
-              className={`flex items-center justify-between text-xl bg-gray-300 py-2 px-4 ${
+              className={`flex items-center justify-between text-xl bg-gray-300 dark:bg-neutral-800 py-2 px-4 ${
                 showMembers ? "rounded-t-lg" : "rounded-lg"
-              } border cursor-pointer`}
+              } border dark:border-neutral-600 cursor-pointer`}
               onClick={() => {
                 setShowMembers(!showMembers);
               }}
@@ -91,12 +98,15 @@ const GroupDetailDialog = ({ group, isOpen, onClose }) => {
             </h1>
             {showMembers && (
               <p
-                className={`text-gray-600 p-2 bg-gray-100 ${
+                className={`text-neutral-500 p-2 bg-gray-100 dark:bg-neutral-800 ${
                   showMembers ? "rounded-b-lg" : "rounded-lg"
                 }`}
               >
                 {group?.members.map((member) => (
-                  <div key={member.id} className=" p-2 border my-1 rounded-lg bg-gray-200 hover:bg-gray-400">
+                  <div
+                    key={member.id}
+                    className=" p-2 border dark:border-neutral-700 my-1 rounded-lg hover:bg-neutral-700"
+                  >
                     <div className="flex items-center justify-between gap-4">
                       <p>{member.fullName}</p>
                       <p>{member.email}</p>

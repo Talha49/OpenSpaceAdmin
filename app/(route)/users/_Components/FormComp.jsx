@@ -133,16 +133,16 @@ const FormComp = () => {
   }
 
   return (
-    <div className="w-full max-w-7xl mx-auto p-6">
-      <h2 className="text-xl font-semibold text-gray-700 mb-1">User Form</h2>
-      <p className="text-sm text-gray-500 mb-6">Fill date for the user. Give it a try.</p>
+    <div className="w-full max-w-7xl mx-auto p-6 dark:bg-neutral-950">
+      <h2 className="text-xl font-semibold text-neutral-800 dark:text-neutral-400 mb-1">User Form</h2>
+      <p className="text-sm text-neutral-500 dark:text-neutral-600 mb-6">Fill date for the user. Give it a try.</p>
 
-      <div className="bg-white rounded-lg shadow-md p-8">
+      <div className="bg-white dark:bg-neutral-900 rounded-lg shadow-md p-8">
         <div className="flex flex-col md:flex-row justify-around">
           {/* Left Section */}
           <div className="mb-6 md:mb-0">
-            <h3 className="text-lg font-semibold text-gray-700 mb-1">Personal Details</h3>
-            <p className="text-sm text-gray-500 mb-4">Please fill out all the fields.</p>
+            <h3 className="text-lg font-semibold text-neutral-800 dark:text-neutral-400 mb-1">Personal Details</h3>
+            <p className="text-sm text-neutral-500 dark:text-neutral-500 mb-4">Please fill out all the fields.</p>
             <div className="space-y-2">
               <button className="w-full py-2 px-4  text-gray-700 rounded-md blue-button focus:outline-none focus:ring-2 focus:ring-gray-400">Delete</button>
               <button className="w-full py-2 px-4  text-gray-700 rounded-md blue-button focus:outline-none focus:ring-2 focus:ring-gray-400">Edit</button>
@@ -153,20 +153,20 @@ const FormComp = () => {
           <div>
             <form className="space-y-4" onSubmit={handleSubmit}>
               <div>
-                <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                <label htmlFor="fullName" className="block text-sm font-medium text-neutral-800 dark:text-neutral-500 mb-1">Full Name</label>
                 <input
                   type="text"
                   id="fullName"
                   name="fullName"
                   value={formData.fullName}
                   onChange={handleChange}
-                  className={`w-full px-3 py-2 border ${errors.fullName ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                  className={`w-full px-3 py-2 border ${errors.fullName ? 'border-red-500' : 'border-neutral-500'} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
                 />
                 {errors.fullName && <p className="text-red-500 text-sm mt-1">{errors.fullName}</p>}
               </div>
 
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                <label htmlFor="email" className="block text-sm font-medium text-neutral-800 dark:text-neutral-500 mb-1">Email Address</label>
                 <input
                   type="email"
                   id="email"
@@ -174,48 +174,48 @@ const FormComp = () => {
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="email@domain.com"
-                  className={`w-full px-3 py-2 border ${errors.email ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                  className={`w-full px-3 py-2 border ${errors.email ? 'border-red-500' : 'border-neutral-500'} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
                 />
                 {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
               </div>
 
               <div className="flex flex-col md:flex-row md:space-x-4">
                 <div className="md:w-1/2 mb-4 md:mb-0">
-                  <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">Address / Street</label>
+                  <label htmlFor="address" className="block text-sm font-medium text-neutral-800 dark:text-neutral-500 mb-1">Address / Street</label>
                   <input
                     type="text"
                     id="address"
                     name="address"
                     value={formData.address}
                     onChange={handleChange}
-                    className={`w-full px-3 py-2 border ${errors.address ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                    className={`w-full px-3 py-2 border ${errors.address ? 'border-red-500' : 'border-neutral-500'} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
                   />
                   {errors.address && <p className="text-red-500 text-sm mt-1">{errors.address}</p>}
                 </div>
 
                 <div className="md:w-1/2">
-                  <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-1">City</label>
+                  <label htmlFor="city" className="block text-sm font-medium text-neutral-800 dark:text-neutral-500 mb-1">City</label>
                   <input
                     type="text"
                     id="city"
                     name="city"
                     value={formData.city}
                     onChange={handleChange}
-                    className={`w-full px-3 py-2 border ${errors.city ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                    className={`w-full px-3 py-2 border ${errors.city ? 'border-red-500' : 'border-neutral-500'} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
                   />
                   {errors.city && <p className="text-red-500 text-sm mt-1">{errors.city}</p>}
                 </div>
               </div>
 
               <div>
-                <label htmlFor="contact" className="block text-sm font-medium text-gray-700 mb-1">Contact</label>
+                <label htmlFor="contact" className="block text-sm font-medium text-neutral-800 dark:text-neutral-500 mb-1">Contact</label>
                 <input
                   type="tel"
                   id="contact"
                   name="contact"
                   value={formData.contact}
                   onChange={handleChange}
-                  className={`w-full px-3 py-2 border ${errors.contact ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                  className={`w-full px-3 py-2 border ${errors.contact ? 'border-red-500' : 'border-neutral-500'} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
                 />
                 {errors.contact && <p className="text-red-500 text-sm mt-1">{errors.contact}</p>}
               </div>
