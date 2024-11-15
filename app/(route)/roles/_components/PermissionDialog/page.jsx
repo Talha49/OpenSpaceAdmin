@@ -1,6 +1,6 @@
 import React from "react";
 
-const PermissionDialog = ({ children, onClose, classes }) => {
+const PermissionDialog = ({ children, onClose, onCreate, classes }) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4 md:p-10 transition-opacity duration-300 ease-in-out">
       {/* Dialog Box */}
@@ -26,7 +26,10 @@ const PermissionDialog = ({ children, onClose, classes }) => {
           >
             Cancel
           </button>
-          <button className="px-4 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition-all">
+          <button
+            className="px-4 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition-all"
+            onClick={onCreate}
+          >
             Create
           </button>
         </div>

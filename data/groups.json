@@ -1,6 +1,7 @@
 [
   {
     "groupType": "Type 2",
+    "role": [],
     "basics": {
       "name": "OpenSpace",
       "description": "OpenSpace is our FYp"
@@ -33,6 +34,7 @@
         "id": "4b0eac35-7e3d-4840-8f26-39d462fc4816"
       }
     ],
+    "targetData": [], 
     "id": "1aab0256-3c87-4b6c-b7c3-4277a629f59d"
   },
   {
@@ -114,5 +116,49 @@
       }
     ],
     "id": "95af0c59-1ca4-4c1a-80bf-5acfe1ff34b5"
+  },
+  {
+    "groupType": "Type 1",
+    "basics": {
+      "name": "Team 1",
+      "description": "this team manage construction tasks"
+    },
+    "owners": [
+      {
+        "fullName": "Abdul Samad",
+        "email": "abdulsamad18090@gmail.com",
+        "address": "House D-237, Block D, Street 54, PAEC ECHS, Rawat, Islamabad",
+        "city": "Islamabad",
+        "contact": "03345455964",
+        "id": "a472852c-b37a-4840-a0b1-7f21c2658897"
+      }
+    ],
+    "members": [
+      {
+        "fullName": "Usama Binte Ladin",
+        "email": "Usama879@gmail.com",
+        "address": "House Ghju8 4D",
+        "city": "Karachi",
+        "contact": "09876543234",
+        "id": "a9ccebde-42d0-4b37-898a-cd1b3def6799"
+      },
+      {
+        "fullName": "Taha Sheikh",
+        "email": "TahaS@gmail.com",
+        "address": "House GH78 ",
+        "city": "Islamabad",
+        "contact": "23456789233",
+        "id": "3ecf6f8a-889e-48e3-8947-8d9f4713ad84"
+      },
+      {
+        "fullName": "Ali Khan",
+        "email": "ALiK@gmail.com",
+        "address": "House G678 G",
+        "city": "Gujrat",
+        "contact": "03458735213",
+        "id": "9ac6328c-3d14-41a0-b409-fc2f86f8a917"
+      }
+    ],
+    "id": "652eaf25-0857-4bce-8619-207318c54e3e"
   }
 ]

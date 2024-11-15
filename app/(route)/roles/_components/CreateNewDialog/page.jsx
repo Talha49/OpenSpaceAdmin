@@ -5,6 +5,7 @@ import { IoIosArrowForward } from "react-icons/io";
 import { userPermissions } from "../UserPermissions";
 import { administratorPermissions } from "../AdministratorPermissions";
 import { CiMenuFries, CiSearch } from "react-icons/ci";
+import axios from "axios";
 
 const CreateNewDialog = ({ onClose }) => {
   const [activeStep, setActiveStep] = useState(0);
@@ -36,6 +37,19 @@ const CreateNewDialog = ({ onClose }) => {
         return;
       }
     }
+    if (activeStep === 1) {
+      const newErrors = {};
+      if (!selectedPermissionsList.length) {
+        newErrors.permissions = "You must select at least one permission.";
+      }
+      setErrors(newErrors);
+
+      // Stop the flow if there are validation errors
+      if (Object.keys(newErrors).length > 0) {
+        return;
+      }
+    }
+
     if (activeStep < 2) {
       setActiveStep((prevStep) => prevStep + 1);
     }
@@ -56,6 +70,22 @@ const CreateNewDialog = ({ onClose }) => {
           ? prevPermissions.filter((perm) => perm !== permission) // Remove permission
           : [...prevPermissions, permission] // Add permission
     );
+  };
+
+  const handleCreateRole = async ({ data }) => {
+    try {
+      if (activeStep === stepContent.length - 1) {
+        const res = await axios.post("/api/roles/create", {
+          roleName,
+          roleDescription,
+          permissions: selectedPermissionsList,
+          createdBy: "Abdul Samad",
+        });
+        console.log("res =>", res);
+      }
+    } catch (error) {
+      console.log("Error creating role:", error);
+    }
   };
 
   // Step content and labels
@@ -239,7 +269,7 @@ const CreateNewDialog = ({ onClose }) => {
                 </>
               )}
             </div>
-            <div className="w-full rounded border-gray-300 p-4">
+            <div className="w-full rounded border-gray-300 px-4">
               {selectedPermission ? (
                 <>
                   <h1 className="text-base font-semibold">
@@ -251,6 +281,9 @@ const CreateNewDialog = ({ onClose }) => {
                       {selectedPermission.category}
                     </span>
                   </h1>
+                  {errors.permissions && (
+                    <p className="text-red-500 text-xs">{errors.permissions}</p>
+                  )}
                   <div className="overflow-x-auto mt-2">
                     {/* Map through selected permissions and display them as checkboxes */}
                     {selectedPermission.permissions.map((permission, index) => (
@@ -332,7 +365,7 @@ const CreateNewDialog = ({ onClose }) => {
   ];
 
   return (
-    <PermissionDialog onClose={onClose}>
+    <PermissionDialog onClose={onClose} onCreate={handleCreateRole}>
       <h1 className="text-2xl font-semibold my-4 dark:text-neutral-500">
         Create Role
       </h1>
