@@ -1,5 +1,7 @@
 "use client";
 import React, { useEffect, useState, useMemo } from "react";
+import { createAsyncThunk } from '@reduxjs/toolkit';
+
 import { useDispatch, useSelector } from "react-redux";
 import { IoMdRefresh } from "react-icons/io";
 import {
@@ -16,17 +18,19 @@ import DeleteFilterModal from "@/app/_components/UserDetailDilaog&Modal/DeleteFi
 
 const DeletedUsers = () => {
   const dispatch = useDispatch();
-  const [deletedUsers, setDeletedUsers] = useState([]);
+
+  const [deletedUsers, setDeletedUsers] = useState([]); // State to store deleted users
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [sortConfig, setSortConfig] = useState({
     key: null,
     direction: "ascending",
   });
+  
   const [searchTerm, setSearchTerm] = useState("");
   const [filterCriteria, setFilterCriteria] = useState({});
   const [rowsPerPage, setRowsPerPage] = useState(10);
-
+  const status = useSelector((state) => state.user.status); // Fetch status (idle, loading, succeeded, etc.)
   const handleOpenFilterModal = () => setIsFilterModalOpen(true);
   const handleCloseFilterModal = () => setIsFilterModalOpen(false);
   const handleApplyFilter = (criteria) => {
@@ -34,20 +38,25 @@ const DeletedUsers = () => {
     setCurrentPage(1); // Reset to first page when filter is applied
     handleCloseFilterModal();
   };
+  useEffect(() => {
+    if (status === "idle") {
+      dispatch(fetchDeletedUsers())
+        .unwrap()
+        .then((data) => {
+          console.log("🎉 Successfully fetched deleted users:", data);
+          setDeletedUsers(data); // Update the state with fetched data
+        })
+        .catch((error) => {
+          console.error("❌ Error fetching deleted users:", error.message);
+        });
+    }
+  }, [dispatch, status]);
 
-  const getDeletedUsers = async () => {
-    const res = await dispatch(fetchDeletedUsers());
-    setDeletedUsers(res.payload);
-  };
-
+  
   const handleRowsPerPageChange = (e) => {
     setRowsPerPage(Number(e.target.value));
     setCurrentPage(1); // Reset to first page when rows per page changes
   };
-
-  useEffect(() => {
-    getDeletedUsers();
-  }, [dispatch]);
 
   const handleSort = (key) => {
     let direction = "ascending";
@@ -66,7 +75,7 @@ const DeletedUsers = () => {
         user.fullName.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
-
+   
     // Apply filter criteria
     if (Object.keys(filterCriteria).length > 0) {
       result = result.filter(

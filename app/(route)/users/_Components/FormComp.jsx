@@ -63,23 +63,28 @@ const FormComp = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     if (!validateForm()) {
       return;
     }
-
+  
+    const userData = {
+      ...formData,
+      createdByAdmin: !selectedUser, // If there's no selected user, it's a new user created by admin
+    };
+  
     if (selectedUser) {
       // Update user
-      dispatch(updateUser({ ...formData, id: selectedUser.id }));
+      dispatch(updateUser({ ...userData, id: selectedUser.id }));
       try {
         const response = await fetch('/api/Users/updateUser', {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ ...formData, id: selectedUser.id }),
+          body: JSON.stringify({ ...userData, id: selectedUser.id }),
         });
-
+  
         if (response.ok) {
           alert('User updated successfully!');
         } else {
@@ -91,18 +96,19 @@ const FormComp = () => {
       }
     } else {
       // Add new user
-      dispatch(addUser(formData));
+      dispatch(addUser(userData));
       try {
         const response = await fetch('/api/Users/saveUser', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(formData),
+          body: JSON.stringify(userData),
         });
-
+  
         if (response.ok) {
           alert('User saved successfully!');
+          
         } else {
           const errorData = await response.json();
           alert(`Failed to save user: ${errorData.error}`);
@@ -111,19 +117,19 @@ const FormComp = () => {
         alert('An error occurred while saving the user');
       }
     }
-
+  
     setFormData({
       fullName: '',
       email: '',
       address: '',
       city: '',
-      contact: ''
+      contact: '',
     });
-
+  
     dispatch(clearSelectedUser()); // Clear selected user after submitting
-    router.push('/table-test');
+    router.push('/users/active');
   };
-
+  
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({

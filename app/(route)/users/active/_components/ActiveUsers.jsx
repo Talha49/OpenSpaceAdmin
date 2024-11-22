@@ -53,7 +53,9 @@ const Modal = ({ user }) => {
           className="cursor-pointer hover:bg-gray-100 dark:hover:bg-neutral-700 text-neutral-500 p-2 rounded-md flex items-center gap-2"
           onClick={() => {
             dispatch(deleteUserAsync(user.id));
+            
             dispatch(storeDeletedUser(user));
+        
           }}
         >
           <MdDelete className="text-lg" />
