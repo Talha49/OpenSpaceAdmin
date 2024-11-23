@@ -15,6 +15,7 @@ import NewHeader from "@/app/_HOC/NewHeader/NewHeader";
 import NewTableComponent from "@/app/_HOC/Table/NewTableComponent";
 import { fetchDeletedUsers } from "@/lib/Feature/UserSlice";
 import DeleteFilterModal from "@/app/_components/UserDetailDilaog&Modal/DeleteFilterModal";
+import * as XLSX from "xlsx";
 
 const DeletedUsers = () => {
   const dispatch = useDispatch();
@@ -113,8 +114,36 @@ const DeletedUsers = () => {
   );
 
   const headerItems = [
-    { icon: <IoMdRefresh />, label: "Refresh" },
-    { icon: <FaFileExport />, label: "Export Delete Users" },
+    {
+      icon: <IoMdRefresh />,
+      label: "Refresh",
+      onClick: () => {
+        dispatch(fetchDeletedUsers())
+          .unwrap()
+          .then((data) => {
+            console.log("🎉 Successfully refreshed deleted users:", data);
+            setDeletedUsers(data); // Update the deleted users state
+          })
+          .catch((error) => {
+            console.error("❌ Error refreshing deleted users:", error.message);
+          });
+      },
+    },
+    {
+      icon: <FaFileExport />,
+      label: "Export Delete Users",
+      onClick: () => {
+        exportDeletedUsersToExcel(
+          deletedUsers.map((user) => ({
+            fullName: user.fullName,
+            email: user.email,
+            address: user.address,
+            city: user.city,
+            contact: user.contact,
+          }))
+        );
+      },
+    },
   ];
 
   const tableColumns = [
@@ -124,6 +153,57 @@ const DeletedUsers = () => {
     { label: "City", key: "city" },
     { label: "Contact", key: "contact" },
   ];
+
+  const exportDeletedUsersToExcel = (data, filename = "Deleted_Users_Report.xlsx") => {
+    // Define headers and custom styles
+    const headers = [
+      ["Deleted Users Report"], // Title
+      ["Generated on:", new Date().toLocaleString()], // Subtitle with timestamp
+      [], // Empty row for spacing
+      ["Display Name", "Email", "Address", "City", "Contact"], // Table Headers
+    ];
+  
+    const worksheetData = headers.concat(
+      data.map((user) => [
+        user.fullName,
+        user.email,
+        user.address,
+        user.city,
+        user.contact,
+      ])
+    );
+  
+    const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
+  
+    // Apply column widths for better readability
+    worksheet["!cols"] = [
+      { wch: 25 }, // Display Name
+      { wch: 30 }, // Email
+      { wch: 40 }, // Address
+      { wch: 20 }, // City
+      { wch: 15 }, // Contact
+    ];
+  
+    // Add styling to headers
+    const headerStyle = {
+      font: { bold: true, sz: 14, color: { rgb: "FFFFFF" } },
+      fill: { fgColor: { rgb: "4F81BD" } },
+      alignment: { horizontal: "center", vertical: "center" },
+    };
+  
+    // Apply styles to header cells
+    ["A1", "A2", "A4", "B4", "C4", "D4", "E4"].forEach((cell) => {
+      if (worksheet[cell]) worksheet[cell].s = headerStyle;
+    });
+  
+    // Create a workbook and append the worksheet
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Deleted Users");
+  
+    // Save the workbook
+    XLSX.writeFile(workbook, filename);
+  };
+
 
   return (
     <div className="min-h-screen py-4">
@@ -142,6 +222,7 @@ const DeletedUsers = () => {
                 <div
                   key={i}
                   className="flex items-center gap-1 cursor-pointer hover:text-blue-500 transition-all"
+                  onClick={item.onClick || undefined} // Execute onClick if available
                 >
                   <span className="text-lg">{item.icon}</span>
                   <p>{item.label}</p>

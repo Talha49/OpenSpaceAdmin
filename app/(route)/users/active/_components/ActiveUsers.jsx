@@ -1,5 +1,7 @@
+
 "use client";
 import React, { useState, useEffect, useMemo } from "react";
+import UserUpdateDialog from "@/app/_components/UserDetailDilaog&Modal/UserUpdateDialog"; // Import the new component
 import {
   FaEllipsisH,
   FaUserEdit,
@@ -8,6 +10,7 @@ import {
   FaKey,
   FaFileExport,
   FaFilter,
+  FaInfoCircle,
 } from "react-icons/fa";
 import NewTableComponent from "@/app/_HOC/Table/NewTableComponent";
 import { MdDelete, MdEventNote, MdManageAccounts } from "react-icons/md";
@@ -31,6 +34,7 @@ import { FiRefreshCcw } from "react-icons/fi";
 import { BsThreeDots } from "react-icons/bs";
 import Link from "next/link";
 import FilterModal from "@/app/_components/UserDetailDilaog&Modal/FilterModal";
+import * as XLSX from "xlsx";
 
 const Modal = ({ user }) => {
   const dispatch = useDispatch();
@@ -41,26 +45,32 @@ const Modal = ({ user }) => {
         <IoIosClose className="text-neutral-500" />
       </div>
       <ul>
-        <li className="cursor-pointer hover:bg-gray-100 dark:hover:bg-neutral-700 text-neutral-500 p-2 rounded-md flex items-center gap-2">
+      <li
+          className="cursor-pointer hover:bg-gray-100 dark:hover:bg-neutral-700 text-neutral-500 p-2 rounded-md flex items-center gap-2"
+          onClick={() => {
+            dispatch(setSelectedUseruniquely(user));
+            router.push("/users");
+          }}
+        >
           <MdEventNote className="text-lg" />
-          <h1>Manage Product Licences</h1>
+          <h1>Manage useraname and password</h1>
         </li>
         <li className="cursor-pointer hover:bg-gray-100 dark:hover:bg-neutral-700 text-neutral-500 p-2 rounded-md flex items-center gap-2">
           <MdManageAccounts className="text-lg" />
           <h1>Manage Groups</h1>
         </li>
-        <li
+        {/* <li
           className="cursor-pointer hover:bg-gray-100 dark:hover:bg-neutral-700 text-neutral-500 p-2 rounded-md flex items-center gap-2"
           onClick={() => {
             dispatch(deleteUserAsync(user.id));
-            
+
             dispatch(storeDeletedUser(user));
-        
+
           }}
         >
           <MdDelete className="text-lg" />
           <h1>Delete User</h1>
-        </li>
+        </li> */}
         <li
           className="cursor-pointer hover:bg-gray-100 dark:hover:bg-neutral-700 text-neutral-500 p-2 rounded-md flex items-center gap-2"
           onClick={() => {
@@ -68,8 +78,8 @@ const Modal = ({ user }) => {
             router.push("/users");
           }}
         >
-          <FaUserEdit className="text-lg" />
-          <h1>Manage User</h1>
+          <FaInfoCircle className="text-lg" />
+          <h1>View Details</h1>
         </li>
       </ul>
     </div>
@@ -78,13 +88,20 @@ const Modal = ({ user }) => {
 
 const TableRoute = () => {
   const tableColumns = [
-    { label: "Display Name", key: "fullName" },
-    { label: "Email", key: "email" },
-    { label: "Address", key: "address" },
-    { label: "City", key: "city" },
-    { label: "Contact", key: "contact" },
+    { label: "Display Name", key: "fullName", width: "w-[200px]" },
+    { label: "Email", key: "email", width: "w-[250px]" },
+    { label: "Address", key: "address", width: "w-[300px]" },
+    { label: "City", key: "city", width: "w-[200px]" },
+    { label: "Contact", key: "contact", width: "w-[200px]" },
   ];
-  const [isModalOpen, setIsModalOpen] = useState(null);
+
+
+ const [isModalOpen, setIsModalOpen] = useState(null);
+  console.log("isModalOpen:", isModalOpen);
+
+const toggleModal = (userId) => {
+  setIsModalOpen((prev) => (prev === userId ? null : userId));
+};
   const [showInfoModal, setShowInfoModal] = useState(false);
   const [clickedUser, setClickedUser] = useState(null);
   const [sortConfig, setSortConfig] = useState({ key: "", direction: "" });
@@ -103,6 +120,19 @@ const TableRoute = () => {
   const handleCloseFilterModal = () => setIsFilterModalOpen(false);
   const handleApplyFilter = (criteria) => setFilterCriteria(criteria);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false); // Declare state for the modal
+  const [selectedUser, setSelectedUser] = useState(null); // State for the selected user
+
+  const handleOpenUpdateModal = (user) => {
+    setSelectedUser(user); // Set the selected user
+    setIsUpdateModalOpen(true); // Open the update modal
+  };
+
+  const handleSaveUserDetails = (updatedUser) => {
+    console.log("Updated User Details:", updatedUser);
+    // Dispatch updated user details to the Redux store or backend
+    setIsUpdateModalOpen(false); // Close the update modal
+  };
 
   const router = useRouter();
 
@@ -157,23 +187,55 @@ const TableRoute = () => {
   );
 
   const handleCheckboxChange = (user) => {
-    setSelectedUsers((prevSelected) =>
-      prevSelected.find((selectedUser) => selectedUser.id === user.id)
-        ? prevSelected.filter((selectedUser) => selectedUser.id !== user.id)
-        : [...prevSelected, user]
-    );
+    setSelectedUsers((prevSelected) => {
+      // Check if the user is already selected
+      const isSelected = prevSelected.some(
+        (selectedUser) => selectedUser._id === user._id
+      );
+  
+      if (isSelected) {
+        // Remove the user if already selected
+        return prevSelected.filter(
+          (selectedUser) => selectedUser._id !== user._id
+        );
+      } else {
+        // Add the user to selected list
+        return [...prevSelected, user];
+      }
+    });
+  
+   
   };
-
+  
+  
   const handleSelectAll = () => {
-    if (selectedUsers.length === paginatedUsers.length) {
-      // If all users are selected, clear the selection
-      setSelectedUsers([]);
+    const allSelected = paginatedUsers.every((user) =>
+      selectedUsers.some((selectedUser) => selectedUser._id === user._id)
+    );
+  
+    if (allSelected) {
+      // Deselect all users on the current page
+      setSelectedUsers((prevSelected) =>
+        prevSelected.filter(
+          (selectedUser) =>
+            !paginatedUsers.some((user) => user._id === selectedUser._id)
+        )
+      );
     } else {
-      // Otherwise, select all users on the current page
-      setSelectedUsers(paginatedUsers);
+      // Select all users on the current page
+      setSelectedUsers((prevSelected) => [
+        ...prevSelected,
+        ...paginatedUsers.filter(
+          (user) =>
+            !prevSelected.some((selectedUser) => selectedUser._id === user._id)
+        ),
+      ]);
     }
+  
+  
   };
-
+  
+ 
   const handleRowsPerPageChange = (e) => {
     setRowsPerPage(Number(e.target.value));
     setCurrentPage(1); // Reset to first page when rows per page changes
@@ -200,6 +262,9 @@ const TableRoute = () => {
     {
       icon: <IoMdRefresh />,
       label: "Refresh",
+      onClick: () => {
+        dispatch(fetchUsers());
+      },
     },
     {
       icon: <FaKey />,
@@ -208,13 +273,44 @@ const TableRoute = () => {
     {
       icon: <FaFileExport />,
       label: "Export Users",
+      onClick: () => {
+        exportToExcel(users.map((user) => ({
+          "Display Name": user.fullName,
+          Email: user.email,
+          Address: user.address,
+          City: user.city,
+          Contact: user.contact,
+        })));
+      },
     },
   ];
+
+  //export as a excel
+  const exportToExcel = (data, filename = "Users_Data.xlsx") => {
+    const worksheet = XLSX.utils.json_to_sheet(data);
+
+    // Add custom styles (this requires additional tools like Excel templates if needed).
+    worksheet["!cols"] = [
+      { wch: 20 }, // Column width for Display Name
+      { wch: 25 }, // Column width for Email
+      { wch: 30 }, // Column width for Address
+      { wch: 15 }, // Column width for City
+      { wch: 15 }, // Column width for Contact
+    ];
+
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Users");
+
+    // Add a header row for clarity
+    XLSX.utils.sheet_add_aoa(worksheet, [["Display Name", "Email", "Address", "City", "Contact"]], { origin: "A1" });
+
+    XLSX.writeFile(workbook, filename);
+  };
 
   return (
     <div className="">
       <NewHeader>
-        <div className="flex flex-col px-4 ">
+        <div className="flex flex-col px-6 ">
           <div className="mb-4 flex flex-col gap-4">
             <h1 className="text-xl font-semibold tracking-wider text-neutral-500">Talha.ae</h1>
             <h2 className="text-lg font-semibold tracking-wider text-neutral-500">
@@ -222,13 +318,17 @@ const TableRoute = () => {
             </h2>
           </div>
           <div className="flex flex-col sm:flex-row sm:gap-0 gap-6 sm:items-center justify-between border-t-2 dark:border-neutral-500 pt-2">
-            <div className="flex items-center sm:gap-x-6 gap-x-4 text-[8px]">
+            <div className="flex items-center sm:gap-x-6 gap-x-4 text-[9px]">
               {headerItems.map((item, i) => (
                 <div
                   key={i}
                   className="flex items-center gap-1 cursor-pointer hover:text-blue-500 transition-all group relative"
                   onClick={() => {
-                    if (item.label === "Delete User") {
+                    if (item.onClick) {
+                      item.onClick(); // Trigger the API call for Refresh
+                    } else if (item.link) {
+                      router.push(item.link); // Navigate to the link if provided
+                    } else if (item.label === "Delete User") {
                       setIsSelectable(!isSelectable);
                       setIsGroupSelection(false);
                     } else if (item.label === "Group") {
@@ -240,14 +340,12 @@ const TableRoute = () => {
                   {item.link ? (
                     <Link href={item.link} className="flex items-center gap-1">
                       <span className="text-sm text-blue-400">{item.icon}</span>
-                      <p className="hidden lg:inline">{item.label}</p>
+                      <p className="hidden lg:inline text-xs">{item.label}</p>
                     </Link>
                   ) : (
                     <div className="flex items-center gap-1">
-                      <span className="text-sm text-blue-400 ">
-                        {item.icon}
-                      </span>
-                      <p className="hidden lg:inline">{item.label}</p>
+                      <span className="text-sm text-blue-400">{item.icon}</span>
+                      <p className="hidden lg:inline text-xs">{item.label}</p>
                     </div>
                   )}
                   <div className="absolute left-1/2 transform -translate-x-/2 mb-8 hidden group-hover:block bg-gray-700 text-white text-xs rounded py-1 px-2 whitespace-nowrap">
@@ -334,7 +432,8 @@ const TableRoute = () => {
         <NewTableComponent
           tableColumns={[
             isSelectable || isGroupSelection ? (
-              <th className={`flex items-center justify-between `}>
+
+              <th className={`flex items-center justify-between w-[50px] `}>
                 <input
                   type="checkbox"
                   checked={
@@ -374,56 +473,126 @@ const TableRoute = () => {
           currentPage={currentPage}
           onPageChange={(page) => setCurrentPage(page)}
           handleRowsPerPageChange={handleRowsPerPageChange}
+
         >
-          {paginatedUsers.map((user) => (
-            <tr
-              key={user.id}
-              className="border-b dark:border-neutral-700 cursor-pointer relative bg-gray-100 dark:bg-neutral-800 hover:bg-gray-200 dark:hover:bg-neutral-600"
-              onClick={() => {
-                setClickedUser(user);
-                setShowInfoModal(true);
-              }}
-            >
-              {isSelectable || isGroupSelection ? (
-                <td>
-                  <input
-                    type="checkbox"
-                    className="mx-2"
-                    checked={selectedUsers.some(
-                      (selectedUser) => selectedUser.id === user.id
-                    )}
-                    onChange={(e) => {
-                      e.stopPropagation(); // Prevent triggering row click
-                      handleCheckboxChange(user);
-                    }}
-                  />
-                </td>
-              ) : null}
-              <td className="p-3 text-gray-700 dark:text-neutral-400">
-                <div className="flex items-center justify-between ">
-                  <span className="hover:text-blue-600">{user.fullName}</span>
-                  <span
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleIconClick(user.id);
-                    }}
-                    className="cursor-pointer relative"
-                  >
-                    <FaEllipsisH className="rotate-90 text-blue-600" />
-                    {isModalOpen === user.id && (
-                      <div className="absolute top-0 left-4">
-                        <Modal user={user} />
-                      </div>
-                    )}
-                  </span>
-                </div>
-              </td>
-              <td className="p-3 text-gray-700 dark:text-neutral-400">{user.email}</td>
-              <td className="p-3 text-gray-700 dark:text-neutral-400">{user.address}</td>
-              <td className="p-3 text-gray-700 dark:text-neutral-400">{user.city}</td>
-              <td className="p-3 text-gray-700 dark:text-neutral-400">{user.contact}</td>
-            </tr>
-          ))}
+         {paginatedUsers.map((user, rowIndex) => (
+  <tr
+    key={user.id}
+    className="odd:bg-gray-100 even:bg-white dark:odd:bg-neutral-800 dark:even:bg-neutral-900 cursor-pointer hover:bg-gray-300 dark:hover:bg-neutral-600 hover:text-blue-700 transition-all duration-200 h-[50px]"
+  >
+    {isSelectable || isGroupSelection ? (
+      <td>
+        <input
+          type="checkbox"
+          className="mx-2"
+          checked={selectedUsers.some(
+            (selectedUser) => selectedUser._id === user._id
+          )}
+          onChange={(e) => {
+            e.stopPropagation(); // Prevent triggering row click
+            handleCheckboxChange(user);
+          }}
+        />
+      </td>
+    ) : null}
+    <td className="p-3 text-gray-700 dark:text-neutral-400 w-[200px]">
+      <div className="flex items-center justify-between relative">
+        <span className="hover:text-blue-600">{user.fullName}</span>
+        <span
+          onClick={(e) => {
+            e.stopPropagation();
+            handleIconClick(rowIndex, user);
+          }}
+          className="cursor-pointer relative"
+        >
+          <FaEllipsisH className="rotate-90 text-blue-600" />
+          {isModalOpen === rowIndex && (
+            <div className="absolute top-full left-0 mt-2 w-64 bg-white dark:bg-neutral-950 border border-gray-300 dark:border-neutral-800 rounded-lg shadow-lg z-50">
+              {/* Modal Header */}
+              <div className="flex justify-end p-2">
+                <IoIosClose
+                  className="text-gray-500 cursor-pointer hover:text-gray-700"
+                  onClick={() => setIsModalOpen(null)}
+                />
+              </div>
+              {/* Modal Content */}
+              <ul className="flex flex-col gap-2 p-2">
+              <li
+                onClick={() => handleOpenUpdateModal(user)}
+                className="cursor-pointer flex items-center gap-2 text-gray-700 hover:bg-gray-100 dark:hover:bg-neutral-700 p-2 rounded-md"
+              >
+                 <MdEventNote className="text-lg text-gray-500" />
+                 <span>Manage username & password</span>
+              </li>
+                <li className="cursor-pointer flex items-center gap-2 text-gray-700 hover:bg-gray-100 dark:hover:bg-neutral-700 p-2 rounded-md">
+                  <MdManageAccounts className="text-lg text-gray-500" />
+                  <span>Manage Groups</span>
+                </li>
+                {/* <li
+                  className="cursor-pointer flex items-center gap-2 text-gray-700 hover:bg-gray-100 dark:hover:bg-neutral-700 p-2 rounded-md"
+                  onClick={() => {
+                    dispatch(setSelectedUseruniquely(user));
+                    router.push("/users");
+                  }}
+                >
+                  <MdEventNote className="text-lg text-gray-500" />
+                  <span>Manage username and password</span>
+                </li> */}
+                <li
+                  className="cursor-pointer flex items-center gap-2 text-gray-700 hover:bg-gray-100 dark:hover:bg-neutral-700 p-2 rounded-md"
+                  onClick={() => {
+                    setShowInfoModal(false); // Close current modal
+                    setTimeout(() => {
+                      setClickedUser(user); // Re-set user after resetting
+                      setShowInfoModal(true); // Open the details modal again
+                    }, ); // Use a brief delay to ensure state change
+                    setIsModalOpen(null); // Close the action modal
+                  }}
+                >
+                  <FaInfoCircle className="text-lg text-gray-500" />
+                  <span>View Details</span>
+                </li>
+              </ul>
+            </div>
+          )}
+        </span>
+      </div>
+    </td>
+    <td className="p-3 text-gray-700 dark:text-neutral-400 w-[250px]">
+      {user.email}
+    </td>
+    <td
+      className="p-3 text-gray-700 dark:text-neutral-400 max-w-[300px] truncate"
+      title={user.address}
+    >
+      {user.address}
+    </td>
+    <td className="p-3 text-gray-700 dark:text-neutral-400 w-[200px]">
+      {user.city}
+    </td>
+    <td className="p-3 text-gray-700 dark:text-neutral-400 w-[200px]">
+      {user.contact}
+    </td>
+  </tr>
+))}
+
+{/* User Details Modal */}
+{showInfoModal && (
+  <UserDetailDialog
+    user={clickedUser} // Pass the selected user to the dialog
+    onClose={() => setShowInfoModal(false)} // Close handler
+  />
+)}
+
+
+      {/* Update User Modal */}
+      {isUpdateModalOpen && (
+        <UserUpdateDialog
+          user={selectedUser}
+          onClose={() => setIsUpdateModalOpen(false)}
+          onSave={handleSaveUserDetails}
+        />
+      )}
         </NewTableComponent>
         <UserDetailDialog
           onClose={() => setShowInfoModal(false)}
@@ -437,6 +606,7 @@ const TableRoute = () => {
         )}
       </div>
     </div>
+    
   );
 };
 

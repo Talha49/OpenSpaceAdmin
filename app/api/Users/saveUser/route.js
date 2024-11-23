@@ -22,17 +22,42 @@ const sendEmail = async (email, password, fullName) => {
     to: email,
     subject: 'Your New Account Login Details',
     html: `
-      <div style="font-family: Arial, sans-serif; color: #333;">
-        <h2 style="color: #007bff;">Welcome to Our Platform!</h2>
-        <p>Dear <b>${fullName}</b>,</p>
-        <p>Your account has been successfully created by the Admin.</p>
-        <p><b>Here are your login details:</b></p>
-        <ul>
-          <li><b>Email:</b> ${email}</li>
-          <li><b>Password:</b> ${password}</li>
-        </ul>
-        <p>We recommend resetting your password after logging in for security purposes.</p>
-        <a href="https://yourwebsite.com/login" style="background-color: #007bff; color: white; padding: 10px; text-decoration: none; border-radius: 5px;">Log In to Your Account</a>
+      <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: auto; border: 1px solid #ddd; border-radius: 8px; overflow: hidden;">
+        <!-- Header Section -->
+        <div style="background-color: #007bff; padding: 20px; text-align: center;">
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_gYQAwOklEatAbHEPKC0vnPwJqOW4INa1e8N5yeie3TmY1iS2CkLtBJJSfyymzXcUKA&amp;usqp=CAU" class="sFlh5c FyHeAf" alt="Company Logo" style="max-width: 150px; margin-bottom: 10px;">
+          <h1 style="color: white; font-size: 24px; margin: 0;">Welcome to Our Platform!</h1>
+        </div>
+
+        <!-- Content Section -->
+        <div style="padding: 20px;">
+          <p style="font-size: 16px; margin: 0;">Dear <b>${fullName}</b>,</p>
+          <p style="font-size: 14px; color: #555;">Your account has been successfully created by the Admin.</p>
+          <p style="font-size: 16px; font-weight: bold; margin: 20px 0 10px;">Here are your login details:</p>
+          <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+              <td style="font-size: 14px; color: #555; padding: 8px; border: 1px solid #ddd; font-weight: bold;">Email:</td>
+              <td style="font-size: 14px; color: #555; padding: 8px; border: 1px solid #ddd;">${email}</td>
+            </tr>
+            <tr>
+              <td style="font-size: 14px; color: #555; padding: 8px; border: 1px solid #ddd; font-weight: bold;">Password:</td>
+              <td style="font-size: 14px; color: #555; padding: 8px; border: 1px solid #ddd;">${password}</td>
+            </tr>
+          </table>
+          <p style="font-size: 14px; color: #555; margin-top: 20px;">We recommend resetting your password after logging in for security purposes.</p>
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="https://yourwebsite.com/login" 
+               style="background-color: #007bff; color: white; padding: 12px 20px; text-decoration: none; border-radius: 5px; font-size: 16px;">
+               Log In to Your Account
+            </a>
+          </div>
+        </div>
+
+        <!-- Footer Section -->
+        <div style="background-color: #f8f9fa; padding: 10px; text-align: center; font-size: 12px; color: #777;">
+          <p style="margin: 0;">If you have any questions, feel free to contact our support team at <a href="mailto:support@yourcompany.com" style="color: #007bff;">support@yourcompany.com</a>.</p>
+          <p style="margin: 0;">&copy; 2024 YourCompany. All rights reserved.</p>
+        </div>
       </div>
     `,
   };
