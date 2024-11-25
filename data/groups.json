@@ -1,43 +1,5 @@
 [
   {
-    "groupType": "Type 2",
-    "role": [],
-    "basics": {
-      "name": "OpenSpace",
-      "description": "OpenSpace is our FYp"
-    },
-    "owners": [
-      {
-        "fullName": "TaimoorR",
-        "email": "Taimor@gmail.com",
-        "address": "House 789 9i ",
-        "city": "Kharian",
-        "contact": "77346789869",
-        "id": "5d895502-cd3f-4334-9cb8-c5fcd2d496f7"
-      }
-    ],
-    "members": [
-      {
-        "fullName": "Usama Binte Ladin",
-        "email": "Usama879@gmail.com",
-        "address": "House Ghju8 4D",
-        "city": "Karachi",
-        "contact": "09876543234",
-        "id": "a9ccebde-42d0-4b37-898a-cd1b3def6799"
-      },
-      {
-        "fullName": "Ali Tas",
-        "email": "AliT@gmail.com",
-        "address": "house g6778 h",
-        "city": "Islamabad",
-        "contact": "09865347899",
-        "id": "4b0eac35-7e3d-4840-8f26-39d462fc4816"
-      }
-    ],
-    "targetData": [], 
-    "id": "1aab0256-3c87-4b6c-b7c3-4277a629f59d"
-  },
-  {
     "groupType": "Type 1",
     "basics": {
       "name": "Heart Det",
@@ -160,5 +122,371 @@
       }
     ],
     "id": "652eaf25-0857-4bce-8619-207318c54e3e"
+  },
+  {
+    "groupType": "Type 1",
+    "basics": {
+      "name": "lex",
+      "description": "op"
+    },
+    "owners": [
+      {
+        "_id": "6740d5acf400759c6367d411",
+        "fullName": "Ahmad Ali Baig",
+        "email": "ahmadalibaig52@gmail.com",
+        "password": "$2a$10$ZS2cjOtYb3koxvTQzci9V.wuorot6Nul57PQI8Pdl1qlO15NOdlwW",
+        "status": "active",
+        "address": "mills officer colony House no 32",
+        "city": "Bhakkar",
+        "contact": "03345455956",
+        "image": "https://firebasestorage.googleapis.com/v0/b/sijm-74506.appspot.com/o/UserImagesetByAdmin%2Fahmadalibaig52%40gmail.com%2FprofileImage.jpg?alt=media&token=35a99c20-5d39-4e90-bfbc-a4f69375a7e3",
+        "isSocialLogin": false,
+        "createdByAdmin": true,
+        "__v": 0
+      }
+    ],
+    "members": [
+      {
+        "_id": "67434c4d51bfacc1cb14116a",
+        "fullName": "Talha Khan Ghauri",
+        "email": "ghaurit82@gmail.com",
+        "password": "$2a$10$u02zZVo6AfGvya1pdCIrouiD2KNlkmAoOH/RTfVVV8YKd55b2VACG",
+        "status": "active",
+        "address": "Raja Bazar Imperial Market Fawara chownk",
+        "city": "Rawalpindi",
+        "contact": "03345455968",
+        "image": "https://firebasestorage.googleapis.com/v0/b/sijm-74506.appspot.com/o/UserImagesetByAdmin%2Fghaurit82%40gmail.com%2FprofileImage.jpg?alt=media&token=cd5fd998-4fee-4524-bf83-434b5a815b5c",
+        "isSocialLogin": false,
+        "createdByAdmin": true,
+        "__v": 0,
+        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzQzNGM0ZDUxYmZhY2MxY2IxNDExNmEiLCJlbWFpbCI6ImdoYXVyaXQ4MkBnbWFpbC5jb20iLCJpYXQiOjE3MzI0NjM3NzEsImV4cCI6MTczMjU1MDE3MX0.Ynf0uylNVoQQGrbQYM3rPYPL7EDSAAdXstaf9opjoXQ",
+        "updatedAt": "2024-11-24T15:56:11.251Z"
+      },
+      {
+        "_id": "6741a3d7ffc1d85f2a3c2738",
+        "fullName": "Tester User",
+        "email": "tester213@gmail.com",
+        "password": "$2b$10$GJUHQ.nh2OVkbe1vFOhjj.OsFyxLCvzQXh/z4pnwXo6EKyUM.mv9y",
+        "status": "active",
+        "address": "mills officer colony RWP",
+        "city": "Rawalpindi",
+        "contact": "03345455981",
+        "image": "",
+        "isSocialLogin": false,
+        "createdByAdmin": true,
+        "__v": 0
+      }
+    ],
+    "id": "8614825f-6dcb-4787-8104-5a936c6bfe88"
+  },
+  {
+    "groupType": "Type 1",
+    "basics": {
+      "name": "asasda",
+      "description": "asda"
+    },
+    "owners": [
+      {
+        "_id": "67434c4d51bfacc1cb14116a",
+        "fullName": "Talha Khan Ghauri",
+        "email": "ghaurit82@gmail.com",
+        "password": "$2a$10$u02zZVo6AfGvya1pdCIrouiD2KNlkmAoOH/RTfVVV8YKd55b2VACG",
+        "status": "active",
+        "address": "Raja Bazar Imperial Market Fawara chownk",
+        "city": "Rawalpindi",
+        "contact": "03345455968",
+        "image": "https://firebasestorage.googleapis.com/v0/b/sijm-74506.appspot.com/o/UserImagesetByAdmin%2Fghaurit82%40gmail.com%2FprofileImage.jpg?alt=media&token=cd5fd998-4fee-4524-bf83-434b5a815b5c",
+        "isSocialLogin": false,
+        "createdByAdmin": true,
+        "__v": 0,
+        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzQzNGM0ZDUxYmZhY2MxY2IxNDExNmEiLCJlbWFpbCI6ImdoYXVyaXQ4MkBnbWFpbC5jb20iLCJpYXQiOjE3MzI0NjM3NzEsImV4cCI6MTczMjU1MDE3MX0.Ynf0uylNVoQQGrbQYM3rPYPL7EDSAAdXstaf9opjoXQ",
+        "updatedAt": "2024-11-24T15:56:11.251Z"
+      },
+      {
+        "_id": "6741a43affc1d85f2a3c273c",
+        "fullName": "tester2",
+        "email": "tester2@gmail.com",
+        "password": "$2b$10$xcfjXDBcBtmgCxfwTIwUC.YjmbXqPBon/KTq5UZNdQL/8/53WXRx6",
+        "status": "active",
+        "address": "testing address",
+        "city": "ISB",
+        "contact": "03345455952",
+        "image": "",
+        "isSocialLogin": false,
+        "createdByAdmin": true,
+        "__v": 0
+      },
+      {
+        "_id": "6741a3d7ffc1d85f2a3c2738",
+        "fullName": "Tester User",
+        "email": "tester213@gmail.com",
+        "password": "$2b$10$GJUHQ.nh2OVkbe1vFOhjj.OsFyxLCvzQXh/z4pnwXo6EKyUM.mv9y",
+        "status": "active",
+        "address": "mills officer colony RWP",
+        "city": "Rawalpindi",
+        "contact": "03345455981",
+        "image": "",
+        "isSocialLogin": false,
+        "createdByAdmin": true,
+        "__v": 0
+      }
+    ],
+    "members": [
+      {
+        "_id": "6741a43affc1d85f2a3c273c",
+        "fullName": "tester2",
+        "email": "tester2@gmail.com",
+        "password": "$2b$10$xcfjXDBcBtmgCxfwTIwUC.YjmbXqPBon/KTq5UZNdQL/8/53WXRx6",
+        "status": "active",
+        "address": "testing address",
+        "city": "ISB",
+        "contact": "03345455952",
+        "image": "",
+        "isSocialLogin": false,
+        "createdByAdmin": true,
+        "__v": 0
+      },
+      {
+        "_id": "67434c4d51bfacc1cb14116a",
+        "fullName": "Talha Khan Ghauri",
+        "email": "ghaurit82@gmail.com",
+        "password": "$2a$10$u02zZVo6AfGvya1pdCIrouiD2KNlkmAoOH/RTfVVV8YKd55b2VACG",
+        "status": "active",
+        "address": "Raja Bazar Imperial Market Fawara chownk",
+        "city": "Rawalpindi",
+        "contact": "03345455968",
+        "image": "https://firebasestorage.googleapis.com/v0/b/sijm-74506.appspot.com/o/UserImagesetByAdmin%2Fghaurit82%40gmail.com%2FprofileImage.jpg?alt=media&token=cd5fd998-4fee-4524-bf83-434b5a815b5c",
+        "isSocialLogin": false,
+        "createdByAdmin": true,
+        "__v": 0,
+        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzQzNGM0ZDUxYmZhY2MxY2IxNDExNmEiLCJlbWFpbCI6ImdoYXVyaXQ4MkBnbWFpbC5jb20iLCJpYXQiOjE3MzI0NjM3NzEsImV4cCI6MTczMjU1MDE3MX0.Ynf0uylNVoQQGrbQYM3rPYPL7EDSAAdXstaf9opjoXQ",
+        "updatedAt": "2024-11-24T15:56:11.251Z"
+      },
+      {
+        "_id": "6741a3d7ffc1d85f2a3c2738",
+        "fullName": "Tester User",
+        "email": "tester213@gmail.com",
+        "password": "$2b$10$GJUHQ.nh2OVkbe1vFOhjj.OsFyxLCvzQXh/z4pnwXo6EKyUM.mv9y",
+        "status": "active",
+        "address": "mills officer colony RWP",
+        "city": "Rawalpindi",
+        "contact": "03345455981",
+        "image": "",
+        "isSocialLogin": false,
+        "createdByAdmin": true,
+        "__v": 0
+      }
+    ],
+    "id": "c901bb30-dd7d-4e98-8e3d-6636ba565fea"
+  },
+  {
+    "groupType": "Type 1",
+    "basics": {
+      "name": "sda",
+      "description": "dada"
+    },
+    "owners": [
+      {
+        "_id": "6741a43affc1d85f2a3c273c",
+        "fullName": "tester2",
+        "email": "tester2@gmail.com",
+        "password": "$2b$10$xcfjXDBcBtmgCxfwTIwUC.YjmbXqPBon/KTq5UZNdQL/8/53WXRx6",
+        "status": "active",
+        "address": "testing address",
+        "city": "ISB",
+        "contact": "03345455952",
+        "image": "",
+        "isSocialLogin": false,
+        "createdByAdmin": true,
+        "__v": 0
+      },
+      {
+        "_id": "67434c4d51bfacc1cb14116a",
+        "fullName": "Talha Khan Ghauri",
+        "email": "ghaurit82@gmail.com",
+        "password": "$2a$10$u02zZVo6AfGvya1pdCIrouiD2KNlkmAoOH/RTfVVV8YKd55b2VACG",
+        "status": "active",
+        "address": "Raja Bazar Imperial Market Fawara chownk",
+        "city": "Rawalpindi",
+        "contact": "03345455968",
+        "image": "https://firebasestorage.googleapis.com/v0/b/sijm-74506.appspot.com/o/UserImagesetByAdmin%2Fghaurit82%40gmail.com%2FprofileImage.jpg?alt=media&token=cd5fd998-4fee-4524-bf83-434b5a815b5c",
+        "isSocialLogin": false,
+        "createdByAdmin": true,
+        "__v": 0,
+        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzQzNGM0ZDUxYmZhY2MxY2IxNDExNmEiLCJlbWFpbCI6ImdoYXVyaXQ4MkBnbWFpbC5jb20iLCJpYXQiOjE3MzI0NjM3NzEsImV4cCI6MTczMjU1MDE3MX0.Ynf0uylNVoQQGrbQYM3rPYPL7EDSAAdXstaf9opjoXQ",
+        "updatedAt": "2024-11-24T15:56:11.251Z"
+      }
+    ],
+    "members": [
+      {
+        "_id": "6741a3d7ffc1d85f2a3c2738",
+        "fullName": "Tester User",
+        "email": "tester213@gmail.com",
+        "password": "$2b$10$GJUHQ.nh2OVkbe1vFOhjj.OsFyxLCvzQXh/z4pnwXo6EKyUM.mv9y",
+        "status": "active",
+        "address": "mills officer colony RWP",
+        "city": "Rawalpindi",
+        "contact": "03345455981",
+        "image": "",
+        "isSocialLogin": false,
+        "createdByAdmin": true,
+        "__v": 0
+      },
+      {
+        "_id": "6740d5acf400759c6367d411",
+        "fullName": "Ahmad Ali Baig",
+        "email": "ahmadalibaig52@gmail.com",
+        "password": "$2a$10$ZS2cjOtYb3koxvTQzci9V.wuorot6Nul57PQI8Pdl1qlO15NOdlwW",
+        "status": "active",
+        "address": "mills officer colony House no 32",
+        "city": "Bhakkar",
+        "contact": "03345455956",
+        "image": "https://firebasestorage.googleapis.com/v0/b/sijm-74506.appspot.com/o/UserImagesetByAdmin%2Fahmadalibaig52%40gmail.com%2FprofileImage.jpg?alt=media&token=35a99c20-5d39-4e90-bfbc-a4f69375a7e3",
+        "isSocialLogin": false,
+        "createdByAdmin": true,
+        "__v": 0
+      }
+    ],
+    "id": "f330ce25-342b-42e8-a80b-cd0207c0338f"
+  },
+  {
+    "groupType": "Type 3",
+    "basics": {
+      "name": "tetser",
+      "description": "sda"
+    },
+    "owners": [
+      {
+        "_id": "6741a43affc1d85f2a3c273c",
+        "fullName": "tester2",
+        "email": "tester2@gmail.com",
+        "password": "$2b$10$xcfjXDBcBtmgCxfwTIwUC.YjmbXqPBon/KTq5UZNdQL/8/53WXRx6",
+        "status": "active",
+        "address": "testing address",
+        "city": "ISB",
+        "contact": "03345455952",
+        "image": "",
+        "isSocialLogin": false,
+        "createdByAdmin": true,
+        "__v": 0
+      },
+      {
+        "_id": "67434c4d51bfacc1cb14116a",
+        "fullName": "Talha Khan Ghauri",
+        "email": "ghaurit82@gmail.com",
+        "password": "$2a$10$u02zZVo6AfGvya1pdCIrouiD2KNlkmAoOH/RTfVVV8YKd55b2VACG",
+        "status": "active",
+        "address": "Raja Bazar Imperial Market Fawara chownk",
+        "city": "Rawalpindi",
+        "contact": "03345455968",
+        "image": "https://firebasestorage.googleapis.com/v0/b/sijm-74506.appspot.com/o/UserImagesetByAdmin%2Fghaurit82%40gmail.com%2FprofileImage.jpg?alt=media&token=cd5fd998-4fee-4524-bf83-434b5a815b5c",
+        "isSocialLogin": false,
+        "createdByAdmin": true,
+        "__v": 0,
+        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzQzNGM0ZDUxYmZhY2MxY2IxNDExNmEiLCJlbWFpbCI6ImdoYXVyaXQ4MkBnbWFpbC5jb20iLCJpYXQiOjE3MzI0NjM3NzEsImV4cCI6MTczMjU1MDE3MX0.Ynf0uylNVoQQGrbQYM3rPYPL7EDSAAdXstaf9opjoXQ",
+        "updatedAt": "2024-11-24T15:56:11.251Z"
+      }
+    ],
+    "members": [
+      {
+        "_id": "6740d5acf400759c6367d411",
+        "fullName": "Ahmad Ali Baig",
+        "email": "ahmadalibaig52@gmail.com",
+        "password": "$2a$10$ZS2cjOtYb3koxvTQzci9V.wuorot6Nul57PQI8Pdl1qlO15NOdlwW",
+        "status": "active",
+        "address": "mills officer colony House no 32",
+        "city": "Bhakkar",
+        "contact": "03345455956",
+        "image": "https://firebasestorage.googleapis.com/v0/b/sijm-74506.appspot.com/o/UserImagesetByAdmin%2Fahmadalibaig52%40gmail.com%2FprofileImage.jpg?alt=media&token=35a99c20-5d39-4e90-bfbc-a4f69375a7e3",
+        "isSocialLogin": false,
+        "createdByAdmin": true,
+        "__v": 0
+      },
+      {
+        "_id": "6741a3d7ffc1d85f2a3c2738",
+        "fullName": "Tester User",
+        "email": "tester213@gmail.com",
+        "password": "$2b$10$GJUHQ.nh2OVkbe1vFOhjj.OsFyxLCvzQXh/z4pnwXo6EKyUM.mv9y",
+        "status": "active",
+        "address": "mills officer colony RWP",
+        "city": "Rawalpindi",
+        "contact": "03345455981",
+        "image": "",
+        "isSocialLogin": false,
+        "createdByAdmin": true,
+        "__v": 0
+      }
+    ],
+    "id": "02552b34-8039-491b-b08c-2995a4242bc8"
+  },
+  {
+    "groupType": "Type 1",
+    "basics": {
+      "name": "sad",
+      "description": "ada"
+    },
+    "owners": [
+      {
+        "_id": "6741a3d7ffc1d85f2a3c2738",
+        "fullName": "Tester User",
+        "email": "tester213@gmail.com",
+        "password": "$2b$10$GJUHQ.nh2OVkbe1vFOhjj.OsFyxLCvzQXh/z4pnwXo6EKyUM.mv9y",
+        "status": "active",
+        "address": "mills officer colony RWP",
+        "city": "Rawalpindi",
+        "contact": "03345455981",
+        "image": "",
+        "isSocialLogin": false,
+        "createdByAdmin": true,
+        "__v": 0
+      },
+      {
+        "_id": "6741a43affc1d85f2a3c273c",
+        "fullName": "tester2",
+        "email": "tester2@gmail.com",
+        "password": "$2b$10$xcfjXDBcBtmgCxfwTIwUC.YjmbXqPBon/KTq5UZNdQL/8/53WXRx6",
+        "status": "active",
+        "address": "testing address",
+        "city": "ISB",
+        "contact": "03345455952",
+        "image": "",
+        "isSocialLogin": false,
+        "createdByAdmin": true,
+        "__v": 0
+      }
+    ],
+    "members": [
+      {
+        "_id": "6740d5acf400759c6367d411",
+        "fullName": "Ahmad Ali Baig",
+        "email": "ahmadalibaig52@gmail.com",
+        "password": "$2a$10$ZS2cjOtYb3koxvTQzci9V.wuorot6Nul57PQI8Pdl1qlO15NOdlwW",
+        "status": "active",
+        "address": "mills officer colony House no 32",
+        "city": "Bhakkar",
+        "contact": "03345455956",
+        "image": "https://firebasestorage.googleapis.com/v0/b/sijm-74506.appspot.com/o/UserImagesetByAdmin%2Fahmadalibaig52%40gmail.com%2FprofileImage.jpg?alt=media&token=35a99c20-5d39-4e90-bfbc-a4f69375a7e3",
+        "isSocialLogin": false,
+        "createdByAdmin": true,
+        "__v": 0
+      },
+      {
+        "_id": "67434c4d51bfacc1cb14116a",
+        "fullName": "Talha Khan Ghauri",
+        "email": "ghaurit82@gmail.com",
+        "password": "$2a$10$u02zZVo6AfGvya1pdCIrouiD2KNlkmAoOH/RTfVVV8YKd55b2VACG",
+        "status": "active",
+        "address": "Raja Bazar Imperial Market Fawara chownk",
+        "city": "Rawalpindi",
+        "contact": "03345455968",
+        "image": "https://firebasestorage.googleapis.com/v0/b/sijm-74506.appspot.com/o/UserImagesetByAdmin%2Fghaurit82%40gmail.com%2FprofileImage.jpg?alt=media&token=cd5fd998-4fee-4524-bf83-434b5a815b5c",
+        "isSocialLogin": false,
+        "createdByAdmin": true,
+        "__v": 0,
+        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzQzNGM0ZDUxYmZhY2MxY2IxNDExNmEiLCJlbWFpbCI6ImdoYXVyaXQ4MkBnbWFpbC5jb20iLCJpYXQiOjE3MzI0NjM3NzEsImV4cCI6MTczMjU1MDE3MX0.Ynf0uylNVoQQGrbQYM3rPYPL7EDSAAdXstaf9opjoXQ",
+        "updatedAt": "2024-11-24T15:56:11.251Z"
+      }
+    ],
+    "id": "fdff0c33-ac71-4200-b143-6df8645e2077"
   }
 ]

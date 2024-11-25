@@ -17,7 +17,9 @@ const Dialog = ({ children, onClose }) => {
           onClick={onClose}
         >
           <IoMdClose />
+          
         </div>
+        
         {children}
       </div>
     </div>
@@ -30,6 +32,7 @@ const GroupFormComp = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [dialogType, setDialogType] = useState(null); // 'owners' or 'members'
   const [groupType, setGroupType] = useState("Type 1");
+  
   const [stepperFormData, setStepperFormData] = useState({
     groupType: "Type 1",
     basics: {
@@ -43,6 +46,11 @@ const GroupFormComp = () => {
   const dispatch = useDispatch();
 
   const router = useRouter();
+
+  const handleClose = () => {
+    setIsDialogOpen(false); // Close the modal
+    router.push("/group/ActiveGroups"); // Replace "/previousScreen" with the route you want to navigate back to
+  };
 
   useEffect(() => {
     dispatch(fetchUsers());
@@ -70,13 +78,13 @@ const GroupFormComp = () => {
             alert("Please fill out the fields");
           }
           break;
-        case 2:
-          if (stepperFormData.owners.length !== 0) {
-            setActiveStep((prevStep) => prevStep + 1);
-          } else {
-            alert("Please select at least 1 owner");
-          }
-          break;
+          case 2:
+            if (stepperFormData.owners.length > 0) {
+              setActiveStep((prevStep) => prevStep + 1);
+            } else {
+              alert("Please select at least 1 owner");
+            }
+            break;
         case 3:
           if (stepperFormData.members.length >= 2) {
             setActiveStep((prevStep) => prevStep + 1);
@@ -108,27 +116,20 @@ const GroupFormComp = () => {
 
   const handleUserSelection = (user, type) => {
     setStepperFormData((prevData) => {
-      if (type === "owners") {
-        // Allow only one owner; if another is selected, replace the previous one
-        return {
-          ...prevData,
-          owners: [user], // Always replace with the new selected owner
-        };
-      } else {
-        // Handle multiple members selection
-        const updatedList = prevData[type].includes(user)
-          ? prevData[type].filter((userObj) => userObj !== user)
-          : [...prevData[type], user];
-
-        return {
-          ...prevData,
-          [type]: updatedList,
-        };
-      }
+      const updatedList = prevData[type].includes(user)
+        ? prevData[type].filter((userObj) => userObj !== user)
+        : [...prevData[type], user];
+  
+      return {
+        ...prevData,
+        [type]: updatedList,
+      };
     });
   };
+  
 
   const handleCreateGroup = async () => {
+    
     const res = await dispatch(createGroup(stepperFormData));
     if (!res) {
       alert("failed to create group");
@@ -227,6 +228,7 @@ const GroupFormComp = () => {
       case 1:
         return (
           <div>
+            
             <h1 className="text-2xl font-bold">Set up the basics</h1>
             <p className="my-7">
               To get started, fill out the basic info about the group you'd like
@@ -404,6 +406,12 @@ const GroupFormComp = () => {
       </div>
       <div className="flex justify-between items-center py-4 w-full border-t border-gray-300 dark:border-neutral-800">
         <div className="flex gap-4">
+        <button
+          onClick={handleClose}
+          className="border bg-gray-600 text-white h-fit  px-3 py-2 rounded-lg"
+        >
+          Close
+        </button>
           <button
             onClick={handleBack}
             disabled={activeStep === 0}
@@ -443,6 +451,7 @@ const GroupFormComp = () => {
       </div>
       {isDialogOpen && (
         <Dialog onClose={() => setIsDialogOpen(false)}>
+          
           <ul className="w-fit h-[400px] overflow-y-auto relative">
             <div className="w-full flex items-center justify-between sticky top-0 bg-white dark:bg-neutral-800">
               <h1 className="text-2xl font-bold">

@@ -422,6 +422,7 @@ const ActiveGroup = () => {
 
   return (
     <div>
+      
       <NewHeader>
         <div className="flex flex-col px-4">
           <div className="mb-4 flex flex-col gap-4">
