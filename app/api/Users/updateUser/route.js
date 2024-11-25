@@ -1,15 +1,20 @@
 import dbConnect from "@/lib/connectdb/connection";
 import nodemailer from "nodemailer";
-import bcrypt from "bcryptjs"; // For hashing passwords
-import User from "@/lib/models/User"; // Assuming you have a User model
-
+import bcrypt from "bcryptjs";
+import User from "@/lib/models/User";
+import { ref, uploadString, getDownloadURL } from "firebase/storage";
+import { storage } from "@/lib/firebase/firebaseConfig";
 export async function POST(req) {
   try {
     const body = await req.json();
-    const { fullName, email, address, city, profileImage, password } = body;
+    const { fullName, email, address, city, image: uploadedImage, password } = body;
 
     // Connect to the database
     await dbConnect();
+    let imageUrl = uploadedImage || null;
+    // Initialize imageUrl as null
+    
+   
 
     // Generate hashed password
     const hashedPassword = password ? await bcrypt.hash(password, 10) : undefined;
@@ -19,14 +24,14 @@ export async function POST(req) {
       fullName,
       address,
       city,
-      profileImage,
-      ...(hashedPassword && { password: hashedPassword }), // Only update the password if provided
+      ...(imageUrl && { image: imageUrl }), // Update image URL if uploaded
+      ...(hashedPassword && { password: hashedPassword }), // Update password if provided
     };
 
     const updatedUser = await User.findOneAndUpdate(
       { email }, // Find the user by email
       updatedFields,
-      { new: true }
+      { new: true } // Return the updated document
     );
 
     if (!updatedUser) {
@@ -37,6 +42,7 @@ export async function POST(req) {
     }
 
     // Configure Nodemailer
+    if (password) {
     const transporter = nodemailer.createTransport({
       service: "Gmail", // Replace with your email service
       auth: {
@@ -89,10 +95,10 @@ export async function POST(req) {
         </div>
       `,
     };
-  
+    
     // Send the email
     await transporter.sendMail(mailOptions);
-
+  }
     return new Response(
       JSON.stringify({ message: "User updated and email sent successfully." }),
       { status: 200 }
@@ -104,4 +110,5 @@ export async function POST(req) {
       { status: 500 }
     );
   }
+  
 }

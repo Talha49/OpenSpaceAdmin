@@ -44,4 +44,57 @@
   .blue-button:hover {
     background-color: #0056b3; /* Darker blue on hover */
   }
-  
+  /* Hide the default checkbox */
+.custom-circle-checkbox {
+  appearance: none; /* Removes default checkbox styling */
+  -webkit-appearance: none; /* Compatibility for WebKit browsers */
+  width: 15px;
+  height: 15px;
+  border-radius: 50%; /* Makes it circular */
+  background-color: #fff; /* Default background */
+  cursor: pointer; /* Pointer cursor for better UX */
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Center the tick icon */
+  position: relative;
+  box-shadow: 0 0 0 1px #ccc; /* Light outline for visibility */
+  transition: background-color 0.3s ease; /* Smooth transition */
+}
+
+/* Checked state: blue background and white tick */
+.custom-circle-checkbox:checked {
+  background-color: #007bff; /* Blue background */
+  box-shadow: none; /* Remove shadow when checked */
+}
+
+.custom-circle-checkbox:checked::after {
+  content: "";
+  position: absolute;
+  width: 6px;
+  height: 10px;
+  border: solid white; /* White tick */
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg); /* Create tick shape */
+}
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5); /* Optional for dimming background */
+  z-index: 1000; /* Ensure it stays on top */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  position: relative;
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  width: 300px; /* Adjust as needed */
+  z-index: 1001; /* Ensures content is above the overlay */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}

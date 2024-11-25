@@ -1,6 +1,6 @@
 
 "use client";
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import UserUpdateDialog from "@/app/_components/UserDetailDilaog&Modal/UserUpdateDialog"; // Import the new component
 import {
   FaEllipsisH,
@@ -45,7 +45,7 @@ const Modal = ({ user }) => {
         <IoIosClose className="text-neutral-500" />
       </div>
       <ul>
-      <li
+        <li
           className="cursor-pointer hover:bg-gray-100 dark:hover:bg-neutral-700 text-neutral-500 p-2 rounded-md flex items-center gap-2"
           onClick={() => {
             dispatch(setSelectedUseruniquely(user));
@@ -88,20 +88,20 @@ const Modal = ({ user }) => {
 
 const TableRoute = () => {
   const tableColumns = [
-    { label: "Display Name", key: "fullName", width: "w-[200px]" },
-    { label: "Email", key: "email", width: "w-[250px]" },
-    { label: "Address", key: "address", width: "w-[300px]" },
-    { label: "City", key: "city", width: "w-[200px]" },
-    { label: "Contact", key: "contact", width: "w-[200px]" },
+    { label: "Display Name", key: "fullName", width: "200px" },
+    { label: "Email", key: "email", width: "250px" },
+    { label: "Address", key: "address", width: "300px" },
+    { label: "City", key: "city", width: "150px" },
+    { label: "Contact", key: "contact", width: "150px" },
   ];
+  
 
-
- const [isModalOpen, setIsModalOpen] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(null);
   console.log("isModalOpen:", isModalOpen);
 
-const toggleModal = (userId) => {
-  setIsModalOpen((prev) => (prev === userId ? null : userId));
-};
+  const toggleModal = (userId) => {
+    setIsModalOpen((prev) => (prev === userId ? null : userId));
+  };
   const [showInfoModal, setShowInfoModal] = useState(false);
   const [clickedUser, setClickedUser] = useState(null);
   const [sortConfig, setSortConfig] = useState({ key: "", direction: "" });
@@ -192,7 +192,7 @@ const toggleModal = (userId) => {
       const isSelected = prevSelected.some(
         (selectedUser) => selectedUser._id === user._id
       );
-  
+
       if (isSelected) {
         // Remove the user if already selected
         return prevSelected.filter(
@@ -203,16 +203,16 @@ const toggleModal = (userId) => {
         return [...prevSelected, user];
       }
     });
-  
-   
+
+
   };
-  
-  
+
+
   const handleSelectAll = () => {
     const allSelected = paginatedUsers.every((user) =>
       selectedUsers.some((selectedUser) => selectedUser._id === user._id)
     );
-  
+
     if (allSelected) {
       // Deselect all users on the current page
       setSelectedUsers((prevSelected) =>
@@ -231,11 +231,11 @@ const toggleModal = (userId) => {
         ),
       ]);
     }
-  
-  
+
+
   };
-  
- 
+
+
   const handleRowsPerPageChange = (e) => {
     setRowsPerPage(Number(e.target.value));
     setCurrentPage(1); // Reset to first page when rows per page changes
@@ -306,6 +306,23 @@ const toggleModal = (userId) => {
 
     XLSX.writeFile(workbook, filename);
   };
+  const modalRef = useRef(null);
+
+  //modal for the three dots modal
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (modalRef.current && !modalRef.current.contains(event.target)) {
+        setIsModalOpen(null); // Close modal
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
 
   return (
     <div className="">
@@ -428,14 +445,15 @@ const toggleModal = (userId) => {
         </div>
       )}
 
-      <div className="pl-4 pr-2 relative shadow-md rounded-lg">
+      <div className="pl-4 pr-2 relative shadow-md rounded-lg ">
         <NewTableComponent
           tableColumns={[
             isSelectable || isGroupSelection ? (
 
-              <th className={`flex items-center justify-between w-[50px] `}>
+              <th className="flex items-center justify-between w-[50px]">
                 <input
                   type="checkbox"
+                  className="custom-circle-checkbox"
                   checked={
                     paginatedUsers.length > 0 &&
                     selectedUsers.length === paginatedUsers.length
@@ -443,10 +461,12 @@ const toggleModal = (userId) => {
                   onChange={handleSelectAll}
                 />
               </th>
+
             ) : null,
             ...tableColumns.map((col) => (
               <div
                 key={col.key}
+                style={{ width: col.width }} // Apply consistent width
                 className="flex items-center justify-between cursor-pointer w-full "
                 onClick={() => handleSort(col.key)}
               >
@@ -475,124 +495,123 @@ const toggleModal = (userId) => {
           handleRowsPerPageChange={handleRowsPerPageChange}
 
         >
-         {paginatedUsers.map((user, rowIndex) => (
-  <tr
-    key={user.id}
-    className="odd:bg-gray-100 even:bg-white dark:odd:bg-neutral-800 dark:even:bg-neutral-900 cursor-pointer hover:bg-gray-300 dark:hover:bg-neutral-600 hover:text-blue-700 transition-all duration-200 h-[50px]"
-  >
-    {isSelectable || isGroupSelection ? (
-      <td>
-        <input
-          type="checkbox"
-          className="mx-2"
-          checked={selectedUsers.some(
-            (selectedUser) => selectedUser._id === user._id
-          )}
-          onChange={(e) => {
-            e.stopPropagation(); // Prevent triggering row click
-            handleCheckboxChange(user);
-          }}
-        />
-      </td>
-    ) : null}
-    <td className="p-3 text-gray-700 dark:text-neutral-400 w-[200px]">
-      <div className="flex items-center justify-between relative">
-        <span className="hover:text-blue-600">{user.fullName}</span>
-        <span
-          onClick={(e) => {
-            e.stopPropagation();
-            handleIconClick(rowIndex, user);
-          }}
-          className="cursor-pointer relative"
-        >
-          <FaEllipsisH className="rotate-90 text-blue-600" />
-          {isModalOpen === rowIndex && (
-            <div className="absolute top-full left-0 mt-2 w-64 bg-white dark:bg-neutral-950 border border-gray-300 dark:border-neutral-800 rounded-lg shadow-lg z-50">
-              {/* Modal Header */}
-              <div className="flex justify-end p-2">
-                <IoIosClose
-                  className="text-gray-500 cursor-pointer hover:text-gray-700"
-                  onClick={() => setIsModalOpen(null)}
-                />
-              </div>
-              {/* Modal Content */}
-              <ul className="flex flex-col gap-2 p-2">
-              <li
-                onClick={() => handleOpenUpdateModal(user)}
-                className="cursor-pointer flex items-center gap-2 text-gray-700 hover:bg-gray-100 dark:hover:bg-neutral-700 p-2 rounded-md"
+          {paginatedUsers.map((user, rowIndex) => (
+            <tr
+              key={user.id}
+              className="odd:bg-gray-100 even:bg-white dark:odd:bg-neutral-800 dark:even:bg-neutral-900 cursor-pointer hover:bg-gray-300 dark:hover:bg-neutral-600 hover:text-blue-700 transition-all duration-200 h-[50px]"
+            >
+              {isSelectable || isGroupSelection ? (
+                <td>
+                  <input
+                    type="checkbox"
+
+                    className="mx-2 custom-circle-checkbox"
+                    checked={selectedUsers.some(
+                      (selectedUser) => selectedUser._id === user._id
+                    )}
+                    onChange={(e) => {
+                      e.stopPropagation(); // Prevent triggering row click
+                      handleCheckboxChange(user);
+                    }}
+                  />
+                </td>
+              ) : null}
+              <td className="p-3 text-gray-700 dark:text-neutral-400 w-[200px]">
+                <div className="flex items-center justify-between relative">
+                  <span className="hover:text-blue-600">{user.fullName}</span>
+                  <span
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleIconClick(rowIndex, user);
+                    }}
+                    className="cursor-pointer relative"
+                  >
+                    <FaEllipsisH className="rotate-90 text-blue-600" />
+                    {isModalOpen === rowIndex && (
+                      <div
+                        ref={(ref) => (modalRef.current = ref)} // For detecting clicks outside
+                        className="absolute top-full left-0 mt-2 w-64 bg-white dark:bg-neutral-950 border border-gray-300 dark:border-neutral-800 rounded-lg shadow-lg z-50"
+
+                      >
+                        <ul className="flex flex-col gap-2 p-2">
+                          <li
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleOpenUpdateModal(user);
+                              setIsModalOpen(null); // Close the modal after selection
+                            }}
+                            className="cursor-pointer flex items-center gap-2 text-gray-700 hover:bg-gray-100 dark:hover:bg-neutral-700 p-2 rounded-md"
+                          >
+                            <MdEventNote className="text-lg text-gray-500" />
+                            <span>Manage username & password</span>
+                          </li>
+                          <li
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              console.log("Manage Groups clicked"); // Placeholder for your action
+                              setIsModalOpen(null);
+                            }}
+                            className="cursor-pointer flex items-center gap-2 text-gray-700 hover:bg-gray-100 dark:hover:bg-neutral-700 p-2 rounded-md"
+                          >
+                            <MdManageAccounts className="text-lg text-gray-500" />
+                            <span>Manage Groups</span>
+                          </li>
+                          <li
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setShowInfoModal(false);
+                              setTimeout(() => {
+                                setClickedUser(user);
+                                setShowInfoModal(true);
+                              }, 0);
+                              setIsModalOpen(null);
+                            }}
+                            className="cursor-pointer flex items-center gap-2 text-gray-700 hover:bg-gray-100 dark:hover:bg-neutral-700 p-2 rounded-md"
+                          >
+                            <FaInfoCircle className="text-lg text-gray-500" />
+                            <span>View Details</span>
+                          </li>
+                        </ul>
+                      </div>
+                    )}
+                  </span>
+                </div>
+              </td>
+              <td className="p-3 text-gray-700 dark:text-neutral-400 w-[250px]">
+                {user.email}
+              </td>
+              <td
+                className="p-3 text-gray-700 dark:text-neutral-400 max-w-[300px] truncate"
+                title={user.address}
               >
-                 <MdEventNote className="text-lg text-gray-500" />
-                 <span>Manage username & password</span>
-              </li>
-                <li className="cursor-pointer flex items-center gap-2 text-gray-700 hover:bg-gray-100 dark:hover:bg-neutral-700 p-2 rounded-md">
-                  <MdManageAccounts className="text-lg text-gray-500" />
-                  <span>Manage Groups</span>
-                </li>
-                {/* <li
-                  className="cursor-pointer flex items-center gap-2 text-gray-700 hover:bg-gray-100 dark:hover:bg-neutral-700 p-2 rounded-md"
-                  onClick={() => {
-                    dispatch(setSelectedUseruniquely(user));
-                    router.push("/users");
-                  }}
-                >
-                  <MdEventNote className="text-lg text-gray-500" />
-                  <span>Manage username and password</span>
-                </li> */}
-                <li
-                  className="cursor-pointer flex items-center gap-2 text-gray-700 hover:bg-gray-100 dark:hover:bg-neutral-700 p-2 rounded-md"
-                  onClick={() => {
-                    setShowInfoModal(false); // Close current modal
-                    setTimeout(() => {
-                      setClickedUser(user); // Re-set user after resetting
-                      setShowInfoModal(true); // Open the details modal again
-                    }, ); // Use a brief delay to ensure state change
-                    setIsModalOpen(null); // Close the action modal
-                  }}
-                >
-                  <FaInfoCircle className="text-lg text-gray-500" />
-                  <span>View Details</span>
-                </li>
-              </ul>
-            </div>
+                {user.address}
+              </td>
+              <td className="p-3 text-gray-700 dark:text-neutral-400 w-[200px]">
+                {user.city}
+              </td>
+              <td className="p-3 text-gray-700 dark:text-neutral-400 w-[200px]">
+                {user.contact}
+              </td>
+            </tr>
+          ))}
+
+          {/* User Details Modal */}
+          {showInfoModal && (
+            <UserDetailDialog
+              user={clickedUser} // Pass the selected user to the dialog
+              onClose={() => setShowInfoModal(false)} // Close handler
+            />
           )}
-        </span>
-      </div>
-    </td>
-    <td className="p-3 text-gray-700 dark:text-neutral-400 w-[250px]">
-      {user.email}
-    </td>
-    <td
-      className="p-3 text-gray-700 dark:text-neutral-400 max-w-[300px] truncate"
-      title={user.address}
-    >
-      {user.address}
-    </td>
-    <td className="p-3 text-gray-700 dark:text-neutral-400 w-[200px]">
-      {user.city}
-    </td>
-    <td className="p-3 text-gray-700 dark:text-neutral-400 w-[200px]">
-      {user.contact}
-    </td>
-  </tr>
-))}
-
-{/* User Details Modal */}
-{showInfoModal && (
-  <UserDetailDialog
-    user={clickedUser} // Pass the selected user to the dialog
-    onClose={() => setShowInfoModal(false)} // Close handler
-  />
-)}
 
 
-      {/* Update User Modal */}
-      {isUpdateModalOpen && (
-        <UserUpdateDialog
-          user={selectedUser}
-          onClose={() => setIsUpdateModalOpen(false)}
-          onSave={handleSaveUserDetails}
-        />
-      )}
+          {/* Update User Modal */}
+          {isUpdateModalOpen && (
+            <UserUpdateDialog
+              user={selectedUser}
+              onClose={() => setIsUpdateModalOpen(false)}
+              onSave={handleSaveUserDetails}
+            />
+          )}
         </NewTableComponent>
         <UserDetailDialog
           onClose={() => setShowInfoModal(false)}
@@ -606,7 +625,7 @@ const toggleModal = (userId) => {
         )}
       </div>
     </div>
-    
+
   );
 };
 

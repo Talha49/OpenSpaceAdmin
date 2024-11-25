@@ -4,7 +4,8 @@ import React, { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import { Transition } from "@headlessui/react";
 import { FaTimes, FaSyncAlt, FaEdit, FaEyeSlash, FaEye } from "react-icons/fa";
-
+import { storage } from "@/lib/firebase/firebaseConfig";
+import { ref, uploadString, getDownloadURL } from "firebase/storage"
 const UserUpdateDialog = ({ user, onClose, onSave }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [formData, setFormData] = useState({ ...user });
@@ -14,7 +15,14 @@ const UserUpdateDialog = ({ user, onClose, onSave }) => {
     const [showOldPassword, setShowOldPassword] = useState(false); // Toggle visibility of old password
     const [newPassword, setNewPassword] = useState(""); // Generated new password
     const [isSaving, setIsSaving] = useState(false); // Track saving state
+    const [users, setUsers] = useState([]); // State for storing all users
 
+    useEffect(() => {
+        if (formData.email) {
+            handleRefresh(); // Fetch active user data on mount
+        }
+    }, [formData.email]);
+    
     useEffect(() => {
         if (user) {
             setIsOpen(true);
@@ -39,60 +47,130 @@ const UserUpdateDialog = ({ user, onClose, onSave }) => {
 
     const handleCancel = () => {
         setFormData({ ...user }); // Reset form data to original user data
+        setNewPassword(""); // Clear the generated password
         setProfileImage(user.profileImage || null); // Reset image
         setIsEditable(false); // Disable editing
     };
 
+    //handle save with api HIT 
     const handleSave = async () => {
         setIsSaving(true); // Show "Saving..." on Save button
         try {
+            // Step 1: Upload the image to Firebase and get the URL
+            const imageUrl = await uploadImageToFirebase();
+
+            // Step 2: Use the new image URL (or fallback to existing profileImage if no new image uploaded)
+            const updatedProfileImage = imageUrl || profileImage;
+
             const response = await fetch("/api/Users/updateUser", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     ...formData,
-                    profileImage,
+                    image: updatedProfileImage, // Send the Firebase image URL
                     password: newPassword || undefined, // Send the new password if generated
                 }),
             });
 
             if (!response.ok) {
                 const errorData = await response.json();
-                throw new Error(errorData.message || "Failed to update user.");
-            }
+                // Parse the response JSON
 
-            console.log("User updated and email sent successfully.");
-            setIsEditable(false); // Disable editing
+                throw new Error(errorData.message || "Failed to update user.");
+
+            }
+            const result = await response.json();
+            console.log("API Response Data:", result);
+            if (result && result.user) {
+                setProfileImage(result.user.image); // Update the displayed profile image
+                setFormData(result.user); // Update the form with the latest user details
+                console.log("User updated and email sent successfully.");
+                setIsEditable(false); // Disable editing
+            }
         } catch (error) {
             console.error("Error saving user details:", error);
             alert("An error occurred while saving. Please try again.");
         } finally {
             setIsSaving(false); // Re-enable Save button
+            setIsEditable(false); // Exit edit mode if the user confirms
         }
     };
 
 
 
-
+    //handle image upload and also handle image upload to firebase
     const handleImageUpload = (e) => {
         const file = e.target.files[0];
         if (file) {
             const reader = new FileReader();
             reader.onloadend = () => {
-                setProfileImage(reader.result); // Set the new profile image preview
+                setProfileImage(reader.result); // Update state with base64 image
             };
-            reader.readAsDataURL(file);
+            reader.readAsDataURL(file); // Read file as base64
+        }
+    };
+    const uploadImageToFirebase = async () => {
+        // Skip upload if no new image is selected or the image is already a URL
+        if (!profileImage || !profileImage.startsWith("data:image")) {
+            console.log("No new base64 image to upload.");
+            return null; // Return null to indicate no new upload occurred
+        }
+
+        try {
+            const storageRef = ref(storage, `UserImagesetByAdmin/${formData.email}/profileImage.jpg`);
+            await uploadString(storageRef, profileImage, "data_url");
+            const imageUrl = await getDownloadURL(storageRef);
+            console.log("Uploaded image URL:", imageUrl);
+            return imageUrl;
+        } catch (error) {
+            console.error("Error uploading image to Firebase:", error);
+            throw error; // Let the caller handle the error
         }
     };
 
-    const handleImageEditClick = () => {
-        fileInputRef.current.click(); // Trigger file input click
-    };
 
-    const handleRefresh = () => {
-        console.log("Refreshing user details...");
-        // Implement refresh logic here
+    const handleImageEditClick = () => {
+        if (fileInputRef.current) {
+            fileInputRef.current.click(); // Trigger file input click
+        }
     };
+    
+    const handleRefresh = async () => {
+        try {
+            const response = await fetch("/api/Users/getUser"); // Fetch all active users
+            if (!response.ok) {
+                throw new Error("Failed to fetch users.");
+            }
+    
+            const users = await response.json(); // Parse the JSON response
+            console.log("Fetched active users:", users);
+    
+            // Find the current user in the fetched users list
+            const currentUser = users.find((u) => u.email === formData.email);
+    
+            if (!currentUser) {
+                throw new Error("Current user not found among active users.");
+            }
+    
+            // Update state with the current user's data
+            setFormData({
+                fullName: currentUser.fullName || "",
+                email: currentUser.email || "",
+                address: currentUser.address || "",
+                city: currentUser.city || "",
+                image: currentUser.image || "/images/avatar.png",
+            });
+    
+            setProfileImage(currentUser.image || "/images/avatar.png");
+        } catch (error) {
+            console.error("Error refreshing active user details:", error);
+            alert("Failed to refresh user details. Please try again.");
+        }
+    };
+    
+    
+    
+    
     const generateRandomPassword = () => {
         const generatedPassword = Math.random().toString(36).slice(-8); // Generate an 8-character password
         setNewPassword(generatedPassword);
@@ -136,12 +214,13 @@ const UserUpdateDialog = ({ user, onClose, onSave }) => {
                     <div className="flex items-center gap-4">
                         <div className="relative w-16 h-16">
                             <Image
-                                src={profileImage || "/images/avatar.png"}
+                                src={profileImage || user.image || "/images/avatar.png"} // Display user.image initially
                                 alt={`${user.fullName}'s Profile`}
                                 layout="fill"
                                 objectFit="cover"
                                 className="rounded-full"
                             />
+
                             {isEditable && (
                                 <button
                                     onClick={handleImageEditClick}

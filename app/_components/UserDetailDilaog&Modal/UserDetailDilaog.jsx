@@ -64,7 +64,7 @@ const UserDetailDialog = ({ user, onClose }) => {
         <div className="text-center p-6 border-b border-neutral-300 dark:border-neutral-800">
           <div className="relative w-24 h-24 mx-auto mb-4">
             <Image
-              src={user.profileImage || "/images/avatar.png"} // Replace with default image
+              src={user.image || "/images/avatar.png"} // Replace with default image
               alt={`${user.fullName}'s Profile`}
               layout="fill"
               objectFit="cover"

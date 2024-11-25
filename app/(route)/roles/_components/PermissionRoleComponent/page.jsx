@@ -160,9 +160,9 @@ const PermissionRolesComponent = () => {
                   }}
                 >
                   <IoIosAddCircleOutline className="text-xl text-blue-600" />
-                  <span>Create New</span>
+                  <span>Create New Role</span>
                 </p>
-                <p
+                {/* <p
                   className="flex items-center gap-1 hover:bg-blue-200 dark:hover:bg-neutral-800 p-1 rounded cursor-pointer text-sm transition-all"
                   onClick={() => {
                     setIsOpen(true);
@@ -170,7 +170,7 @@ const PermissionRolesComponent = () => {
                 >
                   <IoIosAddCircleOutline className="text-xl text-blue-600" />
                   <span>Create New Role for External User</span>
-                </p>
+                </p> */}
               </>
             }
             currentPage={currentPage}
