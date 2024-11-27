@@ -9,6 +9,7 @@ import {
   FaFileExport,
   FaFilter,
   FaSort,
+  FaSpinner,
   FaUserFriends,
 } from "react-icons/fa";
 import NewHeader from "@/app/_HOC/NewHeader/NewHeader";
@@ -30,6 +31,7 @@ const DeletedUsers = () => {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [filterCriteria, setFilterCriteria] = useState({});
+  const [isLoading, setIsLoading] = useState(true);  // Loading state
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const status = useSelector((state) => state.user.status); // Fetch status (idle, loading, succeeded, etc.)
   const handleOpenFilterModal = () => setIsFilterModalOpen(true);
@@ -39,25 +41,21 @@ const DeletedUsers = () => {
     setCurrentPage(1); // Reset to first page when filter is applied
     handleCloseFilterModal();
   };
+  // Fetch deleted users on component mount
   useEffect(() => {
-    if (status === "idle") {
-      dispatch(fetchDeletedUsers())
-        .unwrap()
-        .then((data) => {
-          console.log("🎉 Successfully fetched deleted users:", data);
-          setDeletedUsers(data); // Update the state with fetched data
-        })
-        .catch((error) => {
-          console.error("❌ Error fetching deleted users:", error.message);
-        });
-    }
-  }, [dispatch, status]);
+    setIsLoading(true); // Set loading to true when fetching starts
+    dispatch(fetchDeletedUsers()) // Dispatch the fetchDeletedUsers action immediately on mount
+      .unwrap() // Unwrap the promise to handle success/failure
+      .then((data) => {
+        console.log("🎉 Successfully fetched deleted users:", data);
+        setDeletedUsers(data); // Update state with fetched data
+      })
+      .catch((error) => {
+        console.error("❌ Error fetching deleted users:", error.message);
+      });
+    setIsLoading(false); // Set loading to false after fetch is complete
+  }, [dispatch]);  // Only depend on dispatch, not on status
 
-  //redux 
-  useEffect(() => {
-    // Fetch groups when the component mounts
-    dispatch(fetchDeletedUsers);
-  }, [dispatch]);
 
   const handleRowsPerPageChange = (e) => {
     setRowsPerPage(Number(e.target.value));
@@ -254,6 +252,11 @@ const DeletedUsers = () => {
         </div>
       </NewHeader>
       <div className="pl-4 pr-2">
+        {isLoading && (
+          <div className="flex justify-center items-center ">
+            <FaSpinner className="animate-spin text-blue-500" size={20} />
+          </div>
+        )}
         <NewTableComponent
           tableColumns={tableColumns.map((col) => (
             <div
@@ -274,7 +277,7 @@ const DeletedUsers = () => {
           {paginatedDeletedUsers.map((user) => (
             <tr
               key={user.id}
-              className="border-b dark:border-neutral-700 cursor-pointer relative bg-gray-100 dark:bg-neutral-800 hover:bg-gray-200"
+              className="odd:bg-gray-100 even:bg-white dark:odd:bg-neutral-800 dark:even:bg-neutral-900 cursor-pointer hover:bg-gray-300 dark:hover:bg-neutral-600 hover:text-blue-700 transition-all duration-200 "
             >
               <td className="p-3 text-gray-700 dark:text-neutral-400">
                 <div className="flex items-center justify-between ">

@@ -11,6 +11,7 @@ import {
   FaFileExport,
   FaFilter,
   FaInfoCircle,
+  FaSpinner,
 } from "react-icons/fa";
 import NewTableComponent from "@/app/_HOC/Table/NewTableComponent";
 import { MdDelete, MdEventNote, MdManageAccounts } from "react-icons/md";
@@ -122,7 +123,7 @@ const TableRoute = () => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false); // Declare state for the modal
   const [selectedUser, setSelectedUser] = useState(null); // State for the selected user
-
+  const [isLoading, setIsLoading] = useState(true);  // Loading state
   const handleOpenUpdateModal = (user) => {
     setSelectedUser(user); // Set the selected user
     setIsUpdateModalOpen(true); // Open the update modal
@@ -137,7 +138,11 @@ const TableRoute = () => {
   const router = useRouter();
 
   useEffect(() => {
-    dispatch(fetchUsers());
+    setIsLoading(true); // Set loading to true when fetching starts
+    dispatch(fetchUsers())
+      .finally(() => {
+        setIsLoading(false); // Set loading to false after fetch is complete
+      });
   }, [dispatch]);
 
   const handleIconClick = (rowIndex) => {
@@ -250,7 +255,7 @@ const TableRoute = () => {
     {
       icon: <FaUserFriends />,
       label: "Group",
-      
+
     },
     {
       icon: <FaShieldAlt />,
@@ -259,6 +264,7 @@ const TableRoute = () => {
     {
       icon: <MdDelete />,
       label: "Delete User",
+
     },
     {
       icon: <IoMdRefresh />,
@@ -326,12 +332,31 @@ const TableRoute = () => {
 
   const handleCancel = () => {
     // Reset the selected users state
-   
-    setSelectedUsers([]); 
+
+    setSelectedUsers([]);
     setIsGroupSelection(false); // Assuming you're using local state for isSelectable
 
     // Redirect the user
+
+  };
+
+  // Inside your TableRoute component
+
+  const handleManageGroupsClick = (user) => {
+    if (!user || !user._id) {
+      console.error("Invalid user or user ID");
+      return;
+    }
   
+    try {
+      const params = new URLSearchParams();
+      params.append('userId', user._id);
+  
+      const path = `/users/manage-groups?${params.toString()}`;
+      router.push(path);
+    } catch (error) {
+      console.error("Error navigating to manage groups:", error);
+    }
   };
   
   return (
@@ -419,18 +444,31 @@ const TableRoute = () => {
           </button>
           <button
             className="bg-red-500 px-3 py-2 rounded-lg"
-            onClick={() => {
+            onClick={async () => {
               if (selectedUsers.length === 0) {
                 alert("Please select users to delete.");
               } else {
-                selectedUsers.forEach((user) => {
-                  dispatch(deleteUserAsync(user.id)); // Dispatch delete action for selected users
-                  dispatch(storeDeletedUser(user));
-                  setSelectedUsers([]); // Clear selection after deletion
-                  setIsSelectable(false); // Exit selection mode
-                  dispatch(fetchUsers());
-                  router.push("/users/active");
-                });
+                // Set loading state before deletion (optional)
+                setIsLoading(true); // Optionally show a loading state during the deletion process
+
+                // Loop through selected users and delete them
+                for (const user of selectedUsers) {
+                  await dispatch(deleteUserAsync(user.id)); // Await deletion of user
+                  dispatch(storeDeletedUser(user)); // Store the deleted user
+                }
+
+                // Clear selection after deletion
+                setSelectedUsers([]);
+                setIsSelectable(false); // Exit selection mode
+
+                // After all deletions are done, refresh the users list
+                await dispatch(fetchUsers());
+
+                // Navigate to the active users page
+                router.push("/users/active");
+
+                // Set loading state to false after deletion and fetch are done
+                setIsLoading(false);
               }
             }}
           >
@@ -456,12 +494,12 @@ const TableRoute = () => {
             Group
           </button>
           <button type="button" // Prevent the form from submitting
-              className="px-3 rounded-lg ml-1 py-2 bg-gray-400 text-white  hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              onClick={handleCancel} // Use onClick instead of onSubmit
-                >
-                  
-                  Cancel
-                </button>
+            className="px-3 rounded-lg ml-1 py-2 bg-gray-400 text-white  hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            onClick={handleCancel} // Use onClick instead of onSubmit
+          >
+
+            Cancel
+          </button>
         </div>
       )}
 
@@ -505,6 +543,12 @@ const TableRoute = () => {
               >
                 <IoMdPersonAdd className="text-blue-500" />
                 <span className="text-sm">Add User</span>
+                {/* Loader above the table */}
+                {isLoading && (
+                  <div className="flex justify-center items-center ">
+                    <FaSpinner className="animate-spin text-blue-500" size={20} />
+                  </div>
+                )}
               </button>
             </>
           }
@@ -569,7 +613,7 @@ const TableRoute = () => {
                             onClick={(e) => {
                               e.stopPropagation();
                               console.log("Manage Groups clicked"); // Placeholder for your action
-                              setIsModalOpen(null);
+                              handleManageGroupsClick(user);  // Navigate to Manage Groups
                             }}
                             className="cursor-pointer flex items-center gap-2 text-gray-700 hover:bg-gray-100 dark:hover:bg-neutral-700 p-2 rounded-md"
                           >

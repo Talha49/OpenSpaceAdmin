@@ -1,4 +1,5 @@
 "use client";
+import DeleteGroupDetailDialog from "@/app/_components/DeleteGroupDetailDialog/DeleteGroupDetailDialog";
 import GroupDetailDialog from "@/app/_components/GroupDetailDialog/GroupDetailDialog";
 import GenericFilterModal from "@/app/_components/UserDetailDilaog&Modal/GerenicFilterModal";
 import GetDeleteFilterModal from "@/app/_components/UserDetailDilaog&Modal/GetDeleteFilterModal";
@@ -6,7 +7,7 @@ import NewHeader from "@/app/_HOC/NewHeader/NewHeader";
 import NewTableComponent from "@/app/_HOC/Table/NewTableComponent";
 import { fetchDeletedGroups } from "@/lib/Feature/GroupSlice";
 import React, { useState, useEffect, useMemo } from "react";
-import { FaFileExport, FaUserFriends, FaSort, FaFilter } from "react-icons/fa";
+import { FaFileExport, FaUserFriends, FaSort, FaFilter, FaSpinner } from "react-icons/fa";
 import { IoMdRefresh } from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -14,6 +15,10 @@ const headerItems = [
   {
     icon: <IoMdRefresh />,
     label: "Refresh",
+    onClick:()=>
+    {
+      fetchDeletedGroups();
+    },
   },
   {
     icon: <FaFileExport />,
@@ -24,19 +29,19 @@ const headerItems = [
 const DeleteGroupComponent = () => {
   const dispatch = useDispatch();
   const [currentPage, setCurrentPage] = useState(1);
+  const [deletedGroups, setDeletedGroups] = useState([]);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [isOpen, setIsOpen] = useState(false);
   const [clickedGroup, setClickedGroup] = useState(null);
   const [filterCriteria, setFilterCriteria] = useState({ groupType: "" });
+    const [isLoading, setIsLoading] = useState(true);  // Loading state
   const [sortConfig, setSortConfig] = useState({
     key: null,
     direction: "ascending",
   });
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const deletedGroups = useSelector(
-    (state) => state.group.deletedGroups.deletedGroups
-  );
+ 
 
   const handleOpenFilterModal = () => setIsFilterModalOpen(true);
   const handleCloseFilterModal = () => setIsFilterModalOpen(false);
@@ -51,10 +56,28 @@ const DeleteGroupComponent = () => {
     setRowsPerPage(Number(e.target.value));
     setCurrentPage(1); // Reset to first page when rows per page changes
   };
-
   useEffect(() => {
-    dispatch(fetchDeletedGroups());
-  }, [dispatch]);
+    const fetchDeletedGroups = async () => {
+      setIsLoading(true); // Set loading to true when fetching starts
+      try {
+        const response = await fetch('/api/Groups/getDeletedGroups'); // Assuming this is your API endpoint
+        const data = await response.json();
+        console.log('Fetched Deleted Groups:', data); // Log the data to check
+
+        if (data && Array.isArray(data)) {
+          setDeletedGroups(data);
+        } else {
+          console.error('No valid data returned');
+        }
+      } catch (error) {
+        console.error('Error fetching deleted groups:', error);
+      }
+      setIsLoading(false); // Set loading to false after fetch is complete
+    };
+
+    fetchDeletedGroups();
+  }, []);
+
 
   console.log("Deleted Groups:", deletedGroups);
 
@@ -71,7 +94,7 @@ const DeleteGroupComponent = () => {
 
     // Apply search filter
     result = result.filter((group) =>
-      group.basics.name.toLowerCase().includes(searchTerm.toLowerCase())
+      group.groupName.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     // Apply type filter
@@ -85,26 +108,35 @@ const DeleteGroupComponent = () => {
     if (sortConfig.key !== null) {
       result.sort((a, b) => {
         let aValue, bValue;
+
         switch (sortConfig.key) {
           case "fullName":
-            aValue = a.basics.name.toLowerCase();
-            bValue = b.basics.name.toLowerCase();
+            // Ensure 'groupName' exists before trying to access it
+            aValue = a.groupName ? a.groupName.toLowerCase() : "";
+            bValue = b.groupName ? b.groupName.toLowerCase() : "";
             break;
           case "owner":
-            aValue = a.owners && a.owners[0]?.fullName.toLowerCase();
-            bValue = b.owners && b.owners[0]?.fullName.toLowerCase();
+            // Ensure 'owners' array exists and has at least one owner
+            aValue = a.groupOwrnerID && a.groupOwrnerID[0]?.fullName
+              ? a.groupOwrnerID[0]?.fullName.toLowerCase()
+              : "";
+            bValue = b.groupOwrnerID && b.groupOwrnerID[0]?.fullName
+              ? b.groupOwrnerID[0]?.fullName.toLowerCase()
+              : "";
             break;
           case "type":
-            aValue = a.groupType.toLowerCase();
-            bValue = b.groupType.toLowerCase();
+            // Ensure 'groupType' exists before trying to access it
+            aValue = a.groupType ? a.groupType.toLowerCase() : "";
+            bValue = b.groupType ? b.groupType.toLowerCase() : "";
             break;
           case "members":
-            aValue = a.members.length;
-            bValue = b.members.length;
+            // Ensure 'groupTargetID' exists and has a length
+            aValue = a.groupTargetID ? a.groupTargetID.length : 0;
+            bValue = b.groupTargetID ? b.groupTargetID.length : 0;
             break;
           default:
-            aValue = a[sortConfig.key];
-            bValue = b[sortConfig.key];
+            aValue = a[sortConfig.key] || "";
+            bValue = b[sortConfig.key] || "";
         }
 
         if (aValue < bValue) {
@@ -120,6 +152,7 @@ const DeleteGroupComponent = () => {
     return result;
   }, [deletedGroups, searchTerm, filterCriteria, sortConfig]);
 
+
   // Pagination Logic
   const paginatedGroups = filteredAndSortedGroups.slice(
     (currentPage - 1) * rowsPerPage,
@@ -127,10 +160,10 @@ const DeleteGroupComponent = () => {
   );
 
   const tableColumns = [
-    { label: "Group Name", key: "fullName" },
-    { label: "Owner", key: "owner" },
-    { label: "Type", key: "type" },
-    { label: "Members", key: "members" },
+    { label: "Group Name", key: "fullName", width: "250px" },
+    { label: "Owner", key: "owner", width: "300px" },
+    { label: "Type", key: "type", width: "200px" },
+    { label: "Members", key: "members", width: "200px" },
   ];
 
   return (
@@ -180,16 +213,24 @@ const DeleteGroupComponent = () => {
       </NewHeader>
 
       <div className="pl-4 pr-2">
+      {isLoading && (
+        <div className="flex justify-center items-center ">
+          <FaSpinner className="animate-spin text-blue-500" size={20} />
+        </div>
+      )}
         <NewTableComponent
           tableColumns={tableColumns.map((col) => (
             <div
               key={col.key}
+              style={{ width: col.width }} // Apply consistent width
               className="flex items-center justify-between cursor-pointer w-full"
             >
               <span>{col.label}</span>
               <FaSort className="ml-1" onClick={() => handleSort(col.key)} />
             </div>
+            
           ))}
+          
           rowsPerPage={rowsPerPage}
           totalRows={filteredAndSortedGroups.length}
           currentPage={currentPage}
@@ -197,24 +238,27 @@ const DeleteGroupComponent = () => {
           handleRowsPerPageChange={handleRowsPerPageChange}
         >
           {paginatedGroups.map((group) => (
+            
             <tr
               key={group.id}
-              className="border-b dark:border-neutral-700 cursor-pointer relative bg-gray-100 dark:bg-neutral-800 hover:bg-gray-200"
+               className="odd:bg-gray-100 even:bg-white dark:odd:bg-neutral-800 dark:even:bg-neutral-900 cursor-pointer hover:bg-gray-300 dark:hover:bg-neutral-600 hover:text-blue-700 transition-all duration-200 "
               onClick={() => {
                 setIsOpen(true);
                 setClickedGroup(group);
               }}
             >
-              <td className="p-3 text-gray-700 dark:text-neutral-500">{group?.basics.name}</td>
-              <td className="p-3 text-gray-700 dark:text-neutral-500">
-                {group?.owners && group.owners[0]?.fullName}
+               <td className="p-3 text-gray-700 dark:text-neutral-400 w-[250]">{group?.groupName}</td>
+              <td className="p-3 text-gray-700 dark:text-neutral-400 w-[300]">
+                {group?.groupOwrnerID?.map((owner) => owner.fullName).join(", ")}
               </td>
-              <td className="p-3 text-gray-700 dark:text-neutral-500">{group?.groupType}</td>
-              <td className="p-3 text-gray-700 dark:text-neutral-500">{group?.members.length}</td>
+              <td className="p-3 text-gray-700 dark:text-neutral-400 w-[200]">{group?.groupType}</td>
+              <td className="p-3 text-gray-700 dark:text-neutral-400 w-[200]">
+                {group?.groupTargetID?.length || 0}
+              </td>
             </tr>
           ))}
         </NewTableComponent>
-        <GroupDetailDialog
+        <DeleteGroupDetailDialog
           isOpen={isOpen}
           onClose={() => {
             setIsOpen(false);
@@ -224,9 +268,11 @@ const DeleteGroupComponent = () => {
 
         {isFilterModalOpen && (
           <GetDeleteFilterModal
+          
             onClose={handleCloseFilterModal}
             onApplyFilter={handleApplyFilter}
           />
+          
         )}
 
         {/* {

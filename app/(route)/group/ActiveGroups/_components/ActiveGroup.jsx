@@ -246,6 +246,7 @@ import {
   FaSort,
   FaFilter,
   FaUsers,
+  FaSpinner,
 } from "react-icons/fa";
 import { IoMdRefresh } from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
@@ -268,6 +269,8 @@ const ActiveGroup = () => {
   const [selectedGroups, setSelectedGroups] = useState([]);
   const groups = useSelector((state) => state.group.groups);
   const [optionsGroup, setOptionsGroup] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false); // Track the deletion state
+  const [isLoading, setIsLoading] = useState(true);  // Loading state
   const handleOpenFilterModal = () => setIsFilterModalOpen(true);
   const handleCloseFilterModal = () => setIsFilterModalOpen(false);
   const handleApplyFilter = (criteria) => {
@@ -283,9 +286,13 @@ const ActiveGroup = () => {
   };
 
   useEffect(() => {
+    setIsLoading(true); // Set loading to true when fetching starts
     dispatch(fetchGroups()).then(() => {
       console.log("Groups fetched:", groups); // Log the groups from Redux
-    });
+    })
+      .finally(() => {
+        setIsLoading(false); // Set loading to false after fetch is complete
+      });
   }, [dispatch]);
 
   const handleSort = (key) => {
@@ -381,12 +388,12 @@ const ActiveGroup = () => {
       }
     });
   };
-  
+
   const handleSelectAll = () => {
     const allSelected = paginatedGroups.every((group) =>
       selectedGroups.some((selectedGroup) => selectedGroup._id === group._id)
     );
-  
+
     if (allSelected) {
       setSelectedGroups((prevSelected) =>
         prevSelected.filter(
@@ -402,28 +409,44 @@ const ActiveGroup = () => {
       ]);
     }
   };
-  
+
   const handleDeleteGroups = async () => {
+    setIsDeleting(true);  // Set to true when deletion starts
     if (selectedGroups.length === 0) {
       alert("Please select groups to delete.");
     } else {
       const groupIds = selectedGroups.map((group) => group._id); // Use _id instead of id
+
+      // Log the groupIds to ensure they are correct
+      console.log("Deleting groups with IDs:", groupIds);
+
       try {
-        // First, delete the groups
-        await dispatch(deleteGroups(groupIds)).unwrap();
-  
-        // Then, store the deleted groups
-        await dispatch(storeDeletedGroups(selectedGroups)).unwrap();
-  
+        // Dispatch the deleteGroups action with the selected group IDs
+        const actionResult = await dispatch(deleteGroups(groupIds));
+        const { error } = actionResult;
+
+        if (error) {
+          throw new Error('Failed to delete groups');
+        }
+
+        alert('Groups Deleted successfully.');
+
+        // Optionally, update the UI or state after successful deletion
+        dispatch(fetchGroups());
         setSelectedGroups([]); // Clear selected groups
         setIsSelectable(false); // Disable selection mode
-        alert("Groups deleted and stored successfully.");
       } catch (error) {
-        console.error("Failed to delete or store groups:", error);
+        console.error('Failed to delete groups:', error);
+        alert('Failed to delete groups');
+      }
+      finally {
+        setIsDeleting(false); // Set back to false after the operation is complete
       }
     }
+
   };
-  
+
+
   const headerItems = [
     {
       icon: <FaUserFriends />,
@@ -460,7 +483,7 @@ const ActiveGroup = () => {
   console.log("Selected Groups:", selectedGroups);
 
 
-  
+
 
   return (
     <div>
@@ -524,8 +547,9 @@ const ActiveGroup = () => {
           <button
             className="bg-red-500 px-3 py-2 rounded-lg text-white"
             onClick={handleDeleteGroups}
+            disabled={isDeleting}  // Disable the button while deleting
           >
-            Delete
+            {isDeleting ? "Deleting..." : "Delete"}
           </button>
         </div>
       )}
@@ -569,6 +593,12 @@ const ActiveGroup = () => {
                 <FaUsers className="text-blue-500" />
                 <span className="text-sm">Create New Group</span>
               </button>
+              {/* Loader above the table */}
+              {isLoading && (
+                <div className="flex justify-center items-center ">
+                  <FaSpinner className="animate-spin text-blue-500" size={20} />
+                </div>
+              )}
             </>
           }
           rowsPerPage={rowsPerPage}
@@ -590,15 +620,15 @@ const ActiveGroup = () => {
             >
               {isSelectable && (
                 <td>
-              <input
-          type="checkbox"
-          className="custom-circle-checkbox mx-2"
-          checked={selectedGroups.some((selectedGroup) => selectedGroup._id === group._id)} // Use the correct property for checking
-          onChange={(e) => {
-            e.stopPropagation(); // Prevent row click event
-            handleCheckboxChange(group); // Ensure group is passed correctly
-          }}
-        />
+                  <input
+                    type="checkbox"
+                    className="custom-circle-checkbox mx-2"
+                    checked={selectedGroups.some((selectedGroup) => selectedGroup._id === group._id)} // Use the correct property for checking
+                    onChange={(e) => {
+                      e.stopPropagation(); // Prevent row click event
+                      handleCheckboxChange(group); // Ensure group is passed correctly
+                    }}
+                  />
                 </td>
 
               )}
