@@ -35,7 +35,7 @@ import { BsThreeDots } from "react-icons/bs";
 import Link from "next/link";
 import FilterModal from "@/app/_components/UserDetailDilaog&Modal/FilterModal";
 import * as XLSX from "xlsx";
-
+import { clearSelectedUser } from "@/lib/Feature/UserSlice";
 const Modal = ({ user }) => {
   const dispatch = useDispatch();
   const router = useRouter();
@@ -94,7 +94,7 @@ const TableRoute = () => {
     { label: "City", key: "city", width: "150px" },
     { label: "Contact", key: "contact", width: "150px" },
   ];
-  
+
 
   const [isModalOpen, setIsModalOpen] = useState(null);
   console.log("isModalOpen:", isModalOpen);
@@ -250,6 +250,7 @@ const TableRoute = () => {
     {
       icon: <FaUserFriends />,
       label: "Group",
+      
     },
     {
       icon: <FaShieldAlt />,
@@ -323,7 +324,16 @@ const TableRoute = () => {
     };
   }, []);
 
+  const handleCancel = () => {
+    // Reset the selected users state
+   
+    setSelectedUsers([]); 
+    setIsGroupSelection(false); // Assuming you're using local state for isSelectable
 
+    // Redirect the user
+  
+  };
+  
   return (
     <div className="">
       <NewHeader>
@@ -418,12 +428,15 @@ const TableRoute = () => {
                   dispatch(storeDeletedUser(user));
                   setSelectedUsers([]); // Clear selection after deletion
                   setIsSelectable(false); // Exit selection mode
+                  dispatch(fetchUsers());
+                  router.push("/users/active");
                 });
               }
             }}
           >
             Delete
           </button>
+
         </div>
       )}
 
@@ -442,6 +455,13 @@ const TableRoute = () => {
           >
             Group
           </button>
+          <button type="button" // Prevent the form from submitting
+              className="px-3 rounded-lg ml-1 py-2 bg-gray-400 text-white  hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              onClick={handleCancel} // Use onClick instead of onSubmit
+                >
+                  
+                  Cancel
+                </button>
         </div>
       )}
 

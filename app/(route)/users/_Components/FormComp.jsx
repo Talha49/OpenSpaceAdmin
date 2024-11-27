@@ -2,7 +2,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useRouter } from 'next/navigation';
 import { addUser, clearSelectedUser, updateUser } from '@/lib/Feature/UserSlice';
 import { useEffect, useState } from 'react';
-
+import { fetchUsers } from '@/lib/Feature/UserSlice';
 const FormComp = () => {
   const router = useRouter();
   const dispatch = useDispatch();
@@ -17,6 +17,11 @@ const FormComp = () => {
   });
 
   const [errors, setErrors] = useState({});
+
+  useEffect(() => {
+    // Fetch groups when the component mounts
+    dispatch(fetchUsers());
+  }, [dispatch]);
 
   useEffect(() => {
     if (selectedUser) {
@@ -138,6 +143,10 @@ const FormComp = () => {
     });
   }
 
+const handleCancel =() => {
+  router.push('/users/active');
+}
+
   return (
     <div className="w-full max-w-7xl mx-auto p-6 dark:bg-neutral-950">
       <h2 className="text-xl font-semibold text-neutral-800 dark:text-neutral-400 mb-1">User Form</h2>
@@ -229,6 +238,13 @@ const FormComp = () => {
               <div className="mt-6">
                 <button type="submit" className="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                   {selectedUser ? 'Update' : 'Create'}
+                </button>
+                <button type="button" // Prevent the form from submitting
+              className="px-6 ml-3 py-2 bg-gray-400 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              onClick={handleCancel} // Use onClick instead of onSubmit
+                >
+                  
+                  Cancel
                 </button>
               </div>
             </form>

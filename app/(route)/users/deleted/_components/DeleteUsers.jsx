@@ -27,7 +27,7 @@ const DeletedUsers = () => {
     key: null,
     direction: "ascending",
   });
-  
+
   const [searchTerm, setSearchTerm] = useState("");
   const [filterCriteria, setFilterCriteria] = useState({});
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -53,7 +53,12 @@ const DeletedUsers = () => {
     }
   }, [dispatch, status]);
 
-  
+  //redux 
+  useEffect(() => {
+    // Fetch groups when the component mounts
+    dispatch(fetchDeletedUsers);
+  }, [dispatch]);
+
   const handleRowsPerPageChange = (e) => {
     setRowsPerPage(Number(e.target.value));
     setCurrentPage(1); // Reset to first page when rows per page changes
@@ -76,7 +81,7 @@ const DeletedUsers = () => {
         user.fullName.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
-   
+
     // Apply filter criteria
     if (Object.keys(filterCriteria).length > 0) {
       result = result.filter(
@@ -162,7 +167,7 @@ const DeletedUsers = () => {
       [], // Empty row for spacing
       ["Display Name", "Email", "Address", "City", "Contact"], // Table Headers
     ];
-  
+
     const worksheetData = headers.concat(
       data.map((user) => [
         user.fullName,
@@ -172,9 +177,9 @@ const DeletedUsers = () => {
         user.contact,
       ])
     );
-  
+
     const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
-  
+
     // Apply column widths for better readability
     worksheet["!cols"] = [
       { wch: 25 }, // Display Name
@@ -183,23 +188,23 @@ const DeletedUsers = () => {
       { wch: 20 }, // City
       { wch: 15 }, // Contact
     ];
-  
+
     // Add styling to headers
     const headerStyle = {
       font: { bold: true, sz: 14, color: { rgb: "FFFFFF" } },
       fill: { fgColor: { rgb: "4F81BD" } },
       alignment: { horizontal: "center", vertical: "center" },
     };
-  
+
     // Apply styles to header cells
     ["A1", "A2", "A4", "B4", "C4", "D4", "E4"].forEach((cell) => {
       if (worksheet[cell]) worksheet[cell].s = headerStyle;
     });
-  
+
     // Create a workbook and append the worksheet
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Deleted Users");
-  
+
     // Save the workbook
     XLSX.writeFile(workbook, filename);
   };
@@ -249,40 +254,40 @@ const DeletedUsers = () => {
         </div>
       </NewHeader>
       <div className="pl-4 pr-2">
-      <NewTableComponent
-        tableColumns={tableColumns.map((col) => (
-          <div
-            key={col.key}
-            className="flex items-center justify-between cursor-pointer w-full"
-            onClick={() => handleSort(col.key)}
-          >
-            <span>{col.label}</span>
-            <FaSort className="ml-1" />
-          </div>
-        ))}
-        rowsPerPage={rowsPerPage}
-        totalRows={filteredAndSortedUsers.length}
-        currentPage={currentPage}
-        onPageChange={(page) => setCurrentPage(page)}
-        handleRowsPerPageChange={handleRowsPerPageChange}
-      >
-        {paginatedDeletedUsers.map((user) => (
-          <tr
-            key={user.id}
-            className="border-b dark:border-neutral-700 cursor-pointer relative bg-gray-100 dark:bg-neutral-800 hover:bg-gray-200"
-          >
-            <td className="p-3 text-gray-700 dark:text-neutral-400">
-              <div className="flex items-center justify-between ">
-                <span className="hover:text-blue-600">{user.fullName}</span>
-              </div>
-            </td>
-            <td className="p-3 text-gray-700 dark:text-neutral-400">{user.email}</td>
-            <td className="p-3 text-gray-700 dark:text-neutral-400">{user.address}</td>
-            <td className="p-3 text-gray-700 dark:text-neutral-400">{user.city}</td>
-            <td className="p-3 text-gray-700 dark:text-neutral-400">{user.contact}</td>
-          </tr>
-        ))}
-      </NewTableComponent>
+        <NewTableComponent
+          tableColumns={tableColumns.map((col) => (
+            <div
+              key={col.key}
+              className="flex items-center justify-between cursor-pointer w-full"
+              onClick={() => handleSort(col.key)}
+            >
+              <span>{col.label}</span>
+              <FaSort className="ml-1" />
+            </div>
+          ))}
+          rowsPerPage={rowsPerPage}
+          totalRows={filteredAndSortedUsers.length}
+          currentPage={currentPage}
+          onPageChange={(page) => setCurrentPage(page)}
+          handleRowsPerPageChange={handleRowsPerPageChange}
+        >
+          {paginatedDeletedUsers.map((user) => (
+            <tr
+              key={user.id}
+              className="border-b dark:border-neutral-700 cursor-pointer relative bg-gray-100 dark:bg-neutral-800 hover:bg-gray-200"
+            >
+              <td className="p-3 text-gray-700 dark:text-neutral-400">
+                <div className="flex items-center justify-between ">
+                  <span className="hover:text-blue-600">{user.fullName}</span>
+                </div>
+              </td>
+              <td className="p-3 text-gray-700 dark:text-neutral-400">{user.email}</td>
+              <td className="p-3 text-gray-700 dark:text-neutral-400">{user.address}</td>
+              <td className="p-3 text-gray-700 dark:text-neutral-400">{user.city}</td>
+              <td className="p-3 text-gray-700 dark:text-neutral-400">{user.contact}</td>
+            </tr>
+          ))}
+        </NewTableComponent>
       </div>
       {isFilterModalOpen && (
         <DeleteFilterModal

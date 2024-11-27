@@ -4,8 +4,11 @@ import React, { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import { Transition } from "@headlessui/react";
 import { FaTimes, FaSyncAlt, FaEdit, FaEyeSlash, FaEye } from "react-icons/fa";
+import { useDispatch, useSelector } from "react-redux";
+import { useRouter } from "next/navigation";
 import { storage } from "@/lib/firebase/firebaseConfig";
 import { ref, uploadString, getDownloadURL } from "firebase/storage"
+import { fetchUsers } from "@/lib/Feature/UserSlice";
 const UserUpdateDialog = ({ user, onClose, onSave }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [formData, setFormData] = useState({ ...user });
@@ -16,6 +19,8 @@ const UserUpdateDialog = ({ user, onClose, onSave }) => {
     const [newPassword, setNewPassword] = useState(""); // Generated new password
     const [isSaving, setIsSaving] = useState(false); // Track saving state
     const [users, setUsers] = useState([]); // State for storing all users
+    const dispatch = useDispatch();
+    const router = useRouter();
 
     useEffect(() => {
         if (formData.email) {
@@ -79,6 +84,8 @@ const UserUpdateDialog = ({ user, onClose, onSave }) => {
                 throw new Error(errorData.message || "Failed to update user.");
 
             }
+            dispatch(fetchUsers());
+            router.push("/users/active");
             const result = await response.json();
             console.log("API Response Data:", result);
             if (result && result.user) {
