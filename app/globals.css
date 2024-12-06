@@ -98,3 +98,12 @@
   z-index: 1001; /* Ensures content is above the overlay */
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
+/* styles/globals.css */
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hidden {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}

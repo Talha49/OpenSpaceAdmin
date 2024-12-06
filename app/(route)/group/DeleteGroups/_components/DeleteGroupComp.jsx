@@ -10,21 +10,9 @@ import React, { useState, useEffect, useMemo } from "react";
 import { FaFileExport, FaUserFriends, FaSort, FaFilter, FaSpinner } from "react-icons/fa";
 import { IoMdRefresh } from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
+import * as XLSX from "xlsx"; // Import the xlsx library
 
-const headerItems = [
-  {
-    icon: <IoMdRefresh />,
-    label: "Refresh",
-    onClick:()=>
-    {
-      fetchDeletedGroups();
-    },
-  },
-  {
-    icon: <FaFileExport />,
-    label: "Export Groups",
-  },
-];
+  
 
 const DeleteGroupComponent = () => {
   const dispatch = useDispatch();
@@ -51,6 +39,46 @@ const DeleteGroupComponent = () => {
     handleCloseFilterModal();
   };
 
+  const handleExportExcel = () => {
+    console.log('Preparing to export...');
+    console.log(deletedGroups);  // Check if data is available
+  
+    const exportData = deletedGroups.map((group) => ({
+      "Group Name": group.groupName,
+      "Owner": group.groupOwrnerID?.map((owner) => owner.fullName).join(", "),
+      "Type": group.groupType,
+      "Members": group.groupTargetID?.length || 0,
+    }));
+  
+    console.log('Export Data:', exportData);  // Log the mapped export data
+  
+    const ws = XLSX.utils.json_to_sheet(exportData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Deleted Groups");
+  
+    // Check if workbook creation is successful
+    console.log('Workbook created:', wb);
+    
+    XLSX.writeFile(wb, "deleted_groups.xlsx");
+  };
+  
+
+
+const headerItems = [
+  {
+    icon: <IoMdRefresh />,
+    label: "Refresh",
+    onClick:()=>
+    {
+      fetchDeletedGroups();
+    },
+  },
+  {
+    icon: <FaFileExport />,
+    label: "Export Groups",
+    onClick: handleExportExcel, // Add export functionality here
+  },
+];
   // Handle items per page change
   const handleRowsPerPageChange = (e) => {
     setRowsPerPage(Number(e.target.value));

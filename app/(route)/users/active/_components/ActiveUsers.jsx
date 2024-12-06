@@ -37,6 +37,9 @@ import Link from "next/link";
 import FilterModal from "@/app/_components/UserDetailDilaog&Modal/FilterModal";
 import * as XLSX from "xlsx";
 import { clearSelectedUser } from "@/lib/Feature/UserSlice";
+import { MFAModal } from "@/app/_components/MfaSetttingDialog/MFAmodal";
+import Dialog from "@/app/_components/ManageGroupModal/Dialog";
+
 const Modal = ({ user }) => {
   const dispatch = useDispatch();
   const router = useRouter();
@@ -114,7 +117,7 @@ const TableRoute = () => {
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [filterCriteria, setFilterCriteria] = useState({});
   const [searchTerm, setSearchTerm] = useState("");
-
+  const [isMFAModalOpen, setIsMFAModalOpen] = useState(false);
   const users = useSelector((state) => state.user.users);
   const dispatch = useDispatch();
   const handleOpenFilterModal = () => setIsFilterModalOpen(true);
@@ -124,15 +127,92 @@ const TableRoute = () => {
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false); // Declare state for the modal
   const [selectedUser, setSelectedUser] = useState(null); // State for the selected user
   const [isLoading, setIsLoading] = useState(true);  // Loading state
+  const [isUpdatingPassword, setIsUpdatingPassword] = useState(false); // Loading state while updating
+  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
+  const [activeUsers, setActiveUsers] = useState([]);
+  const [isUpdatePasswordDialogOpen, setIsUpdatePasswordDialogOpen] = useState(false);
+const [newPassword, setNewPassword] = useState('');
+const [isDialogOpen, setIsDialogOpen] = useState(false);
+const [selectedUserId, setSelectedUserId] = useState(null);
+const [userDetails, setUserDetails] = useState(null);
+
+
+
+
+const handlePasswordUpdateModalOpen = (user) => {
+  setNewPassword(''); // Clear previous password when opening the modal
+  setSelectedUser(user);
+  setIsUpdatePasswordDialogOpen(true);
+};
+
+// Generate a random 8-digit password
+const generateRandomPassword = () => {
+  const password = Math.random().toString(36).slice(-8); // Generate an 8-digit random password
+  setNewPassword(password);
+};
+
+// This function is a placeholder for your password encryption logic
+const encryptPassword = async (password) => {
+  // Implement encryption logic here (if needed)
+  const encryptedPassword = password; // Placeholder, replace with real encryption logic
+  return encryptedPassword;
+};
+
+// Open the modal to update passwords for active users
+const handlePasswordModalOpen = () => {
+  const activeUsersList = users.filter(user => user.status === 'active');
+  setActiveUsers(activeUsersList);
+  setIsPasswordModalOpen(true);
+};
+
+// Handle password update action
+const handlePasswordUpdate = async (userId, newPassword) => {
+  try {
+    setIsUpdatingPassword(true); // Set loading state to true
+    const encryptedPassword = await encryptPassword(newPassword); // Encrypt the password (if required)
+    
+    const response = await fetch('/api/Users/updatePassword', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        userId,  // The user's ID
+        newPassword: encryptedPassword,  // The encrypted new password
+      }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      setIsUpdatingPassword(false); // Set loading state to false on error
+      setIsUpdatePasswordDialogOpen(false);
+      setIsPasswordModalOpen(false); // Close the modal after updating password
+    } else {
+      alert(data.message || "Error updating password!");
+    }
+  } catch (error) {
+    setIsUpdatingPassword(false); // Set loading state to false on error
+    console.error("Error updating password:", error);
+    setIsUpdatingPassword(false); // Set loading state to false on error
+    alert("Error updating password!");
+  }
+};
+
+
   const handleOpenUpdateModal = (user) => {
     setSelectedUser(user); // Set the selected user
     setIsUpdateModalOpen(true); // Open the update modal
   };
 
+
+
+  //save user details update user all details functionalities
   const handleSaveUserDetails = (updatedUser) => {
     console.log("Updated User Details:", updatedUser);
     // Dispatch updated user details to the Redux store or backend
     setIsUpdateModalOpen(false); // Close the update modal
+    setIsUpdatingPassword(false); // Set loading state to false on error
   };
 
   const router = useRouter();
@@ -257,10 +337,8 @@ const TableRoute = () => {
       label: "Group",
 
     },
-    {
-      icon: <FaShieldAlt />,
-      label: "Multifactor authentication",
-    },
+    { icon: <FaShieldAlt />, label: "Multifactor authentication", onClick: () => setIsMFAModalOpen(true) },
+    // Add other header items here
     {
       icon: <MdDelete />,
       label: "Delete User",
@@ -276,6 +354,7 @@ const TableRoute = () => {
     {
       icon: <FaKey />,
       label: "Password",
+      onClick: () =>  handlePasswordModalOpen(true)
     },
     {
       icon: <FaFileExport />,
@@ -344,21 +423,20 @@ const TableRoute = () => {
 
   const handleManageGroupsClick = (user) => {
     if (!user || !user._id) {
-      console.error("Invalid user or user ID");
+      console.error('Invalid user or user ID');
       return;
     }
-  
-    try {
-      const params = new URLSearchParams();
-      params.append('userId', user._id);
-  
-      const path = `/users/manage-groups?${params.toString()}`;
-      router.push(path);
-    } catch (error) {
-      console.error("Error navigating to manage groups:", error);
-    }
+    console.log('User ID passed to dialog:', user._Id); // Check userId here
+    setSelectedUserId(user._id); // Set the userId for the dialog
+    setIsDialogOpen(true); // Open the dialog
   };
-  
+
+  const closeDialog = () => {
+    setIsDialogOpen(false);
+    setSelectedUserId(null); // Reset the user ID when dialog is closed
+  };
+
+
   return (
     <div className="">
       <NewHeader>
@@ -659,6 +737,11 @@ const TableRoute = () => {
             </tr>
           ))}
 
+<MFAModal
+        isOpen={isMFAModalOpen}
+        onClose={() => setIsMFAModalOpen(false)}
+      />
+    
           {/* User Details Modal */}
           {showInfoModal && (
             <UserDetailDialog
@@ -667,6 +750,103 @@ const TableRoute = () => {
             />
           )}
 
+{isPasswordModalOpen && (
+  <div className="fixed inset-0 bg-gray-900 bg-opacity-50 backdrop-blur-sm flex justify-center items-center z-50 overflow-auto scrollbar-hidden">
+    <div className="bg-white dark:bg-neutral-900 rounded-lg w-full md:w-[80%] lg:w-[70%] xl:w-[60%] 2xl:w-[50%] h-[80vh] p-6 overflow-y-auto relative scrollbar-hidden">
+      
+      {/* Modal Header */}
+      <div className="flex justify-between items-center mb-4 border-b border-gray-200 dark:border-neutral-800 pb-4">
+        <h2 className="text-2xl font-semibold text-gray-800 dark:text-white">Manage User Passwords</h2>
+        <button
+          onClick={() => setIsPasswordModalOpen(false)}
+          className="text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-white focus:outline-none"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      
+      {/* Search Bar */}
+      <div className="mb-4">
+        <input
+          type="text"
+          placeholder="Search active users..."
+          onChange={(e) => setSearchTerm(e.target.value)}
+          value={searchTerm}
+          className="w-full p-3 border border-gray-300 dark:border-neutral-600 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 dark:bg-neutral-800 dark:text-white"
+        />
+      </div>
+
+      {/* User List */}
+      <div className="max-h-[60vh] overflow-y-auto scrollbar-hidden">
+        {activeUsers.length > 0 ? (
+          activeUsers
+            .filter(user => user.fullName.toLowerCase().includes(searchTerm.toLowerCase())) // Filter users by search term
+            .map((user) => (
+              <div key={user._id} className="flex justify-between items-center p-4 mb-2 bg-gray-50 dark:bg-neutral-800 rounded-lg shadow-md hover:bg-gray-100 dark:hover:bg-neutral-700 transition-all duration-200">
+                <div className="flex items-center space-x-4">
+                  <span className="text-lg font-semibold text-gray-700 dark:text-white">{user.fullName}</span>
+                </div>
+                <button
+                  onClick={() => handlePasswordUpdateModalOpen(user)}
+                  className="text-blue-500 hover:text-blue-700 transition-all duration-200"
+                >
+                  Update Password
+                </button>
+              </div>
+            ))
+        ) : (
+          <p className="text-center text-gray-500 dark:text-neutral-400">No active users found</p>
+        )}
+      </div>
+
+    
+    </div>
+  </div>
+)}
+ {/* Update password modal */}
+ {isUpdatePasswordDialogOpen && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white rounded-lg p-6 w-96">
+            <h3 className="text-xl font-semibold">Update Password for {selectedUser?.fullName}</h3>
+            
+            {/* Password input with type 'password' to mask it */}
+            <input
+              type="password" // Use 'password' type for masking input
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              className="mt-4 w-full p-2 border rounded-lg"
+              placeholder="New Password"
+            />
+            
+            {/* Generate password button */}
+            <button
+              onClick={generateRandomPassword}
+              className="mt-2 w-full py-2 bg-blue-500 text-white rounded-lg"
+            >
+              Generate 8-Digit Password
+            </button>
+
+            {/* Update password button */}
+            <button
+              onClick={() => handlePasswordUpdate(selectedUser._id, newPassword)}
+              className="mt-2 w-full py-2 bg-green-500 text-white rounded-lg"
+              disabled={isUpdatingPassword} // Disable button while updating
+            >
+              {isUpdatingPassword ? 'Updating...' : 'Update Password'}
+            </button>
+
+            {/* Cancel button */}
+            <button
+              onClick={() => setIsUpdatePasswordDialogOpen(false)}
+              className="mt-2 w-full py-2 bg-gray-500 text-white rounded-lg"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
 
           {/* Update User Modal */}
           {isUpdateModalOpen && (
@@ -677,6 +857,12 @@ const TableRoute = () => {
             />
           )}
         </NewTableComponent>
+        <Dialog
+        isOpen={isDialogOpen}
+        onClose={closeDialog}
+        userId={selectedUserId}
+        
+      />
         <UserDetailDialog
           onClose={() => setShowInfoModal(false)}
           user={clickedUser}

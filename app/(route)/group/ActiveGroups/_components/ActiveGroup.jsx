@@ -250,6 +250,7 @@ import {
 } from "react-icons/fa";
 import { IoMdRefresh } from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
+import * as XLSX from "xlsx"; // Import the xlsx library
 
 const ActiveGroup = () => {
   const router = useRouter()
@@ -264,6 +265,7 @@ const ActiveGroup = () => {
     direction: "ascending",
   });
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  
   const [searchTerm, setSearchTerm] = useState("");
   const [isSelectable, setIsSelectable] = useState(false);
   const [selectedGroups, setSelectedGroups] = useState([]);
@@ -278,6 +280,28 @@ const ActiveGroup = () => {
     setCurrentPage(1);
     handleCloseFilterModal();
   };
+
+//handle export in xlx on icon click export 
+const handleExportExcel = () => {
+  // Convert groups data to an array of objects that are compatible with Excel format
+  const exportData = groups.map((group) => ({
+    "Group Name": group.groupName,
+    "Owner": group.groupOwrnerID?.map((owner) => owner.fullName).join(", "),
+    "Type": group.groupType,
+    "Members": group.groupTargetID?.length || 0,
+  }));
+
+  // Create a new workbook and add the exportData as a worksheet
+  const ws = XLSX.utils.json_to_sheet(exportData);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Groups");
+
+  // Export the workbook to an Excel file
+  XLSX.writeFile(wb, "groups.xlsx");
+};
+
+
+
 
   // Handle items per page change
   const handleRowsPerPageChange = (e) => {
@@ -465,6 +489,7 @@ const ActiveGroup = () => {
     {
       icon: <FaFileExport />,
       label: "Export Groups",
+      onClick: handleExportExcel, // Add export functionality here
     },
     {
       icon: <FaFileExport />,
