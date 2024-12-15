@@ -1,0 +1,41 @@
+[
+  {
+    "menuId": "1",
+    "name": "Home",
+    "path": "/page1"
+  },
+  {
+    "menuId": "2",
+    "name": "Users",
+    "submenus": [
+      {
+        "id": "2.1",
+        "name": "Active Users",
+        "path": "/page1",
+        "submenus": []
+      },
+      {
+        "id": "2.2",
+        "name": "Deleted Users",
+        "path": "/page2"
+      }
+    ]
+  },
+  {
+    "menuId": "3",
+    "name": "Groups",
+    "submenus": [
+      {
+        "id": "3.1",
+        "name": "Active Groups",
+        "path": "/page3"
+      },
+      {
+        "id": "3.2",
+        "name": "Deleted Groups",
+        "path": "/page4",
+        "submenus": []
+      }
+    ]
+  }
+]

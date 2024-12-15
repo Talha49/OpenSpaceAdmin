@@ -1,0 +1,30 @@
+[
+  {
+    "reportId": 1,
+    "reportName": "Graphical Report",
+    "subReports": [
+      {
+        "reportId": 3,
+        "reportName": "Yearly Report"
+      },
+      {
+        "reportId": 4,
+        "reportName": "Monthly Report"
+      }
+    ]
+  },
+  {
+    "reportId": 2,
+    "reportName": "Tabular Report",
+    "subReports": [
+      {
+        "reportId":5,
+        "reportName": "Yearly Report"
+      },
+      {
+        "reportId": 6,
+        "reportName": "Monthly Report"
+      }
+    ]
+  }
+]

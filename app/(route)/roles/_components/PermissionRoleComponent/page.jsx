@@ -153,7 +153,7 @@ const PermissionRolesComponent = () => {
             ]}
             buttons={
               <>
-                <p
+                {/* <p
                   className="flex items-center gap-1 hover:bg-blue-200 dark:hover:bg-neutral-800 p-1 rounded cursor-pointer text-sm transition-all"
                   onClick={() => {
                     setIsOpenCreateNewDialog(true);
@@ -161,7 +161,7 @@ const PermissionRolesComponent = () => {
                 >
                   <IoIosAddCircleOutline className="text-xl text-blue-600" />
                   <span>Create New</span>
-                </p>
+                </p> */}
                 <p
                   className="flex items-center gap-1 hover:bg-blue-200 dark:hover:bg-neutral-800 p-1 rounded cursor-pointer text-sm transition-all"
                   onClick={() => {
@@ -169,7 +169,7 @@ const PermissionRolesComponent = () => {
                   }}
                 >
                   <IoIosAddCircleOutline className="text-xl text-blue-600" />
-                  <span>Create New Role for External User</span>
+                  <span>Create New Role</span>
                 </p>
               </>
             }
@@ -180,7 +180,10 @@ const PermissionRolesComponent = () => {
             handleRowsPerPageChange={handleRowsPerPageChange}
           >
             {paginatedRoles.map((role) => (
-              <tr key={role.id} className="border-t dark:border-neutral-700 bg-gray-100 dark:bg-neutral-800">
+              <tr
+                key={role.id}
+                className="border-t dark:border-neutral-700 bg-gray-100 dark:bg-neutral-800"
+              >
                 <td className="p-2">{role.id}</td>
                 <td className="p-2 text-blue-500">{role.permissionRole}</td>
                 <td className="p-2">{role.userType}</td>
