@@ -1,14 +1,25 @@
-import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
+import { NextResponse } from "next/server";
+import dbConnect from "@/lib/connectdb/connection";
+import Group from "@/lib/models/Group";
 
-export async function GET() {
+export async function GET(req) {
+  console.log("API: Received GET request for fetching groups");
+
   try {
-    const filePath = path.join(process.cwd(), 'data', 'groups.json');
-    const fileContents = fs.readFileSync(filePath, 'utf8');
-    const groups = JSON.parse(fileContents);
-    return NextResponse.json(groups);
+    await dbConnect();
+    console.log("API: Connected to MongoDB");
+
+    // Fetch groups and populate owners and members
+    const groups = await Group.find({ status: "active" }) // Fetch only active groups
+      .populate("groupOwrnerID", "fullName email") // Populate owners (select only fullName and email fields)
+      .populate("groupTargetID", "fullName email"); // Populate members (select only fullName and email fields)
+
+    // Log the fetched groups before returning
+    console.log("API: Groups fetched and populated:", JSON.stringify(groups, null, 2));
+
+    return NextResponse.json(groups, { status: 200 });
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to fetch groups' }, { status: 500 });
+    console.error("API: Error fetching groups:", error.message);
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

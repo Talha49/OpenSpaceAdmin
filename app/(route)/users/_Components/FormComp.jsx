@@ -2,7 +2,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useRouter } from 'next/navigation';
 import { addUser, clearSelectedUser, updateUser } from '@/lib/Feature/UserSlice';
 import { useEffect, useState } from 'react';
-
+import { fetchUsers } from '@/lib/Feature/UserSlice';
 const FormComp = () => {
   const router = useRouter();
   const dispatch = useDispatch();
@@ -17,6 +17,11 @@ const FormComp = () => {
   });
 
   const [errors, setErrors] = useState({});
+
+  useEffect(() => {
+    // Fetch groups when the component mounts
+    dispatch(fetchUsers());
+  }, [dispatch]);
 
   useEffect(() => {
     if (selectedUser) {
@@ -63,23 +68,28 @@ const FormComp = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     if (!validateForm()) {
       return;
     }
-
+  
+    const userData = {
+      ...formData,
+      createdByAdmin: !selectedUser, // If there's no selected user, it's a new user created by admin
+    };
+  
     if (selectedUser) {
       // Update user
-      dispatch(updateUser({ ...formData, id: selectedUser.id }));
+      dispatch(updateUser({ ...userData, id: selectedUser.id }));
       try {
         const response = await fetch('/api/Users/updateUser', {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ ...formData, id: selectedUser.id }),
+          body: JSON.stringify({ ...userData, id: selectedUser.id }),
         });
-
+  
         if (response.ok) {
           alert('User updated successfully!');
         } else {
@@ -91,18 +101,19 @@ const FormComp = () => {
       }
     } else {
       // Add new user
-      dispatch(addUser(formData));
+      dispatch(addUser(userData));
       try {
         const response = await fetch('/api/Users/saveUser', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(formData),
+          body: JSON.stringify(userData),
         });
-
+  
         if (response.ok) {
           alert('User saved successfully!');
+          
         } else {
           const errorData = await response.json();
           alert(`Failed to save user: ${errorData.error}`);
@@ -111,19 +122,19 @@ const FormComp = () => {
         alert('An error occurred while saving the user');
       }
     }
-
+  
     setFormData({
       fullName: '',
       email: '',
       address: '',
       city: '',
-      contact: ''
+      contact: '',
     });
-
+  
     dispatch(clearSelectedUser()); // Clear selected user after submitting
-    router.push('/table-test');
+    router.push('/users/active');
   };
-
+  
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -131,6 +142,10 @@ const FormComp = () => {
       [name]: value
     });
   }
+
+const handleCancel =() => {
+  router.push('/users/active');
+}
 
   return (
     <div className="w-full max-w-7xl mx-auto p-6 dark:bg-neutral-950">
@@ -223,6 +238,13 @@ const FormComp = () => {
               <div className="mt-6">
                 <button type="submit" className="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                   {selectedUser ? 'Update' : 'Create'}
+                </button>
+                <button type="button" // Prevent the form from submitting
+              className="px-6 ml-3 py-2 bg-gray-400 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              onClick={handleCancel} // Use onClick instead of onSubmit
+                >
+                  
+                  Cancel
                 </button>
               </div>
             </form>

@@ -1,5 +1,7 @@
 "use client";
 import React, { useEffect, useState, useMemo } from "react";
+import { createAsyncThunk } from '@reduxjs/toolkit';
+
 import { useDispatch, useSelector } from "react-redux";
 import { IoMdRefresh } from "react-icons/io";
 import {
@@ -7,26 +9,31 @@ import {
   FaFileExport,
   FaFilter,
   FaSort,
+  FaSpinner,
   FaUserFriends,
 } from "react-icons/fa";
 import NewHeader from "@/app/_HOC/NewHeader/NewHeader";
 import NewTableComponent from "@/app/_HOC/Table/NewTableComponent";
 import { fetchDeletedUsers } from "@/lib/Feature/UserSlice";
 import DeleteFilterModal from "@/app/_components/UserDetailDilaog&Modal/DeleteFilterModal";
+import * as XLSX from "xlsx";
 
 const DeletedUsers = () => {
   const dispatch = useDispatch();
-  const [deletedUsers, setDeletedUsers] = useState([]);
+
+  const [deletedUsers, setDeletedUsers] = useState([]); // State to store deleted users
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [sortConfig, setSortConfig] = useState({
     key: null,
     direction: "ascending",
   });
+
   const [searchTerm, setSearchTerm] = useState("");
   const [filterCriteria, setFilterCriteria] = useState({});
+  const [isLoading, setIsLoading] = useState(true);  // Loading state
   const [rowsPerPage, setRowsPerPage] = useState(10);
-
+  const status = useSelector((state) => state.user.status); // Fetch status (idle, loading, succeeded, etc.)
   const handleOpenFilterModal = () => setIsFilterModalOpen(true);
   const handleCloseFilterModal = () => setIsFilterModalOpen(false);
   const handleApplyFilter = (criteria) => {
@@ -34,20 +41,26 @@ const DeletedUsers = () => {
     setCurrentPage(1); // Reset to first page when filter is applied
     handleCloseFilterModal();
   };
+  // Fetch deleted users on component mount
+  useEffect(() => {
+    setIsLoading(true); // Set loading to true when fetching starts
+    dispatch(fetchDeletedUsers()) // Dispatch the fetchDeletedUsers action immediately on mount
+      .unwrap() // Unwrap the promise to handle success/failure
+      .then((data) => {
+        console.log("🎉 Successfully fetched deleted users:", data);
+        setDeletedUsers(data); // Update state with fetched data
+      })
+      .catch((error) => {
+        console.error("❌ Error fetching deleted users:", error.message);
+      });
+    setIsLoading(false); // Set loading to false after fetch is complete
+  }, [dispatch]);  // Only depend on dispatch, not on status
 
-  const getDeletedUsers = async () => {
-    const res = await dispatch(fetchDeletedUsers());
-    setDeletedUsers(res.payload);
-  };
 
   const handleRowsPerPageChange = (e) => {
     setRowsPerPage(Number(e.target.value));
     setCurrentPage(1); // Reset to first page when rows per page changes
   };
-
-  useEffect(() => {
-    getDeletedUsers();
-  }, [dispatch]);
 
   const handleSort = (key) => {
     let direction = "ascending";
@@ -104,8 +117,36 @@ const DeletedUsers = () => {
   );
 
   const headerItems = [
-    { icon: <IoMdRefresh />, label: "Refresh" },
-    { icon: <FaFileExport />, label: "Export Delete Users" },
+    {
+      icon: <IoMdRefresh />,
+      label: "Refresh",
+      onClick: () => {
+        dispatch(fetchDeletedUsers())
+          .unwrap()
+          .then((data) => {
+            console.log("🎉 Successfully refreshed deleted users:", data);
+            setDeletedUsers(data); // Update the deleted users state
+          })
+          .catch((error) => {
+            console.error("❌ Error refreshing deleted users:", error.message);
+          });
+      },
+    },
+    {
+      icon: <FaFileExport />,
+      label: "Export Delete Users",
+      onClick: () => {
+        exportDeletedUsersToExcel(
+          deletedUsers.map((user) => ({
+            fullName: user.fullName,
+            email: user.email,
+            address: user.address,
+            city: user.city,
+            contact: user.contact,
+          }))
+        );
+      },
+    },
   ];
 
   const tableColumns = [
@@ -115,6 +156,57 @@ const DeletedUsers = () => {
     { label: "City", key: "city" },
     { label: "Contact", key: "contact" },
   ];
+
+  const exportDeletedUsersToExcel = (data, filename = "Deleted_Users_Report.xlsx") => {
+    // Define headers and custom styles
+    const headers = [
+      ["Deleted Users Report"], // Title
+      ["Generated on:", new Date().toLocaleString()], // Subtitle with timestamp
+      [], // Empty row for spacing
+      ["Display Name", "Email", "Address", "City", "Contact"], // Table Headers
+    ];
+
+    const worksheetData = headers.concat(
+      data.map((user) => [
+        user.fullName,
+        user.email,
+        user.address,
+        user.city,
+        user.contact,
+      ])
+    );
+
+    const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
+
+    // Apply column widths for better readability
+    worksheet["!cols"] = [
+      { wch: 25 }, // Display Name
+      { wch: 30 }, // Email
+      { wch: 40 }, // Address
+      { wch: 20 }, // City
+      { wch: 15 }, // Contact
+    ];
+
+    // Add styling to headers
+    const headerStyle = {
+      font: { bold: true, sz: 14, color: { rgb: "FFFFFF" } },
+      fill: { fgColor: { rgb: "4F81BD" } },
+      alignment: { horizontal: "center", vertical: "center" },
+    };
+
+    // Apply styles to header cells
+    ["A1", "A2", "A4", "B4", "C4", "D4", "E4"].forEach((cell) => {
+      if (worksheet[cell]) worksheet[cell].s = headerStyle;
+    });
+
+    // Create a workbook and append the worksheet
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Deleted Users");
+
+    // Save the workbook
+    XLSX.writeFile(workbook, filename);
+  };
+
 
   return (
     <div className="min-h-screen py-4">
@@ -133,6 +225,7 @@ const DeletedUsers = () => {
                 <div
                   key={i}
                   className="flex items-center gap-1 cursor-pointer hover:text-blue-500 transition-all"
+                  onClick={item.onClick || undefined} // Execute onClick if available
                 >
                   <span className="text-lg">{item.icon}</span>
                   <p>{item.label}</p>
@@ -159,40 +252,45 @@ const DeletedUsers = () => {
         </div>
       </NewHeader>
       <div className="pl-4 pr-2">
-      <NewTableComponent
-        tableColumns={tableColumns.map((col) => (
-          <div
-            key={col.key}
-            className="flex items-center justify-between cursor-pointer w-full"
-            onClick={() => handleSort(col.key)}
-          >
-            <span>{col.label}</span>
-            <FaSort className="ml-1" />
+        {isLoading && (
+          <div className="flex justify-center items-center ">
+            <FaSpinner className="animate-spin text-blue-500" size={20} />
           </div>
-        ))}
-        rowsPerPage={rowsPerPage}
-        totalRows={filteredAndSortedUsers.length}
-        currentPage={currentPage}
-        onPageChange={(page) => setCurrentPage(page)}
-        handleRowsPerPageChange={handleRowsPerPageChange}
-      >
-        {paginatedDeletedUsers.map((user) => (
-          <tr
-            key={user.id}
-            className="border-b dark:border-neutral-700 cursor-pointer relative bg-gray-100 dark:bg-neutral-800 hover:bg-gray-200"
-          >
-            <td className="p-3 text-gray-700 dark:text-neutral-400">
-              <div className="flex items-center justify-between ">
-                <span className="hover:text-blue-600">{user.fullName}</span>
-              </div>
-            </td>
-            <td className="p-3 text-gray-700 dark:text-neutral-400">{user.email}</td>
-            <td className="p-3 text-gray-700 dark:text-neutral-400">{user.address}</td>
-            <td className="p-3 text-gray-700 dark:text-neutral-400">{user.city}</td>
-            <td className="p-3 text-gray-700 dark:text-neutral-400">{user.contact}</td>
-          </tr>
-        ))}
-      </NewTableComponent>
+        )}
+        <NewTableComponent
+          tableColumns={tableColumns.map((col) => (
+            <div
+              key={col.key}
+              className="flex items-center justify-between cursor-pointer w-full"
+              onClick={() => handleSort(col.key)}
+            >
+              <span>{col.label}</span>
+              <FaSort className="ml-1" />
+            </div>
+          ))}
+          rowsPerPage={rowsPerPage}
+          totalRows={filteredAndSortedUsers.length}
+          currentPage={currentPage}
+          onPageChange={(page) => setCurrentPage(page)}
+          handleRowsPerPageChange={handleRowsPerPageChange}
+        >
+          {paginatedDeletedUsers.map((user) => (
+            <tr
+              key={user.id}
+              className="odd:bg-gray-100 even:bg-white dark:odd:bg-neutral-800 dark:even:bg-neutral-900 cursor-pointer hover:bg-gray-300 dark:hover:bg-neutral-600 hover:text-blue-700 transition-all duration-200 "
+            >
+              <td className="p-3 text-gray-700 dark:text-neutral-400">
+                <div className="flex items-center justify-between ">
+                  <span className="hover:text-blue-600">{user.fullName}</span>
+                </div>
+              </td>
+              <td className="p-3 text-gray-700 dark:text-neutral-400">{user.email}</td>
+              <td className="p-3 text-gray-700 dark:text-neutral-400">{user.address}</td>
+              <td className="p-3 text-gray-700 dark:text-neutral-400">{user.city}</td>
+              <td className="p-3 text-gray-700 dark:text-neutral-400">{user.contact}</td>
+            </tr>
+          ))}
+        </NewTableComponent>
       </div>
       {isFilterModalOpen && (
         <DeleteFilterModal

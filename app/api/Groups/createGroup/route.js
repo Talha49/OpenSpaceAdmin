@@ -1,26 +1,52 @@
-import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
-import { v4 as uuidv4 } from 'uuid';
+import { NextResponse } from "next/server";
+import dbConnect from "@/lib/connectdb/connection";
+import Group from "@/lib/models/Group";
 
 export async function POST(req) {
+  console.log("API: Received POST request for group creation");
+
   try {
-    const group = await req.json();
-    const filePath = path.join(process.cwd(), 'data', 'groups.json');
-    
-    let groups = [];
-    if (fs.existsSync(filePath)) {
-      const fileContents = fs.readFileSync(filePath, 'utf8');
-      groups = JSON.parse(fileContents);
+    await dbConnect();
+    console.log("API: Connected to MongoDB");
+
+    const groupData = await req.json();
+    console.log("API: Received data:", groupData);
+
+    // Destructure to extract values, including groupType
+    const { groupType, basics, owners, members } = groupData;
+
+    // Validate incoming data
+    if (!owners || owners.length === 0) {
+      throw new Error("At least one owner is required.");
+    }
+    if (!members || members.length < 2) {
+      throw new Error("At least two members are required.");
+    }
+    if (!basics || !basics.name || !basics.description) {
+      throw new Error("Group name and description are required.");
     }
 
-    const newGroup = { ...group, id: uuidv4() };
-    groups.push(newGroup);
+    // Map data to required fields
+    const groupOwrnerID = owners.map((owner) => owner._id); // Extract owner IDs
+    const groupTargetID = members.map((member) => member._id); // Extract member IDs
 
-    fs.writeFileSync(filePath, JSON.stringify(groups, null, 2));
+    const newGroup = await Group.create({
+      groupName: basics.name,
+      groupType: groupType,  // Now groupType is properly passed
+      groupDescription: basics.description,
+      status: "active",
+      created: {
+        by: "admin", // Replace with dynamic user info if needed
+        createdAt: new Date(),
+      },
+      groupOwrnerID,
+      groupTargetID,
+    });
 
+    console.log("API: Group successfully created:", newGroup);
     return NextResponse.json(newGroup, { status: 201 });
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to create group' }, { status: 500 });
+    console.error("API: Error creating group:", error.message);
+    return NextResponse.json({ error: error.message }, { status: 400 });
   }
 }

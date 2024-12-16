@@ -1,36 +1,43 @@
-// /api/storeDeletedUser.js
-import fs from 'fs';
-import path from 'path';
+import dbConnect from '@/lib/connectdb/connection';
+import User from '@/lib/models/User';
 import { NextResponse } from 'next/server';
 
 export async function POST(request) {
   try {
-    const { users } = await request.json();
+    console.log('📩 Received POST request to delete users');
 
-    const dataDir = path.join(process.cwd(), 'datatwo');
-    const filePath = path.join(dataDir, 'deletedUsers.json');
+    // Parse the request body
+    const requestBody = await request.json();
+    console.log('📦 Full request body:', requestBody);
 
-    // Ensure the data directory exists
-    if (!fs.existsSync(dataDir)) {
-      fs.mkdirSync(dataDir, { recursive: true });
+    // Validate that `users` is present and extract `userIds`
+    if (!requestBody || !requestBody.users) {
+      console.error('❌ "users" array is missing in the request body');
+      return NextResponse.json({ error: '"users" array is required in the request body' }, { status: 400 });
     }
 
-    // Read existing deleted users
-    let existingData = [];
-    if (fs.existsSync(filePath)) {
-      const fileContents = fs.readFileSync(filePath, 'utf8');
-      existingData = JSON.parse(fileContents);
+    const userIds = requestBody.users.map((user) => user._id);
+    console.log('📦 Extracted user IDs to delete:', userIds);
+
+    // Connect to the database
+    await dbConnect();
+
+    // Update the `status` of the users to "inactive"
+    const result = await User.updateMany(
+      { _id: { $in: userIds } }, // Match users by IDs
+      { $set: { status: 'inactive' } } // Set status to "inactive"
+    );
+
+    // Log the correct count of modified users
+    console.log(`✅ ${result.modifiedCount || result.nModified} user(s) status updated to "inactive"`);
+
+    if ((result.modifiedCount || result.nModified) === 0) {
+      return NextResponse.json({ message: 'No users found or already inactive' }, { status: 404 });
     }
 
-    // Add new deleted users
-    const updatedData = [...existingData, ...users];
-
-    // Write the updated data back to the file
-    fs.writeFileSync(filePath, JSON.stringify(updatedData, null, 2), 'utf8');
-
-    return NextResponse.json({ message: 'Deleted users stored successfully' });
+    return NextResponse.json({ message: 'Users marked as inactive successfully' }, { status: 200 });
   } catch (error) {
-    console.error('Error handling request:', error);
+    console.error('❌ Error handling request:', error);
     return NextResponse.json({ error: 'Error handling request' }, { status: 500 });
   }
 }

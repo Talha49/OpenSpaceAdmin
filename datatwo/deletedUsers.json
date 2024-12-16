@@ -478,5 +478,33 @@
     "city": "Islamabad",
     "contact": "09865347899",
     "id": "00f4ca65-78c6-4a09-bcb8-014ee75c8f6b"
+  },
+  {
+    "_id": "674083a65983cfc06382c9e3",
+    "fullName": "Ahmad Ali Baig",
+    "email": "ahmadalibaig52@gmail.com",
+    "password": "$2b$10$vCKxqhwAC0/ZyCTSD5q4r.7HaCBGXOSfX6tCuGlq1ACwwYTJcaTDq",
+    "status": "active",
+    "address": "mills officer colony Bhakkar",
+    "city": "Bhakkar",
+    "contact": "03345455956",
+    "image": "",
+    "isSocialLogin": false,
+    "createdByAdmin": true,
+    "__v": 0
+  },
+  {
+    "_id": "674083a65983cfc06382c9e3",
+    "fullName": "Ahmad Ali Baig",
+    "email": "ahmadalibaig52@gmail.com",
+    "password": "$2b$10$vCKxqhwAC0/ZyCTSD5q4r.7HaCBGXOSfX6tCuGlq1ACwwYTJcaTDq",
+    "status": "active",
+    "address": "mills officer colony Bhakkar",
+    "city": "Bhakkar",
+    "contact": "03345455956",
+    "image": "",
+    "isSocialLogin": false,
+    "createdByAdmin": true,
+    "__v": 0
   }
 ]

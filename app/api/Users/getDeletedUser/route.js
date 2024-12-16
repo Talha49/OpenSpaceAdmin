@@ -1,22 +1,32 @@
-// /api/getDeletedUsers.js
-import fs from 'fs';
-import path from 'path';
-import { NextResponse } from 'next/server';
+import dbConnect from '@/lib/connectdb/connection';
+import User from '@/lib/models/User';
 
 export async function GET() {
   try {
-    const dataDir = path.join(process.cwd(), 'datatwo');
-    const filePath = path.join(dataDir, 'deletedUsers.json');
+    console.log('📥 Received request to fetch inactive users');
 
-    if (fs.existsSync(filePath)) {
-      const fileContents = fs.readFileSync(filePath, 'utf8');
-      const deletedUsers = JSON.parse(fileContents);
-      return NextResponse.json(deletedUsers);
-    } else {
-      return NextResponse.json([]);
-    }
+    // Connect to the database
+    console.log('⚙️ Connecting to the database...');
+    await dbConnect();
+    console.log('✅ Database connected successfully.');
+
+    // Fetch inactive users from the User collection
+    console.log('🔍 Querying inactive users...');
+    const inactiveUsers = await User.find({ status: 'inactive' });
+    console.log(`🛠️ Query Result: Found ${inactiveUsers.length} inactive user(s).`);
+
+    // Return the users as JSON
+    return new Response(JSON.stringify(inactiveUsers), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    });
   } catch (error) {
-    console.error('Error handling request:', error);
-    return NextResponse.json({ error: 'Error handling request' }, { status: 500 });
+    console.error('❌ Error fetching inactive users:', error);
+
+    // Return error response
+    return new Response(JSON.stringify({ error: 'Failed to fetch inactive users' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
 }

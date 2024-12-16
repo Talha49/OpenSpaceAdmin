@@ -1,21 +1,20 @@
-import fs from 'fs';
-import path from 'path';
+import dbConnect from '@/lib/connectdb/connection'; // Database connection utility
+import User from '@/lib/models/User'; // User model
 import { NextResponse } from 'next/server';
 
 export async function GET() {
   try {
-    const filePath = path.join(process.cwd(), 'data', 'users.json');
+    console.log('🔄 Connecting to database...');
+    await dbConnect();
 
-    if (!fs.existsSync(filePath)) {
-      return NextResponse.json([], { status: 200 });
-    }
+    console.log('📦 Fetching active users from the database...');
+    const activeUsers = await User.find({ status: 'active' }); // Fetch users with status 'active'
 
-    const fileContents = fs.readFileSync(filePath, 'utf8');
-    const users = JSON.parse(fileContents);
+    console.log('✅ Active users fetched successfully:', activeUsers);
 
-    return NextResponse.json(users, { status: 200 });
+    return NextResponse.json(activeUsers, { status: 200 });
   } catch (error) {
-    console.error('Error fetching users:', error);
+    console.error('❌ Error fetching active users:', error);
     return NextResponse.json({ error: 'Error fetching users' }, { status: 500 });
   }
 }

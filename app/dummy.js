@@ -101,6 +101,7 @@ const ActiveUserComp = () => {
         if (response.ok) {
           setUsers(users.filter(user => user.id !== selectedUser.id));
           setShowModal(false);
+          
         } else {
           console.error("Failed to delete user");
         }

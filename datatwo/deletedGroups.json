@@ -178,5 +178,43 @@
       }
     ],
     "id": "66fb826d-9d98-41d9-90f4-411a1877a80e"
+  },
+  {
+    "groupType": "Type 2",
+    "role": [],
+    "basics": {
+      "name": "OpenSpace",
+      "description": "OpenSpace is our FYp"
+    },
+    "owners": [
+      {
+        "fullName": "TaimoorR",
+        "email": "Taimor@gmail.com",
+        "address": "House 789 9i ",
+        "city": "Kharian",
+        "contact": "77346789869",
+        "id": "5d895502-cd3f-4334-9cb8-c5fcd2d496f7"
+      }
+    ],
+    "members": [
+      {
+        "fullName": "Usama Binte Ladin",
+        "email": "Usama879@gmail.com",
+        "address": "House Ghju8 4D",
+        "city": "Karachi",
+        "contact": "09876543234",
+        "id": "a9ccebde-42d0-4b37-898a-cd1b3def6799"
+      },
+      {
+        "fullName": "Ali Tas",
+        "email": "AliT@gmail.com",
+        "address": "house g6778 h",
+        "city": "Islamabad",
+        "contact": "09865347899",
+        "id": "4b0eac35-7e3d-4840-8f26-39d462fc4816"
+      }
+    ],
+    "targetData": [],
+    "id": "1aab0256-3c87-4b6c-b7c3-4277a629f59d"
   }
 ]

@@ -1,26 +1,22 @@
+import dbConnect from '@/lib/connectdb/connection'; // Fix the import to use dbConnect
+import Group from '@/lib/models/Group'; // Assuming you have a Mongoose model for the Group
 
-import fs from 'fs';
-import path from 'path';
-import { NextResponse } from 'next/server';
-
-export async function GET() {
+export async function GET(req) {
   try {
-    const dataDir = path.join(process.cwd(), 'datatwo');
-    const filePath = path.join(dataDir, 'deletedGroups.json');
+    // Connect to MongoDB with Mongoose
+    await dbConnect();
 
-    // Check if the file exists
-    if (fs.existsSync(filePath)) {
-      const fileContents = fs.readFileSync(filePath, 'utf8');
-      const deletedGroups = JSON.parse(fileContents);
-
-      // Return the deleted groups data
-      return NextResponse.json({ deletedGroups }, { status: 200 });
-    } else {
-      // If the file doesn't exist, return an empty array
-      return NextResponse.json({ deletedGroups: [] }, { status: 200 });
-    }
+    // Fetch groups with 'inactive' status
+    const deletedGroups = await Group.find({ status: 'inactive' })
+    .populate("groupOwrnerID", "fullName email") // Populate owners (select only fullName and email fields)
+    .populate("groupTargetID", "fullName email") ;// Populate members (select only fullName and email fields)
+    // Return deleted groups as JSON
+    return new Response(JSON.stringify(deletedGroups), { status: 200 });
   } catch (error) {
     console.error('Error fetching deleted groups:', error);
-    return NextResponse.json({ error: 'Error fetching deleted groups' }, { status: 500 });
+    return new Response(
+      JSON.stringify({ error: 'Failed to fetch deleted groups' }),
+      { status: 500 }
+    );
   }
 }

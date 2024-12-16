@@ -246,9 +246,11 @@ import {
   FaSort,
   FaFilter,
   FaUsers,
+  FaSpinner,
 } from "react-icons/fa";
 import { IoMdRefresh } from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
+import * as XLSX from "xlsx"; // Import the xlsx library
 
 const ActiveGroup = () => {
   const router = useRouter()
@@ -263,11 +265,14 @@ const ActiveGroup = () => {
     direction: "ascending",
   });
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  
   const [searchTerm, setSearchTerm] = useState("");
   const [isSelectable, setIsSelectable] = useState(false);
   const [selectedGroups, setSelectedGroups] = useState([]);
   const groups = useSelector((state) => state.group.groups);
-
+  const [optionsGroup, setOptionsGroup] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false); // Track the deletion state
+  const [isLoading, setIsLoading] = useState(true);  // Loading state
   const handleOpenFilterModal = () => setIsFilterModalOpen(true);
   const handleCloseFilterModal = () => setIsFilterModalOpen(false);
   const handleApplyFilter = (criteria) => {
@@ -276,6 +281,28 @@ const ActiveGroup = () => {
     handleCloseFilterModal();
   };
 
+//handle export in xlx on icon click export 
+const handleExportExcel = () => {
+  // Convert groups data to an array of objects that are compatible with Excel format
+  const exportData = groups.map((group) => ({
+    "Group Name": group.groupName,
+    "Owner": group.groupOwrnerID?.map((owner) => owner.fullName).join(", "),
+    "Type": group.groupType,
+    "Members": group.groupTargetID?.length || 0,
+  }));
+
+  // Create a new workbook and add the exportData as a worksheet
+  const ws = XLSX.utils.json_to_sheet(exportData);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Groups");
+
+  // Export the workbook to an Excel file
+  XLSX.writeFile(wb, "groups.xlsx");
+};
+
+
+
+
   // Handle items per page change
   const handleRowsPerPageChange = (e) => {
     setRowsPerPage(Number(e.target.value));
@@ -283,7 +310,13 @@ const ActiveGroup = () => {
   };
 
   useEffect(() => {
-    dispatch(fetchGroups());
+    setIsLoading(true); // Set loading to true when fetching starts
+    dispatch(fetchGroups()).then(() => {
+      console.log("Groups fetched:", groups); // Log the groups from Redux
+    })
+      .finally(() => {
+        setIsLoading(false); // Set loading to false after fetch is complete
+      });
   }, [dispatch]);
 
   const handleSort = (key) => {
@@ -299,7 +332,7 @@ const ActiveGroup = () => {
 
     // Apply search filter
     result = result.filter((group) =>
-      group.basics.name.toLowerCase().includes(searchTerm.toLowerCase())
+      group.groupName.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     // Apply type filter
@@ -313,26 +346,35 @@ const ActiveGroup = () => {
     if (sortConfig.key !== null) {
       result.sort((a, b) => {
         let aValue, bValue;
+
         switch (sortConfig.key) {
           case "fullName":
-            aValue = a.basics.name.toLowerCase();
-            bValue = b.basics.name.toLowerCase();
+            // Ensure 'groupName' exists before trying to access it
+            aValue = a.groupName ? a.groupName.toLowerCase() : "";
+            bValue = b.groupName ? b.groupName.toLowerCase() : "";
             break;
           case "owner":
-            aValue = a.owners[0]?.fullName.toLowerCase();
-            bValue = b.owners[0]?.fullName.toLowerCase();
+            // Ensure 'owners' array exists and has at least one owner
+            aValue = a.groupOwrnerID && a.groupOwrnerID[0]?.fullName
+              ? a.groupOwrnerID[0]?.fullName.toLowerCase()
+              : "";
+            bValue = b.groupOwrnerID && b.groupOwrnerID[0]?.fullName
+              ? b.groupOwrnerID[0]?.fullName.toLowerCase()
+              : "";
             break;
           case "type":
-            aValue = a.groupType.toLowerCase();
-            bValue = b.groupType.toLowerCase();
+            // Ensure 'groupType' exists before trying to access it
+            aValue = a.groupType ? a.groupType.toLowerCase() : "";
+            bValue = b.groupType ? b.groupType.toLowerCase() : "";
             break;
           case "members":
-            aValue = a.members.length;
-            bValue = b.members.length;
+            // Ensure 'groupTargetID' exists and has a length
+            aValue = a.groupTargetID ? a.groupTargetID.length : 0;
+            bValue = b.groupTargetID ? b.groupTargetID.length : 0;
             break;
           default:
-            aValue = a[sortConfig.key];
-            bValue = b[sortConfig.key];
+            aValue = a[sortConfig.key] || "";
+            bValue = b[sortConfig.key] || "";
         }
 
         if (aValue < bValue) {
@@ -355,61 +397,99 @@ const ActiveGroup = () => {
   );
 
   const tableColumns = [
-    { label: "Group Name", key: "fullName" },
-    { label: "Owner", key: "owner" },
-    { label: "Type", key: "type" },
-    { label: "Members", key: "members" },
+    { label: "Group Name", key: "fullName", width: "250px" },
+    { label: "Owner", key: "owner", width: "300px" },
+    { label: "Type", key: "type", width: "200px" },
+    { label: "Members", key: "members", width: "200px" },
   ];
-
   const handleCheckboxChange = (group) => {
-    setSelectedGroups((prevSelected) =>
-      prevSelected.find((selectedGroup) => selectedGroup.id === group.id)
-        ? prevSelected.filter((selectedGroup) => selectedGroup.id !== group.id)
-        : [...prevSelected, group]
-    );
+    setSelectedGroups((prevSelected) => {
+      const isSelected = prevSelected.some((selectedGroup) => selectedGroup._id === group._id);
+      if (isSelected) {
+        return prevSelected.filter((selectedGroup) => selectedGroup._id !== group._id);
+      } else {
+        return [...prevSelected, group];
+      }
+    });
   };
 
   const handleSelectAll = () => {
-    if (selectedGroups.length === paginatedGroups.length) {
-      setSelectedGroups([]);
+    const allSelected = paginatedGroups.every((group) =>
+      selectedGroups.some((selectedGroup) => selectedGroup._id === group._id)
+    );
+
+    if (allSelected) {
+      setSelectedGroups((prevSelected) =>
+        prevSelected.filter(
+          (selectedGroup) => !paginatedGroups.some((group) => group._id === selectedGroup._id)
+        )
+      );
     } else {
-      setSelectedGroups(paginatedGroups);
+      setSelectedGroups((prevSelected) => [
+        ...prevSelected,
+        ...paginatedGroups.filter(
+          (group) => !prevSelected.some((selectedGroup) => selectedGroup._id === group._id)
+        ),
+      ]);
     }
   };
 
   const handleDeleteGroups = async () => {
+    setIsDeleting(true);  // Set to true when deletion starts
     if (selectedGroups.length === 0) {
       alert("Please select groups to delete.");
     } else {
-      const groupIds = selectedGroups.map((group) => group.id);
+      const groupIds = selectedGroups.map((group) => group._id); // Use _id instead of id
+
+      // Log the groupIds to ensure they are correct
+      console.log("Deleting groups with IDs:", groupIds);
+
       try {
-        // First, delete the groups
-        await dispatch(deleteGroups(groupIds)).unwrap();
+        // Dispatch the deleteGroups action with the selected group IDs
+        const actionResult = await dispatch(deleteGroups(groupIds));
+        const { error } = actionResult;
 
-        // Then, store the deleted groups
-        await dispatch(storeDeletedGroups(selectedGroups)).unwrap();
+        if (error) {
+          throw new Error('Failed to delete groups');
+        }
 
-        setSelectedGroups([]);
-        setIsSelectable(false);
-        alert("Groups deleted and stored successfully.");
+        alert('Groups Deleted successfully.');
+
+        // Optionally, update the UI or state after successful deletion
+        dispatch(fetchGroups());
+        setSelectedGroups([]); // Clear selected groups
+        setIsSelectable(false); // Disable selection mode
       } catch (error) {
-        console.error("Failed to delete or store groups:", error);
+        console.error('Failed to delete groups:', error);
+        alert('Failed to delete groups');
+      }
+      finally {
+        setIsDeleting(false); // Set back to false after the operation is complete
       }
     }
+
   };
+
 
   const headerItems = [
     {
       icon: <FaUserFriends />,
       label: "Add Group",
+      onClick: () => {
+        router.push("/group");
+      },
     },
     {
       icon: <IoMdRefresh />,
       label: "Refresh",
+      onClick: () => {
+        dispatch(fetchGroups());
+      },
     },
     {
       icon: <FaFileExport />,
       label: "Export Groups",
+      onClick: handleExportExcel, // Add export functionality here
     },
     {
       icon: <FaFileExport />,
@@ -419,6 +499,16 @@ const ActiveGroup = () => {
       },
     },
   ];
+
+  useEffect(() => {
+    dispatch(fetchGroups()).then(() => {
+      console.log("Groups fetched:", groups); // Log the groups from Redux
+    });
+  }, [dispatch]);
+  console.log("Selected Groups:", selectedGroups);
+
+
+
 
   return (
     <div>
@@ -482,8 +572,9 @@ const ActiveGroup = () => {
           <button
             className="bg-red-500 px-3 py-2 rounded-lg text-white"
             onClick={handleDeleteGroups}
+            disabled={isDeleting}  // Disable the button while deleting
           >
-            Delete
+            {isDeleting ? "Deleting..." : "Delete"}
           </button>
         </div>
       )}
@@ -495,17 +586,20 @@ const ActiveGroup = () => {
               <th className="flex items-center justify-between">
                 <input
                   type="checkbox"
-                  checked={
-                    paginatedGroups.length > 0 &&
-                    selectedGroups.length === paginatedGroups.length
-                  }
+                  className="custom-circle-checkbox"
+                  checked={paginatedGroups.every((group) =>
+                    selectedGroups.some((selectedGroup) => selectedGroup._id === group._id)
+                  )}
                   onChange={handleSelectAll}
                 />
+
+
               </th>
             ) : null,
             ...tableColumns.map((col) => (
               <div
                 key={col.key}
+                style={{ width: col.width }} // Apply consistent width
                 className="flex items-center justify-between cursor-pointer w-full"
               >
                 <span>{col.label}</span>
@@ -524,6 +618,12 @@ const ActiveGroup = () => {
                 <FaUsers className="text-blue-500" />
                 <span className="text-sm">Create New Group</span>
               </button>
+              {/* Loader above the table */}
+              {isLoading && (
+                <div className="flex justify-center items-center ">
+                  <FaSpinner className="animate-spin text-blue-500" size={20} />
+                </div>
+              )}
             </>
           }
           rowsPerPage={rowsPerPage}
@@ -535,7 +635,7 @@ const ActiveGroup = () => {
           {paginatedGroups.map((group) => (
             <tr
               key={group.id}
-              className="border-b dark:border-neutral-700 cursor-pointer relative bg-gray-100 dark:bg-neutral-800 hover:bg-gray-200"
+              className="odd:bg-gray-100 even:bg-white dark:odd:bg-neutral-800 dark:even:bg-neutral-900 cursor-pointer hover:bg-gray-300 dark:hover:bg-neutral-600 hover:text-blue-700 transition-all duration-200 "
               onClick={() => {
                 if (!isSelectable) {
                   setIsOpen(true);
@@ -547,23 +647,25 @@ const ActiveGroup = () => {
                 <td>
                   <input
                     type="checkbox"
-                    className="mx-2"
-                    checked={selectedGroups.some(
-                      (selectedGroup) => selectedGroup.id === group.id
-                    )}
+                    className="custom-circle-checkbox mx-2"
+                    checked={selectedGroups.some((selectedGroup) => selectedGroup._id === group._id)} // Use the correct property for checking
                     onChange={(e) => {
-                      e.stopPropagation();
-                      handleCheckboxChange(group);
+                      e.stopPropagation(); // Prevent row click event
+                      handleCheckboxChange(group); // Ensure group is passed correctly
                     }}
                   />
                 </td>
+
               )}
-              <td className="p-3 text-gray-700 dark:text-neutral-400">{group?.basics.name}</td>
-              <td className="p-3 text-gray-700 dark:text-neutral-400">
-                {group?.owners[0]?.fullName}
+              <td className="p-3 text-gray-700 dark:text-neutral-400 w-[250]">{group?.groupName}</td>
+              <td className="p-3 text-gray-700 dark:text-neutral-400 w-[300]">
+                {group?.groupOwrnerID?.map((owner) => owner.fullName).join(", ")}
               </td>
-              <td className="p-3 text-gray-700 dark:text-neutral-400">{group?.groupType}</td>
-              <td className="p-3 text-gray-700 dark:text-neutral-400">{group?.members.length}</td>
+              <td className="p-3 text-gray-700 dark:text-neutral-400 w-[200]">{group?.groupType}</td>
+              <td className="p-3 text-gray-700 dark:text-neutral-400 w-[200]">
+                {group?.groupTargetID?.length || 0}
+              </td>
+
             </tr>
           ))}
         </NewTableComponent>

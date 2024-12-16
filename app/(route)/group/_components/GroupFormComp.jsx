@@ -7,7 +7,7 @@ import { fetchUsers } from "@/lib/Feature/UserSlice";
 import { IoMdClose } from "react-icons/io";
 import { createGroup } from "@/lib/Feature/GroupSlice";
 import { useRouter } from "next/navigation";
-
+import { fetchGroups } from "@/lib/Feature/GroupSlice";
 const Dialog = ({ children, onClose }) => {
   return (
     <div className="absolute top-0 h-screen w-[91vw] flex items-center justify-center">
@@ -17,7 +17,9 @@ const Dialog = ({ children, onClose }) => {
           onClick={onClose}
         >
           <IoMdClose />
+          
         </div>
+        
         {children}
       </div>
     </div>
@@ -30,6 +32,7 @@ const GroupFormComp = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [dialogType, setDialogType] = useState(null); // 'owners' or 'members'
   const [groupType, setGroupType] = useState("Type 1");
+
   const [stepperFormData, setStepperFormData] = useState({
     groupType: "Type 1",
     basics: {
@@ -44,8 +47,18 @@ const GroupFormComp = () => {
 
   const router = useRouter();
 
+  const handleClose = () => {
+    setIsDialogOpen(false); // Close the modal
+    router.push("/group/ActiveGroups"); // Replace "/previousScreen" with the route you want to navigate back to
+  };
+
   useEffect(() => {
     dispatch(fetchUsers());
+  }, [dispatch]);
+
+  useEffect(() => {
+    // Fetch groups when the component mounts
+    dispatch(fetchGroups());
   }, [dispatch]);
 
   const users = useSelector((state) => state.user.users);
@@ -70,13 +83,13 @@ const GroupFormComp = () => {
             alert("Please fill out the fields");
           }
           break;
-        case 2:
-          if (stepperFormData.owners.length !== 0) {
-            setActiveStep((prevStep) => prevStep + 1);
-          } else {
-            alert("Please select at least 1 owner");
-          }
-          break;
+          case 2:
+            if (stepperFormData.owners.length > 0) {
+              setActiveStep((prevStep) => prevStep + 1);
+            } else {
+              alert("Please select at least 1 owner");
+            }
+            break;
         case 3:
           if (stepperFormData.members.length >= 2) {
             setActiveStep((prevStep) => prevStep + 1);
@@ -108,45 +121,70 @@ const GroupFormComp = () => {
 
   const handleUserSelection = (user, type) => {
     setStepperFormData((prevData) => {
-      if (type === "owners") {
-        // Allow only one owner; if another is selected, replace the previous one
-        return {
-          ...prevData,
-          owners: [user], // Always replace with the new selected owner
-        };
-      } else {
-        // Handle multiple members selection
-        const updatedList = prevData[type].includes(user)
-          ? prevData[type].filter((userObj) => userObj !== user)
-          : [...prevData[type], user];
-
-        return {
-          ...prevData,
-          [type]: updatedList,
-        };
-      }
+      const updatedList = prevData[type].includes(user)
+        ? prevData[type].filter((userObj) => userObj !== user)
+        : [...prevData[type], user];
+  
+      return {
+        ...prevData,
+        [type]: updatedList,
+      };
     });
   };
+  
 
   const handleCreateGroup = async () => {
-    const res = await dispatch(createGroup(stepperFormData));
-    if (!res) {
-      alert("failed to create group");
-    } else {
-      alert("group created successfully");
-      router.push("/group/ActiveGroups");
-      setActiveStep(0);
-      setStepperFormData({
-        groupType: "Type 1",
-        basics: {
-          name: "",
-          description: "",
+    console.log("Frontend: Preparing group data:", stepperFormData);
+  
+    // Validate required fields
+    if (stepperFormData.owners.length === 0) {
+      alert("At least one owner must be selected.");
+      return;
+    }
+    if (stepperFormData.members.length < 2) {
+      alert("At least two members must be selected.");
+      return;
+    }
+    if (!stepperFormData.basics.name || !stepperFormData.basics.description) {
+      alert("Group name and description are required.");
+      return;
+    }
+  
+    // Map data for the API
+    const requestData = {
+      basics: stepperFormData.basics,
+      owners: stepperFormData.owners, // These objects include `_id`
+      members: stepperFormData.members, // These objects include `_id`
+      groupType: stepperFormData.groupType // Include groupType here
+    };
+  
+    try {
+      const response = await fetch("/api/Groups/createGroup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-        owners: [],
-        members: [],
+        body: JSON.stringify(requestData),
       });
+  
+      console.log("Frontend: API response received. Status:", response.status);
+  
+      if (!response.ok) {
+        throw new Error("Failed to create group");
+      }
+  
+      const data = await response.json();
+      console.log("Frontend: Group successfully created. Data:", data);
+  
+      alert("Group created successfully!");
+      router.push("/group/ActiveGroups");
+    } catch (error) {
+      console.error("Frontend: Error creating group:", error);
+      alert("An error occurred while creating the group.");
     }
   };
+  
+  
 
   const renderContent = () => {
     switch (activeStep) {
@@ -227,6 +265,7 @@ const GroupFormComp = () => {
       case 1:
         return (
           <div>
+            
             <h1 className="text-2xl font-bold">Set up the basics</h1>
             <p className="my-7">
               To get started, fill out the basic info about the group you'd like
@@ -285,13 +324,13 @@ const GroupFormComp = () => {
             <ul className="mt-4">
               {stepperFormData.owners.length > 0 ? (
                 stepperFormData.owners.map((owner) => {
-                  const myOwner = users.find((user) => user.id === owner.id);
+                 // const myOwner = users.find((user) => user.id === owner.id);
                   return (
                     <li
-                      key={myOwner.id}
+                      key={owner.id}
                       className="border dark:border-neutral-600 rounded-md p-2 my-2 bg-gray-100 dark:bg-neutral-800"
                     >
-                      {myOwner.fullName} - {myOwner.email}
+                      {owner.fullName} - {owner.email}
                     </li>
                   );
                 })
@@ -338,15 +377,15 @@ const GroupFormComp = () => {
               <ul>
                 {stepperFormData.members.length > 0 ? (
                   stepperFormData.members.map((member) => {
-                    const myMember = users.find(
-                      (user) => user.id === member.id
-                    );
+                 //   const myMember = users.find(
+                 //     (user) => user.id === member.id
+                 //   );
                     return (
                       <li
-                        key={myMember.id}
+                        key={member.id}
                         className="border dark:border-neutral-600 rounded-md p-2 my-2 bg-gray-100 dark:bg-neutral-800"
                       >
-                        {myMember.fullName} - {myMember.email}
+                        {member.fullName} - {member.email}
                       </li>
                     );
                   })
@@ -404,6 +443,12 @@ const GroupFormComp = () => {
       </div>
       <div className="flex justify-between items-center py-4 w-full border-t border-gray-300 dark:border-neutral-800">
         <div className="flex gap-4">
+        <button
+          onClick={handleClose}
+          className="border bg-gray-300 text-white h-fit  px-3 py-2 rounded-lg"
+        >
+         Cancel
+        </button>
           <button
             onClick={handleBack}
             disabled={activeStep === 0}
@@ -443,6 +488,7 @@ const GroupFormComp = () => {
       </div>
       {isDialogOpen && (
         <Dialog onClose={() => setIsDialogOpen(false)}>
+          
           <ul className="w-fit h-[400px] overflow-y-auto relative">
             <div className="w-full flex items-center justify-between sticky top-0 bg-white dark:bg-neutral-800">
               <h1 className="text-2xl font-bold">
@@ -467,8 +513,27 @@ const GroupFormComp = () => {
                   <span className="text-center">{user.contact}</span>
                 </div>
               </li>
+              
             ))}
+             {/* Save Button */}
+      <div className="mt-4 flex justify-end">
+        <button
+          className="blue-button px-4 py-2 rounded-lg"
+          onClick={() => {
+            // Logic to save selected owners or members
+            if (dialogType === "owners") {
+              console.log("Owners selected:", stepperFormData.owners);
+            } else if (dialogType === "members") {
+              console.log("Members selected:", stepperFormData.members);
+            }
+            setIsDialogOpen(false); // Close the dialog after saving
+          }}
+        >
+          Save
+        </button>
+      </div>
           </ul>
+          
         </Dialog>
       )}
     </div>

@@ -28,7 +28,7 @@ const Menus = [
     subMenus: [
       { title: "Active users", link: "/users/active" },
       { title: "Contacts", link: "/users/contacts" },
-      { title: "Guest users", link: "/users/guest" },
+     // { title: "Guest users", link: "/users/guest" },//remove on sir send error ppt file 
       { title: "Deleted users", link: "/users/deleted" },
     ],
   },
