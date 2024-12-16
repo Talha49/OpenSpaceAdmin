@@ -42,8 +42,8 @@ export async function POST(req) {
     group.groupTargetID = Array.isArray(group.groupTargetID) ? group.groupTargetID.filter((id) => id.toString() !== userId) : [];
     console.log('Group members after removal:', group.groupTargetID);
 
-    group.groupOwnerID = Array.isArray(group.groupOwnerID) ? group.groupOwnerID.filter((id) => id.toString() !== userId) : [];
-    console.log('Group owners after removal:', group.groupOwnerID);
+    group.groupOwrnerID = Array.isArray(group.groupOwrnerID) ? group.groupOwrnerID.filter((id) => id.toString() !== userId) : [];
+    console.log('Group owners after removal:', group.groupOwrnerID);
 
     await group.save();
     console.log('Group updated successfully');

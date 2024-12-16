@@ -116,11 +116,11 @@ const GroupDetailDialog = ({ group = {}, isOpen, onClose }) => {
         leave="transition-transform duration-300 ease-in-out"
         leaveFrom="translate-x-0"
         leaveTo="translate-x-full"
-        className="fixed top-[4rem] right-0 h-screen z-50"
+        className="fixed top-[4rem] right-0 h-screen z-50 "
       >
-        <div className="bg-white dark:bg-neutral-900 rounded-lg shadow-xl w-full max-w-md h-full overflow-y-auto fixed top-0 right-0 flex flex-col">
+        <div className="bg-white dark:bg-neutral-900 rounded-lg shadow-xl w-full max-w-md h-[90vh] overflow-y-auto  top-0 right-0 flex flex-col">
           <div className="flex justify-between items-center p-4 border-b">
-            <h2 className="text-lg font-semibold dark:text-neutral-500">
+            <h2 className="text-lg font-semibold dark:text-neutral-500 overflow-y-auto">
 
               Group Details
               <button
@@ -348,7 +348,7 @@ const GroupDetailDialog = ({ group = {}, isOpen, onClose }) => {
                 onClick={closeOwnerDialog}
                 className="bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700 transition-colors"
               >
-                Close
+                Save
               </button>
             </div>
           </div>
@@ -399,7 +399,7 @@ const GroupDetailDialog = ({ group = {}, isOpen, onClose }) => {
                 onClick={closeMemberDialog}
                 className="bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700 transition-colors"
               >
-                Close
+                Save
               </button>
             </div>
           </div>

@@ -81,7 +81,7 @@ const DeleteGroupDetailDialog = ({ group = {}, isOpen, onClose }) => {
                 leaveTo="translate-x-full"
                 className="fixed top-[4rem] right-0 h-screen z-50"
             >
-                <div className="bg-white dark:bg-neutral-900 rounded-lg shadow-xl w-full max-w-md h-full overflow-y-auto fixed top-0 right-0 flex flex-col">
+                <div className="bg-white dark:bg-neutral-900 rounded-lg shadow-xl w-full max-w-md h-[90vh] overflow-y-auto  top-0 right-0 flex flex-col">
                     <div className="flex justify-between items-center p-4 border-b">
                         <h2 className="text-lg font-semibold dark:text-neutral-500">
                            Deleted Group Details

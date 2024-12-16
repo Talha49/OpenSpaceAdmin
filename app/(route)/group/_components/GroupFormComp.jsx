@@ -513,8 +513,27 @@ const GroupFormComp = () => {
                   <span className="text-center">{user.contact}</span>
                 </div>
               </li>
+              
             ))}
+             {/* Save Button */}
+      <div className="mt-4 flex justify-end">
+        <button
+          className="blue-button px-4 py-2 rounded-lg"
+          onClick={() => {
+            // Logic to save selected owners or members
+            if (dialogType === "owners") {
+              console.log("Owners selected:", stepperFormData.owners);
+            } else if (dialogType === "members") {
+              console.log("Members selected:", stepperFormData.members);
+            }
+            setIsDialogOpen(false); // Close the dialog after saving
+          }}
+        >
+          Save
+        </button>
+      </div>
           </ul>
+          
         </Dialog>
       )}
     </div>

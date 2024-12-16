@@ -10,20 +10,28 @@ const Dialog = ({ isOpen, onClose, userId }) => {
   const [selectedGroup, setSelectedGroup] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [selectedGroupName, setSelectedGroupName] = useState('');
+  const [isRemoving, setIsRemoving] = useState(false);
   const [groupModalOpen, setGroupModalOpen] = useState(false)
   const [searchPartOf, setSearchPartOf] = useState('')
   const [searchNotPartOf, setSearchNotPartOf] = useState('')
   const [hasChanges, setHasChanges] = useState(false);
   const [confirmationDialog, setConfirmationDialog] = useState({ isOpen: false, groupId: null });
+  const [role, setRole] = useState('member')  // Default role is member
+  const [addRoleDialogOpen, setAddRoleDialogOpen] = useState(false) // New state for adding role modal
+  const [selectedRole, setSelectedRole] = useState('member');  // Default role for the user
+  const [isSaving, setIsSaving] = useState(false);
+
+
   useEffect(() => {
     if (!userId || !isOpen) return
 
     setLoading(true)
     setError(null)
-    
 
- 
-    
+
+
+
     const fetchUserDetails = async (userId) => {
       try {
         const response = await fetch(`/api/Users/manageGroupsUser/getUserDetail?userId=${userId}`)
@@ -64,12 +72,13 @@ const Dialog = ({ isOpen, onClose, userId }) => {
   }
 
   const filteredPartOf = userGroups.partOf.filter(group =>
-    group.groupName.toLowerCase().includes(searchPartOf.toLowerCase())
-  )
+    (group.groupName || '').toLowerCase().includes(searchPartOf.toLowerCase())
+  );
 
   const filteredNotPartOf = userGroups.notPartOf.filter(group =>
-    group.groupName.toLowerCase().includes(searchNotPartOf.toLowerCase())
-  )
+    (group.groupName || '').toLowerCase().includes(searchPartOf.toLowerCase())
+  );
+
 
   if (!isOpen) return null
 
@@ -78,17 +87,19 @@ const Dialog = ({ isOpen, onClose, userId }) => {
   const handleRemoveGroup = (groupId) => {
     setConfirmationDialog({ isOpen: true, groupId });
   };
-  
+
   const confirmRemoveGroup = async () => {
     const groupId = confirmationDialog.groupId;
     try {
+      setIsRemoving(true); // Set to "Removing..." when the button is clicked
       const response = await fetch(`/api/Users/manageGroupsUser/removeGroupUser`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId, groupId }),
       });
-  
+
       if (response.ok) {
+        setIsRemoving(false); // Reset button text after the operation
         setUserGroups((prevGroups) => ({
           partOf: prevGroups.partOf.filter((group) => group._id !== groupId),
           notPartOf: [...prevGroups.notPartOf, prevGroups.partOf.find((group) => group._id === groupId)],
@@ -103,7 +114,7 @@ const Dialog = ({ isOpen, onClose, userId }) => {
       setConfirmationDialog({ isOpen: false, groupId: null });
     }
   };
-  
+
   const cancelRemoveGroup = () => {
     setConfirmationDialog({ isOpen: false, groupId: null });
   };
@@ -112,18 +123,78 @@ const Dialog = ({ isOpen, onClose, userId }) => {
   const router = useRouter();
 
   const handleSaveChanges = async () => {
-       setUserDetails(null)
+    setUserDetails(null)
     setUserGroups({ partOf: [], notPartOf: [] })
     setSelectedGroup(null)
     setGroupModalOpen(false)
-    
+
     onClose()
     setHasChanges(false);  // Reset the changes state
     router.push('/users/active');
- 
-};
 
-//end here add user and remove
+  };
+  //add user into group as member or owner 
+  const handleAddUserToGroup = async (groupId, role) => {
+
+    if (!groupId || !role) {
+      console.error('Group ID or Role not selected');
+      return;
+    }
+
+    console.log('Adding user to group:', { userId, groupId, role });
+
+    try {
+      setIsSaving(true); // Set loading state to true
+
+      const response = await fetch('/api/Users/manageGroupsUser/AddUserIntoGroup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, groupId, role }),
+      });
+
+      if (response.ok) {
+
+        const data = await response.json();
+        setAddRoleDialogOpen(false);
+        console.log('User added successfully:', data);
+
+        // Update state after successful API call
+        setHasChanges(true);
+        setUserGroups((prevGroups) => ({
+          partOf: [...prevGroups.partOf, { _id: groupId, groupName: selectedGroupName, role }],
+          notPartOf: prevGroups.notPartOf.filter(group => group._id !== groupId),
+        }));
+
+        handleCloseAddRoleDialog(); // Close the modal
+      } else {
+        const errorData = await response.json();
+        console.error('Failed to add user to group:', errorData);
+      }
+    } catch (error) {
+      console.error('Error adding user to group:', error);
+    }
+    finally {
+      setIsSaving(false); // Set loading state to false once done
+    }
+  };
+
+
+  // Open Add Role dialog and pass groupId
+  const handleOpenAddRoleDialog = (groupId, groupName) => {
+    setSelectedGroup(groupId);
+    setSelectedGroupName(groupName);  // Set the group name separately
+    setAddRoleDialogOpen(true);
+  };
+
+
+  // Close Add Role dialog
+  const handleCloseAddRoleDialog = () => {
+    setAddRoleDialogOpen(false);
+    setSelectedGroup(null);
+    setSelectedRole('member'); // Reset to default role
+  };
+  //end here add user and remove
+
   return (
     <div className="scrollbar-hidden fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex justify-center items-center z-50">
       <div className="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 p-8 rounded-xl shadow-2xl w-11/12 max-w-4xl relative h-[535px] overflow-hidden">
@@ -161,7 +232,7 @@ const Dialog = ({ isOpen, onClose, userId }) => {
                     <p className="text-sm font-semibold">Status : {userDetails.status}</p>
 
                   </div>
-                  
+
                 </div>
               </div>
 
@@ -174,7 +245,7 @@ const Dialog = ({ isOpen, onClose, userId }) => {
                       placeholder="Search groups..."
                       value={searchPartOf}
                       onChange={(e) => setSearchPartOf(e.target.value)}
-                      className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700  focus:ring-1 focus:ring-blue-500"
                     />
                     <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                   </div>
@@ -209,7 +280,7 @@ const Dialog = ({ isOpen, onClose, userId }) => {
                       placeholder="Search groups..."
                       value={searchNotPartOf}
                       onChange={(e) => setSearchNotPartOf(e.target.value)}
-                      className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700  focus:ring-1 focus:ring-blue-500"
                     />
                     <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                   </div>
@@ -224,8 +295,8 @@ const Dialog = ({ isOpen, onClose, userId }) => {
                         >
                           <span className="cursor-pointer" onClick={() => handleGroupClick(group)}>{group.groupName}</span>
                           <button
-                            className="ml-2 p-1 bg-green-500 text-white rounded-full hover:bg-green-600 transition-colors"
-                            aria-label={`Add to ${group.groupName}`}
+                            onClick={() => handleOpenAddRoleDialog(group)}
+                            className="p-2 bg-green-500 text-white rounded-full"
                           >
                             <FaUserPlus />
                           </button>
@@ -233,7 +304,7 @@ const Dialog = ({ isOpen, onClose, userId }) => {
                       ))
                     )}
                   </ul>
-                  
+
                 </div>
                 {hasChanges && (
                   <div className="fixed bottom-8 right-56">
@@ -246,35 +317,82 @@ const Dialog = ({ isOpen, onClose, userId }) => {
                   </div>
                 )}
               </div>
-             
+
             </div>
           )
         )}
       </div>
       {confirmationDialog.isOpen && (
-  <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex justify-center items-center z-50">
-    <div className="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 p-6 rounded-xl shadow-2xl w-11/12 max-w-sm">
-      <h3 className="text-xl font-semibold mb-4">Confirm Removal</h3>
-      <p className="text-gray-700 dark:text-gray-300 mb-6">
-        Are you sure you want to remove this user from the group?
-      </p>
-      <div className="flex justify-end space-x-4">
-        <button
-          onClick={cancelRemoveGroup}
-          className="px-4 py-2 bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-500"
-        >
-          No
-        </button>
-        <button
-          onClick={confirmRemoveGroup}
-          className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
-        >
-          Yes, Remove
-        </button>
-      </div>
-    </div>
-  </div>
-)}
+        <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex justify-center items-center z-50">
+          <div className="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 p-6 rounded-xl shadow-2xl w-11/12 max-w-sm">
+            <h3 className="text-xl font-semibold mb-4">Confirm Removal</h3>
+            <p className="text-gray-700 dark:text-gray-300 mb-6">
+              Are you sure you want to remove this user from the group?
+            </p>
+            <div className="flex justify-end space-x-4">
+              <button
+                onClick={cancelRemoveGroup}
+                className="px-4 py-2 bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-500"
+              >
+                No
+              </button>
+              <button
+                onClick={confirmRemoveGroup}
+                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+                disabled={isRemoving} // Optionally disable the button while removing
+              >
+                {isRemoving ? 'Removing...' : 'Yes, Remove'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {addRoleDialogOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex justify-center items-center z-50">
+          <div className="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 p-8 rounded-xl shadow-xl w-full max-w-md relative">
+
+            {/* Close button */}
+            <button
+              onClick={handleCloseAddRoleDialog}
+              className="absolute top-4 right-4 text-3xl font-semibold text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-all"
+              aria-label="Close"
+            >
+              &times;
+            </button>
+
+            {/* Modal Title */}
+            <h3 className="text-2xl font-semibold text-blue-600 dark:text-blue-400 mb-4 text-center">
+              Select Role
+            </h3>
+
+            {/* Role Selection Buttons */}
+            <div className="space-y-3">
+              <button
+                onClick={() => setSelectedRole('member')}
+                className={`w-full py-2 rounded-lg text-lg transition-all duration-200 ${selectedRole === 'member' ? 'bg-blue-500 text-white' : 'bg-gray-300 dark:bg-gray-700 dark:text-white hover:bg-blue-400 hover:text-white'}`}
+              >
+                Member
+              </button>
+              <button
+                onClick={() => setSelectedRole('owner')}
+                className={`w-full py-2 rounded-lg text-lg transition-all duration-200 ${selectedRole === 'owner' ? 'bg-blue-500 text-white' : 'bg-gray-300 dark:bg-gray-700 dark:text-white hover:bg-blue-400 hover:text-white'}`}
+              >
+                Owner
+              </button>
+
+            </div>
+
+            {/* Save Button */}
+            <button
+              onClick={() => handleAddUserToGroup(selectedGroup, selectedRole)}
+              className="w-full mt-4 py-2 bg-green-500 text-white rounded-lg shadow-md transition-all duration-200 hover:bg-green-600 focus:outline-none"
+              disabled={isSaving} // Optionally disable button while saving
+            >
+              {isSaving ? 'Saving...' : 'Save'}
+            </button>
+          </div>
+        </div>
+      )}
 
       {groupModalOpen && selectedGroup && (
         <div className="scrollbar-hidden fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex justify-center items-center z-50">
@@ -327,10 +445,10 @@ const Dialog = ({ isOpen, onClose, userId }) => {
                     {selectedGroup.status || 'No status available'}
                   </p>
                 </div>
-                
+
               </div>
             </div>
-           
+
           </div>
         </div>
       )}
