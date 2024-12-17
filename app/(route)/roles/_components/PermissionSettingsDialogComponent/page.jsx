@@ -34,57 +34,73 @@ const PermissionSettingsDialog = ({ onClose }) => {
   const [openMenuIndex, setOpenMenuIndex] = useState(null); // Track which menu is open
   const [openReportId, setOpenReportId] = useState(null); // State to track which report is expanded
   const [active, setActive] = useState(null);
-  const [permissions, setPermissions] = useState({
-    menuPermissions: menuData.map((menu) => ({
-      id: menu.menuId,
-      name: menu.name,
-      included: false,
-      permission: [],
-      submenus: menu.submenus
-        ? menu?.submenus?.map((submenu) => ({
-            id: submenu.id,
-            name: submenu.name,
-            included: false,
-            permission: [],
-          }))
-        : [],
-    })),
-    formPermissions: formData.map((page) => ({
-      name: page.pageName,
-      tabs: page.tabs.map((tab) => ({
-        name: tab.tabName,
-        view: false,
-        sections: tab.sections.map((section) => ({
-          name: section.sectionName,
+  const [permissions, setPermissions] = useState(() => {
+    // Try to load the permissions from localStorage
+    const savedState = localStorage.getItem("permissions");
+
+    if (savedState) {
+      // Parse the saved state if it exists
+      return JSON.parse(savedState);
+    }
+
+    // If no saved state, return the default structure
+    return {
+      menuPermissions: menuData.map((menu) => ({
+        id: menu.menuId,
+        name: menu.name,
+        included: false,
+        permission: [],
+        submenus: menu.submenus
+          ? menu.submenus.map((submenu) => ({
+              id: submenu.id,
+              name: submenu.name,
+              included: false,
+              permission: [],
+            }))
+          : [],
+      })),
+      formPermissions: formData.map((page) => ({
+        name: page.pageName,
+        tabs: page.tabs.map((tab) => ({
+          name: tab.tabName,
           view: false,
-          fields: section.fields.map((field) => ({
-            name: field.fieldName,
-            permission: "edit",
+          sections: tab.sections.map((section) => ({
+            name: section.sectionName,
+            view: false,
+            fields: section.fields.map((field) => ({
+              name: field.fieldName,
+              permission: "edit",
+            })),
           })),
         })),
       })),
-    })),
-    reportPermissions: reportData.map((report) => ({
-      id: report.reportId,
-      name: report.reportName,
-      included: false,
-      subReports: report.subReports.map((subReport) => ({
-        id: subReport.reportId,
-        name: subReport.reportName,
+      reportPermissions: reportData.map((report) => ({
+        id: report.reportId,
+        name: report.reportName,
         included: false,
-        view: false,
-        expport: false,
-        generate: false,
+        subReports: report.subReports.map((subReport) => ({
+          id: subReport.reportId,
+          name: subReport.reportName,
+          included: false,
+          view: false,
+          export: false,
+          generate: false,
+        })),
       })),
-    })),
-    workflowPermissions: wrokflowData.map((diagram) => ({
-      name: diagram.name,
-      create: false,
-      view: false,
-      edit: false,
-      delete: false,
-    })),
+      workflowPermissions: wrokflowData.map((diagram) => ({
+        name: diagram.name,
+        create: false,
+        view: false,
+        edit: false,
+        delete: false,
+      })),
+    };
   });
+
+  // Effect to save permissions to localStorage when the permissions state changes
+  useEffect(() => {
+    localStorage.setItem("permissions", JSON.stringify(permissions));
+  }, [permissions]);
   const dispatch = useDispatch();
   const [formIndex, setFormIndex] = useState(null);
 
