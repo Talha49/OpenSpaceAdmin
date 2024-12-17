@@ -27,8 +27,6 @@ export async function POST(req) {
       !formPermissions ||
       !reportPermissions ||
       !workflowPermissions ||
-      !allotedUsers ||
-      !allotedGroups ||
       !createdBy
     ) {
       return NextResponse.json(
@@ -47,8 +45,6 @@ export async function POST(req) {
         reportPermissions,
         workflowPermissions,
       },
-      allotedUsers,
-      allotedGroups,
       created: {
         by: createdBy,
       },

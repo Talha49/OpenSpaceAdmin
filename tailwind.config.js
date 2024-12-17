@@ -13,8 +13,17 @@ module.exports = {
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
+      animation: {
+        toast: "toast 0.3s ease-in-out",
+      },
+      keyframes: {
+        toast: {
+          "0%": { transform: "translateY(100%)" },
+          "100%": { transform: "translateY(0)" },
+        },
+      },
     },
   },
   plugins: [],
   darkMode: "class",
-}
+};

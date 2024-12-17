@@ -1,11 +1,14 @@
+"use client";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import PermissionDialog from "../PermissionDialog/page";
 import {
+  createRole,
   resetRole,
   resetSelectedUsersAndGroups,
   setRoleDetails,
 } from "@/lib/Feature/CreateRole";
+import { useToast } from "@/lib/toastContext";
 
 const CreateNewPermissionForExternalUserDialog = ({
   onClose,
@@ -13,9 +16,48 @@ const CreateNewPermissionForExternalUserDialog = ({
   handleOpenGrantRoleDialog,
 }) => {
   const dispatch = useDispatch();
+  const { showToast } = useToast();
 
   // Get the current role data from the Redux store
-  const { name, description } = useSelector((state) => state.role);
+  const {
+    name,
+    description,
+    permissions,
+    selectedUsersForRole,
+    selectedGroupsForRole,
+    loading,
+    error,
+  } = useSelector((state) => state.role);
+
+  const createdBy = "Abdul Samad";
+
+  const handleCreateRole = async () => {
+    try {
+      // Dispatch the action to create the role
+      await dispatch(
+        createRole({
+          name,
+          description,
+          menuPermissions: permissions.menuPermissions,
+          formPermissions: permissions.formPermissions,
+          reportPermissions: permissions.reportPermissions,
+          workflowPermissions: permissions.workflowPermissions,
+          allotedUsers: selectedUsersForRole,
+          allotedGroups: selectedGroupsForRole,
+          createdBy,
+        })
+      ).unwrap(); // .unwrap() is used to catch errors in the thunk
+
+      // If role creation is successful
+      onClose();
+      localStorage.removeItem("permissions");
+      showToast("Role created successfully!", "success");
+    } catch (error) {
+      // Handle any errors that occurred during the role creation
+      console.error("Error creating role:", error);
+      showToast("An error occurred while creating the role!", "error");
+    }
+  };
 
   // Local state to manage form inputs
   const [roleName, setRoleName] = useState(name);
@@ -119,12 +161,12 @@ const CreateNewPermissionForExternalUserDialog = ({
           className="px-4 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition-all disabled:bg-neutral-400 disabled:cursor-not-allowed"
           disabled={name === "" || description === ""}
           title={
-            (name === "" || description === "") &&
+            (name === "" || description === "" || loading) &&
             "Please Specify Role Name and Description"
           }
-          // onClick={onCreate}
+          onClick={handleCreateRole}
         >
-          Create
+          {loading ? "Creating..." : "Create"}
         </button>
       </div>
     </PermissionDialog>

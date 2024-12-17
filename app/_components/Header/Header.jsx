@@ -19,7 +19,7 @@ const Header = () => {
         <div>
           <GiSpaceShuttle className="md:text-[35px] sm:text-sm text-blue-400" />
         </div>
-        <div className="md:text-[16px] sm:text-[12px]">OpenSpace - Admin</div>
+        <div className="md:text-[16px] sm:text-[12px]">SIJM - Admin</div>
       </div>
       <div className="flex items-center gap-2 relative">
         {/* <ModeToggler /> */}

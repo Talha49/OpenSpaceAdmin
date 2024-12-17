@@ -110,8 +110,8 @@ const PermissionSettingsDialog = ({ onClose }) => {
 
   const role = useSelector((state) => state.role);
 
-  console.log("Permissions =>", permissions);
-  console.log("Role =>", role);
+  // console.log("Permissions =>", permissions);
+  // console.log("Role =>", role);
 
   // Handle checkbox change (View, etc.)
   const handleCheckboxChange = (path, checked) => {
