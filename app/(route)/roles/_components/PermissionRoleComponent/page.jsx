@@ -13,6 +13,9 @@ import PermissionSettingsDialog from "../PermissionSettingsDialogComponent/page"
 import GrantRoleDialog from "../GrantRoleDialog/page";
 import CreateNewPermissionForExternalUserDialog from "../CreateNewPermissionForExternalUserDialog/page";
 import CreateNewDialog from "../CreateNewDialog/page";
+import { useDispatch } from "react-redux";
+import { fetchAllRoles } from "@/lib/Feature/CreateRole";
+import { useSelector } from "react-redux";
 
 // Function to generate mock role data
 const generateRoles = () => {
@@ -50,6 +53,16 @@ const PermissionRolesComponent = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [rolesData, setRolesData] = useState(generateRoles());
+
+  const dispatch = useDispatch();
+
+  const { roles } = useSelector((state) => state.role);
+
+  useEffect(() => {
+    dispatch(fetchAllRoles());
+  }, [roles, dispatch]);
+
+  console.log("Roles =>", roles);
 
   // Get filtered data based on the search term
   const filteredRoles = rolesData.filter((role) =>
