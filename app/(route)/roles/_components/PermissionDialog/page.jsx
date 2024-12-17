@@ -20,7 +20,7 @@ const PermissionDialog = ({ children, onClose, onCreate, classes }) => {
         {children}
 
         {/* Action Buttons */}
-        <div className="flex justify-end mt-2 gap-2 ">
+        {/* <div className="flex justify-end mt-2 gap-2 ">
           <button
             className="px-4 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition-all"
             onClick={() => {
@@ -36,7 +36,7 @@ const PermissionDialog = ({ children, onClose, onCreate, classes }) => {
           >
             Create
           </button>
-        </div>
+        </div> */}
       </div>
     </div>
   );

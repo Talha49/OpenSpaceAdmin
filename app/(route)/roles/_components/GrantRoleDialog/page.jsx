@@ -3,22 +3,28 @@ import React, { useEffect, useState } from "react";
 import PermissionDialog from "../PermissionDialog/page";
 import Image from "next/image";
 import { IoMdArrowBack } from "react-icons/io";
-import { useSelector } from "react-redux";
-import { useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { fetchUsers } from "@/lib/Feature/UserSlice";
 import { fetchGroups } from "@/lib/Feature/GroupSlice";
+import {
+  setSelectedGroupsForRole,
+  setSelectedUsersForRole,
+} from "@/lib/Feature/CreateRole";
 
 const GrantRoleDialog = ({ onClose }) => {
   const { users } = useSelector((state) => state.user);
   const { groups } = useSelector((state) => state.group);
+  const { selectedUsersForRole, selectedGroupsForRole } = useSelector(
+    (state) => state.role
+  );
   const dispatch = useDispatch();
-  const [selectedUsers, setSelectedUsers] = useState([]);
-  const [selectedGroups, setSelectedGroups] = useState([]);
   const [isOpenUserDropdown, setIsOpenUserDropdown] = useState(false);
   const [isOpenGroupDropdown, setIsOpenGroupDropdown] = useState(false);
 
-  console.log("Selected users =>", selectedUsers);
-  console.log("Selected groups =>", selectedGroups);
+  useEffect(() => {
+    dispatch(fetchUsers());
+    dispatch(fetchGroups());
+  }, [dispatch]);
 
   // Capitalize the first letter of each word in the string
   function capitalizeFirstLetter(str) {
@@ -29,26 +35,19 @@ const GrantRoleDialog = ({ onClose }) => {
 
   // Handle the change of checkbox by user._id
   const handleUserSelection = (userId) => {
-    setSelectedUsers((prev) =>
-      prev.includes(userId)
-        ? prev.filter((id) => id !== userId)
-        : [...prev, userId]
-    );
+    const updatedUsers = selectedUsersForRole.includes(userId)
+      ? selectedUsersForRole.filter((id) => id !== userId)
+      : [...selectedUsersForRole, userId];
+    dispatch(setSelectedUsersForRole(updatedUsers)); // Directly update Redux state
   };
 
   // Handle the change of checkbox by group._id
   const handleGroupSelection = (groupId) => {
-    setSelectedGroups((prev) =>
-      prev.includes(groupId)
-        ? prev.filter((id) => id !== groupId)
-        : [...prev, groupId]
-    );
+    const updatedGroups = selectedGroupsForRole.includes(groupId)
+      ? selectedGroupsForRole.filter((id) => id !== groupId)
+      : [...selectedGroupsForRole, groupId];
+    dispatch(setSelectedGroupsForRole(updatedGroups)); // Directly update Redux state
   };
-
-  useEffect(() => {
-    dispatch(fetchUsers());
-    dispatch(fetchGroups());
-  }, [dispatch]);
 
   return (
     <PermissionDialog onClose={onClose}>
@@ -73,6 +72,7 @@ const GrantRoleDialog = ({ onClose }) => {
             <div className="px-10">
               <Image
                 src="/images/output-onlinegiftools.gif"
+                alt="img"
                 width={100}
                 height={100}
               />
@@ -86,23 +86,23 @@ const GrantRoleDialog = ({ onClose }) => {
                   }}
                   className="w-[350px] px-2 py-1 mt-1 outline focus:outline-2 outline-blue-500 rounded-lg text-left"
                 >
-                  {selectedUsers.length === 0
+                  {selectedUsersForRole.length === 0
                     ? "Select users"
-                    : `${selectedUsers.length} user(s) selected`}
+                    : `${selectedUsersForRole.length} user(s) selected`}
                 </button>
 
                 {isOpenUserDropdown && (
                   <div className="absolute z-10 w-[350px] max-h-60 overflow-y-auto custom-scrollbar mt-1 bg-white dark:bg-neutral-800 border dark:border-neutral-900 rounded-lg">
                     {users.map((user) => (
                       <div
-                        key={user._id} // Use user._id as the key
+                        key={user._id}
                         className="flex items-center gap-3 px-2 py-1 cursor-pointer hover:bg-blue-100 dark:hover:bg-neutral-900"
                       >
                         <input
                           type="checkbox"
-                          id={`user-${user._id}`} // Use user._id for the checkbox ID
-                          checked={selectedUsers.includes(user._id)} // Check if user._id is in selectedUsers
-                          onChange={() => handleUserSelection(user._id)} // Pass user._id to the handler
+                          id={`user-${user._id}`}
+                          checked={selectedUsersForRole.includes(user._id)}
+                          onChange={() => handleUserSelection(user._id)}
                           className="custom-circle-checkbox"
                         />
                         <label htmlFor={`user-${user._id}`} className="text-sm">
@@ -123,7 +123,12 @@ const GrantRoleDialog = ({ onClose }) => {
           </h1>
           <div className="flex gap-3 my-4">
             <div className="px-10">
-              <Image src="/images/group-no-bg.gif" width={100} height={100} />
+              <Image
+                src="/images/group-no-bg.gif"
+                alt="img"
+                width={100}
+                height={100}
+              />
             </div>
             <div className="flex flex-col">
               <label>Target Groups</label>
@@ -134,23 +139,23 @@ const GrantRoleDialog = ({ onClose }) => {
                   }}
                   className="w-[350px] px-2 py-1 mt-1 outline focus:outline-2 outline-blue-500 rounded-lg text-left"
                 >
-                  {selectedGroups.length === 0
+                  {selectedGroupsForRole.length === 0
                     ? "Select groups"
-                    : `${selectedGroups.length} group(s) selected`}
+                    : `${selectedGroupsForRole.length} group(s) selected`}
                 </button>
 
                 {isOpenGroupDropdown && (
                   <div className="absolute z-10 w-[350px] max-h-60 overflow-y-auto custom-scrollbar mt-1 bg-white dark:bg-neutral-800 border dark:border-neutral-900 rounded-lg">
                     {groups.map((group) => (
                       <div
-                        key={group._id} // Use group._id as the key
+                        key={group._id}
                         className="flex items-center gap-3 px-2 py-1 cursor-pointer hover:bg-blue-100 dark:hover:bg-neutral-900"
                       >
                         <input
                           type="checkbox"
-                          id={`group-${group._id}`} // Use group._id for the checkbox ID
-                          checked={selectedGroups.includes(group._id)} // Check if group._id is in selectedGroups
-                          onChange={() => handleGroupSelection(group._id)} // Pass group._id to the handler
+                          id={`group-${group._id}`}
+                          checked={selectedGroupsForRole.includes(group._id)}
+                          onChange={() => handleGroupSelection(group._id)}
                           className="custom-circle-checkbox"
                         />
                         <label
