@@ -605,7 +605,7 @@ const PermissionSettingsDialog = ({ onClose }) => {
                         <div>
                           {selectedContent.tabs.map((tab, tabIndex) => (
                             <div key={tabIndex} className="px-2">
-                              <h1 className="flex item py-1 items-center justify-between gap-1 font-semibold cursor-pointer hover:bg-blue-50">
+                              <h1 className="flex item py-1 items-center justify-between gap-1 font-semibold cursor-pointer hover:bg-blue-50 dark:hover:bg-neutral-800">
                                 <span className="flex items-center gap-3">
                                   <FaArrowRight />
                                   <span className="bg-blue-700 px-2 rounded-r-full text-xs font-normal text-white">
@@ -638,7 +638,7 @@ const PermissionSettingsDialog = ({ onClose }) => {
                                     key={sectionIndex}
                                     className="ml-5 border-t dark:border-neutral-600"
                                   >
-                                    <h1 className="flex items-center justify-between gap-1 py-1 cursor-pointer hover:bg-blue-50">
+                                    <h1 className="flex items-center justify-between gap-1 py-1 cursor-pointer hover:bg-blue-50 dark:hover:bg-neutral-800">
                                       <span className="flex items-center gap-3">
                                         <MdOutlineSubdirectoryArrowRight />
                                         <span className="bg-blue-500 px-2 rounded-r-full text-xs font-normal text-white">
@@ -680,7 +680,7 @@ const PermissionSettingsDialog = ({ onClose }) => {
                                             key={fieldIndex}
                                             className="ml-5 border-t dark:border-neutral-600"
                                           >
-                                            <h1 className="flex items-center justify-between gap-1 py-1 cursor-pointer hover:bg-blue-50">
+                                            <h1 className="flex items-center justify-between gap-1 py-1 cursor-pointer hover:bg-blue-50 dark:hover:bg-neutral-800">
                                               <span className="flex items-center gap-3">
                                                 <MdOutlineSubdirectoryArrowRight />
                                                 <span className="bg-blue-200 px-2 rounded-r-full text-xs font-normal text-blue-600">
@@ -1275,7 +1275,10 @@ const PermissionSettingsDialog = ({ onClose }) => {
                           </thead>
                           <tbody>
                             {wrokflowData.map((diagram, index) => (
-                              <tr key={index} className="hover:bg-neutral-200">
+                              <tr
+                                key={index}
+                                className="hover:bg-neutral-200 dark:hover:bg-neutral-800"
+                              >
                                 <td className="px-4 py-2 border-b dark:border-neutral-600">
                                   {diagram.name}
                                 </td>
