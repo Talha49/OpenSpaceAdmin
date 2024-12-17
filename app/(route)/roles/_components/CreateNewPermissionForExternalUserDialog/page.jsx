@@ -9,6 +9,7 @@ import {
   setRoleDetails,
 } from "@/lib/Feature/CreateRole";
 import { useToast } from "@/lib/toastContext";
+import Alert from "@/app/_components/Alert/Alert";
 
 const CreateNewPermissionForExternalUserDialog = ({
   onClose,
@@ -16,7 +17,6 @@ const CreateNewPermissionForExternalUserDialog = ({
   handleOpenGrantRoleDialog,
 }) => {
   const dispatch = useDispatch();
-  const { showToast } = useToast();
 
   // Get the current role data from the Redux store
   const {
@@ -28,6 +28,7 @@ const CreateNewPermissionForExternalUserDialog = ({
     loading,
     error,
   } = useSelector((state) => state.role);
+  const [alert, setAlert] = useState(null);
 
   const createdBy = "Abdul Samad";
 
@@ -51,11 +52,18 @@ const CreateNewPermissionForExternalUserDialog = ({
       // If role creation is successful
       onClose();
       localStorage.removeItem("permissions");
-      showToast("Role created successfully!", "success");
+      // Show success alert
+      setAlert({ message: "Role created successfully!", type: "success" });
+      setTimeout(() => setAlert(null), 3000); // Hide alert after 3 seconds
     } catch (error) {
       // Handle any errors that occurred during the role creation
       console.error("Error creating role:", error);
-      showToast("An error occurred while creating the role!", "error");
+      // Show error alert
+      setAlert({
+        message: "Error creating role. Please try again.",
+        type: "error",
+      });
+      setTimeout(() => setAlert(null), 3000); // Hide alert after 3 seconds
     }
   };
 
@@ -81,6 +89,14 @@ const CreateNewPermissionForExternalUserDialog = ({
       <h1 className="text-2xl font-semibold my-4 dark:text-neutral-500">
         Permission Role Details
       </h1>
+      {alert && (
+        <Alert
+          message={alert.message}
+          type={alert.type}
+          onClose={() => setAlert(null)}
+        />
+      )}{" "}
+      {/* Display the alert */}
       <div className="shadow-md w-full px-4 py-2 border dark:border-neutral-800 rounded">
         <h1 className="text-lg font-semibold dark:text-neutral-500">
           1. Name & Description
