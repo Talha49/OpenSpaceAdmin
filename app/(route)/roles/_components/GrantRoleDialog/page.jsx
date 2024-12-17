@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import PermissionDialog from "../PermissionDialog/page";
 import Image from "next/image";
-import { IoMdArrowBack } from "react-icons/io";
+import { IoIosSearch, IoMdArrowBack } from "react-icons/io";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchUsers } from "@/lib/Feature/UserSlice";
 import { fetchGroups } from "@/lib/Feature/GroupSlice";
@@ -18,8 +18,11 @@ const GrantRoleDialog = ({ onClose }) => {
     (state) => state.role
   );
   const dispatch = useDispatch();
+
   const [isOpenUserDropdown, setIsOpenUserDropdown] = useState(false);
   const [isOpenGroupDropdown, setIsOpenGroupDropdown] = useState(false);
+  const [userSearch, setUserSearch] = useState(""); // State for user search query
+  const [groupSearch, setGroupSearch] = useState(""); // State for group search query
 
   useEffect(() => {
     dispatch(fetchUsers());
@@ -49,6 +52,16 @@ const GrantRoleDialog = ({ onClose }) => {
     dispatch(setSelectedGroupsForRole(updatedGroups)); // Directly update Redux state
   };
 
+  // Filter users based on search query
+  const filteredUsers = users.filter((user) =>
+    user.fullName.toLowerCase().includes(userSearch.toLowerCase())
+  );
+
+  // Filter groups based on search query
+  const filteredGroups = groups.filter((group) =>
+    group.groupName.toLowerCase().includes(groupSearch.toLowerCase())
+  );
+
   return (
     <PermissionDialog onClose={onClose}>
       <div
@@ -66,7 +79,7 @@ const GrantRoleDialog = ({ onClose }) => {
       <div className="my-2">
         <div className=" border dark:border-neutral-700 shadow-md rounded-lg p-2 mb-3">
           <h1 className="font-bold dark:text-neutral-500">
-            1. Define whome you want to grant this role permission to.
+            1. Define whom you want to grant this role permission to.
           </h1>
           <div className="flex gap-3 my-4">
             <div className="px-10">
@@ -93,10 +106,20 @@ const GrantRoleDialog = ({ onClose }) => {
 
                 {isOpenUserDropdown && (
                   <div className="absolute z-10 w-[350px] max-h-60 overflow-y-auto custom-scrollbar mt-1 bg-white dark:bg-neutral-800 border dark:border-neutral-900 rounded-lg">
-                    {users.map((user) => (
+                    <span className="flex items-center w-full border px-2 py-1 mb-1 rounded-t-lg sticky top-0 z-10 bg-white dark:bg-neutral-800">
+                      <input
+                        type="search"
+                        placeholder="Start typing user name"
+                        className="w-full focus:outline-none placeholder:text-sm text-sm"
+                        value={userSearch}
+                        onChange={(e) => setUserSearch(e.target.value)}
+                      />
+                      <IoIosSearch />
+                    </span>
+                    {filteredUsers.map((user) => (
                       <div
                         key={user._id}
-                        className="flex items-center gap-3 px-2 py-1 cursor-pointer hover:bg-blue-100 dark:hover:bg-neutral-900"
+                        className="flex items-center gap-3 py-1 cursor-pointer hover:bg-blue-100 dark:hover:bg-neutral-900 rounded px-1"
                       >
                         <input
                           type="checkbox"
@@ -146,7 +169,17 @@ const GrantRoleDialog = ({ onClose }) => {
 
                 {isOpenGroupDropdown && (
                   <div className="absolute z-10 w-[350px] max-h-60 overflow-y-auto custom-scrollbar mt-1 bg-white dark:bg-neutral-800 border dark:border-neutral-900 rounded-lg">
-                    {groups.map((group) => (
+                    <span className="flex items-center w-full border px-2 py-1 mb-1 rounded-t-lg sticky top-0 z-10 bg-white dark:bg-neutral-800">
+                      <input
+                        type="search"
+                        placeholder="Start typing group name"
+                        className="w-full focus:outline-none placeholder:text-sm text-sm"
+                        value={groupSearch}
+                        onChange={(e) => setGroupSearch(e.target.value)}
+                      />
+                      <IoIosSearch />
+                    </span>
+                    {filteredGroups.map((group) => (
                       <div
                         key={group._id}
                         className="flex items-center gap-3 px-2 py-1 cursor-pointer hover:bg-blue-100 dark:hover:bg-neutral-900"

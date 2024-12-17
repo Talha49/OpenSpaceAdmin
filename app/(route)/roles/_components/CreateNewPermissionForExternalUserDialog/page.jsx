@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import PermissionDialog from "../PermissionDialog/page";
-import { setRoleDetails } from "@/lib/Feature/CreateRole";
+import {
+  resetRole,
+  resetSelectedUsersAndGroups,
+  setRoleDetails,
+} from "@/lib/Feature/CreateRole";
 
 const CreateNewPermissionForExternalUserDialog = ({
   onClose,
@@ -12,9 +16,6 @@ const CreateNewPermissionForExternalUserDialog = ({
 
   // Get the current role data from the Redux store
   const { name, description } = useSelector((state) => state.role);
-
-  console.log("name: " + name);
-  console.log("description: " + description);
 
   // Local state to manage form inputs
   const [roleName, setRoleName] = useState(name);
@@ -101,6 +102,30 @@ const CreateNewPermissionForExternalUserDialog = ({
             Add...
           </button>
         </div>
+      </div>
+      <div className="flex justify-end mt-2 gap-2 ">
+        <button
+          className="px-4 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition-all"
+          onClick={() => {
+            onClose();
+            dispatch(resetRole());
+            dispatch(resetSelectedUsersAndGroups());
+            localStorage.removeItem("permissions");
+          }}
+        >
+          Cancel
+        </button>
+        <button
+          className="px-4 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition-all disabled:bg-neutral-400 disabled:cursor-not-allowed"
+          disabled={name === "" || description === ""}
+          title={
+            (name === "" || description === "") &&
+            "Please Specify Role Name and Description"
+          }
+          // onClick={onCreate}
+        >
+          Create
+        </button>
       </div>
     </PermissionDialog>
   );

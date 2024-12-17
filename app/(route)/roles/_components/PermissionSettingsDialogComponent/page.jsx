@@ -221,7 +221,7 @@ const PermissionSettingsDialog = ({ onClose }) => {
 
       <div className="flex gap-2">
         <div
-          className={`w-[350px] h-[300px] custom-scrollbar py-2 overflow-y-auto bg-neutral-100 dark:bg-neutral-800 dark:text-neutral-300 lg:static absolute z-50 ${
+          className={`w-[350px] h-[350px] custom-scrollbar py-2 overflow-y-auto bg-neutral-100 dark:bg-neutral-800 dark:text-neutral-300 lg:static absolute z-50 ${
             !isSidebarOpen && "hidden"
           }`}
         >
@@ -310,7 +310,7 @@ const PermissionSettingsDialog = ({ onClose }) => {
 
         <div className="w-full rounded border-neutral-300">
           {selectedContent && selectedItem && (
-            <div className="h-[300px] overflow-y-auto custom-scrollbar">
+            <div className="h-[350px] overflow-y-auto custom-scrollbar">
               <h2 className="text-lg font-semibold p-2 sticky top-0 bg-white dark:bg-neutral-900 z-10">
                 {selectedItem === "menu" && "Menu Permissions"}
                 {(selectedItem === "form" ||
