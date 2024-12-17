@@ -1,44 +1,101 @@
 import { NextResponse } from "next/server";
-import Role from "@/lib/models/Role";
 import dbConnect from "@/lib/connectdb/connection";
+import Role from "@/lib/models/Role";
+import User from "@/lib/models/User";
+import Group from "@/lib/models/Group";
 
 export async function POST(req) {
   try {
     await dbConnect();
-    const { roleName, roleDescription, permissions, createdBy } =
-      await req.json();
+    const {
+      name,
+      description,
+      menuPermissions,
+      formPermissions,
+      reportPermissions,
+      workflowPermissions,
+      allotedUsers,
+      allotedGroups,
+      createdBy,
+    } = await req.json();
 
-    // Validate required fields
-    if (!roleName || !roleDescription || !permissions || !createdBy) {
+    // Check for missing fields
+    if (
+      !name ||
+      !description ||
+      !menuPermissions ||
+      !formPermissions ||
+      !reportPermissions ||
+      !workflowPermissions ||
+      !allotedUsers ||
+      !allotedGroups ||
+      !createdBy
+    ) {
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 }
       );
     }
 
-    // Create new role with the `created` field populated
+    // Create the new role
     const newRole = new Role({
-      roleName: roleName,
-      roleDescription: roleDescription,
-      permissions: permissions,
+      name,
+      description,
+      permissions: {
+        menuPermissions,
+        formPermissions,
+        reportPermissions,
+        workflowPermissions,
+      },
+      allotedUsers,
+      allotedGroups,
       created: {
-        by: createdBy, // User who created the role
-        at: new Date(), // Optional, defaults to current time
+        by: createdBy,
       },
     });
 
-    // Save the new role
+    // Save the role to the database
     await newRole.save();
 
-    return NextResponse.json(
-      {
-        message: "Role created successfully",
-        role: newRole,
-      },
-      { status: 201 }
+    // Update all the users in `allotedUsers` to reference the new role
+    const updatedUsers = await User.updateMany(
+      { _id: { $in: allotedUsers } },
+      { $set: { role: newRole._id } }
     );
+
+    // Update all the groups in `allotedGroups` to reference the new role
+    const updatedGroups = await Group.updateMany(
+      { _id: { $in: allotedGroups } },
+      { $set: { role: newRole._id } }
+    );
+
+    // Now, update the users in each group in `allotedGroups` (group members)
+    for (const groupId of allotedGroups) {
+      // Fetch the group by its ID
+      const group = await Group.findById(groupId);
+      if (group) {
+        // Combine groupOwnerID and groupTargetID arrays
+        const groupMembers = [...group.groupTargetID];
+        // Update the users in this group with the new role
+        await User.updateMany(
+          { _id: { $in: groupMembers } },
+          { $set: { role: newRole._id } }
+        );
+      }
+    }
+
+    return NextResponse.json({
+      message: "Role created and allocated successfully",
+      status: "success",
+      role: newRole,
+      updatedUsers: updatedUsers.modifiedCount,
+      updatedGroups: updatedGroups.modifiedCount,
+    });
   } catch (error) {
-    console.log("Error occurred while creating role: ", error.message);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.log("Error Creating Role =>", error);
+    return NextResponse.json(
+      { error: "Something went wrong" },
+      { status: 500 }
+    );
   }
 }
