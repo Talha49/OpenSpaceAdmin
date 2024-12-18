@@ -56,11 +56,11 @@ const PermissionRolesComponent = () => {
 
   const dispatch = useDispatch();
 
-  const { roles } = useSelector((state) => state.role);
+  const { roles, loading } = useSelector((state) => state.role);
 
   useEffect(() => {
     dispatch(fetchAllRoles());
-  }, [roles, dispatch]);
+  }, [dispatch]);
 
   console.log("Roles =>", roles);
 
