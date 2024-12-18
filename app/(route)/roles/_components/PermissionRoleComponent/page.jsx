@@ -4,7 +4,7 @@ import Link from "next/link";
 import React, { useState, useEffect } from "react";
 import { CiMenuFries, CiSearch } from "react-icons/ci";
 import { IoIosAddCircleOutline, IoIosArrowForward } from "react-icons/io";
-import { LuChevronFirst, LuChevronLast } from "react-icons/lu";
+import { LuChevronFirst, LuChevronLast, LuLoader } from "react-icons/lu";
 import { MdNavigateBefore, MdNavigateNext } from "react-icons/md";
 import { userPermissions } from "../UserPermissions";
 import { administratorPermissions } from "../AdministratorPermissions";
@@ -16,24 +16,9 @@ import CreateNewDialog from "../CreateNewDialog/page";
 import { useDispatch } from "react-redux";
 import { fetchAllRoles } from "@/lib/Feature/CreateRole";
 import { useSelector } from "react-redux";
-
-// Function to generate mock role data
-const generateRoles = () => {
-  let roles = [];
-  for (let i = 1; i <= 50; i++) {
-    roles.push({
-      id: i,
-      permissionRole: `Role ${i}`,
-      userType: i % 2 === 0 ? "Admin" : "User",
-      description: `Description for Role ${i}`,
-      status: i % 2 === 0 ? "Active" : "Inactive",
-      rbpOnly: i % 3 === 0,
-      createdFrom: `System ${i % 5}`,
-      lastModified: `Date ${i}`,
-    });
-  }
-  return roles;
-};
+import Loader from "@/app/_components/Loader/Loader";
+import RoleDetailDialog from "@/app/_components/RoleDetails Dialog/RoleDetailDialog";
+import { RxReload } from "react-icons/rx";
 
 const PermissionRolesComponent = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -52,21 +37,33 @@ const PermissionRolesComponent = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [rolesData, setRolesData] = useState(generateRoles());
 
   const dispatch = useDispatch();
 
   const { roles, loading } = useSelector((state) => state.role);
+  const [isOpenRoleDetails, setIsOpenRoleDetails] = useState(false);
+  const [selectedRole, setSelectedRole] = useState(null);
 
   useEffect(() => {
     dispatch(fetchAllRoles());
   }, [dispatch]);
 
-  console.log("Roles =>", roles);
+  function getDateAndTime(timestamp) {
+    // Create a new Date object from the timestamp
+    const dateObj = new Date(timestamp);
+
+    // Extract the date in the format YYYY-MM-DD
+    const date = dateObj.toISOString().split("T")[0];
+
+    // Extract the time in the format HH:MM:SS
+    const time = dateObj.toISOString().split("T")[1].split(".")[0];
+
+    return { date, time };
+  }
 
   // Get filtered data based on the search term
-  const filteredRoles = rolesData.filter((role) =>
-    role.permissionRole.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredRoles = roles?.filter((role) =>
+    role.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   // Handle page change
@@ -97,6 +94,7 @@ const PermissionRolesComponent = () => {
 
   return (
     <div className="pl-4 pr-2 py-2 dark:bg-neutral-950">
+      {loading && <Loader />}
       <div className="flex flex-col md:flex-row md:items-center justify-between w-full gap-2">
         <p className="text-sm sm:text-base dark:text-neutral-500">
           Back to{" "}
@@ -150,17 +148,17 @@ const PermissionRolesComponent = () => {
         />
         <CiSearch />
       </div>
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto custom-scrollbar">
         <div className="bg-white dark:bg-neutral-900 min-w-[1000px]">
           <NewTableComponent
             tableColumns={[
               "ID",
               "Permission Role",
-              "User Type",
+              // "User Type",
               "Description",
-              "Status",
-              "RBP-Only",
-              "Created From",
+              // "Status",
+              // "RBP-Only",
+              "Created By",
               "Last Modified",
               "Action",
             ]}
@@ -184,6 +182,15 @@ const PermissionRolesComponent = () => {
                   <IoIosAddCircleOutline className="text-xl text-blue-600" />
                   <span>Create New Role</span>
                 </p>
+                <p
+                  className="flex items-center gap-1 hover:bg-blue-200 dark:hover:bg-neutral-800 p-1 rounded cursor-pointer text-sm transition-all"
+                  onClick={() => {
+                    dispatch(fetchAllRoles());
+                  }}
+                >
+                  <RxReload className="text-lg text-blue-600" />
+                  <span>Refresh</span>
+                </p>
               </>
             }
             currentPage={currentPage}
@@ -192,33 +199,54 @@ const PermissionRolesComponent = () => {
             totalRows={filteredRoles.length}
             handleRowsPerPageChange={handleRowsPerPageChange}
           >
-            {paginatedRoles.map((role) => (
+            {paginatedRoles?.map((role, index) => (
               <tr
                 key={role.id}
-                className="border-t dark:border-neutral-700 bg-gray-100 dark:bg-neutral-800"
+                className="border-t dark:border-neutral-700 bg-gray-100 dark:bg-neutral-800 hover:bg-neutral-300 transition-all"
               >
-                <td className="p-2">{role.id}</td>
-                <td className="p-2 text-blue-500">{role.permissionRole}</td>
-                <td className="p-2">{role.userType}</td>
-                <td className="p-2">{role.description}</td>
-                <td className="p-2">{role.status}</td>
-                <td className="p-2">
+                <td className="p-2">{index + 1}</td>
+                <td
+                  className="p-2 text-blue-500 cursor-pointer hover:font-bold transition-all"
+                  onClick={() => {
+                    setIsOpenRoleDetails(true);
+                    setSelectedRole(role);
+                  }}
+                >
+                  {role?.name}
+                </td>
+                {/* <td className="p-2">{role.userType}</td> */}
+                <td className="p-2 line-clamp-1">{role?.description}</td>
+                {/* <td className="p-2">{role.status}</td> */}
+                {/* <td className="p-2">
                   <input
                     type="checkbox"
                     checked={role.rbpOnly}
                     readOnly
                     className="cursor-pointer"
                   />
-                </td>
-                <td className="p-2">{role.createdFrom}</td>
-                <td className="p-2">{role.lastModified}</td>
+                </td> */}
+                <td className="p-2">{role?.created?.by}</td>
+                <td className="p-2">{getDateAndTime(role.updatedAt).date}</td>
                 <td className="p-2">
-                  <button className="text-blue-500 hover:underline">
+                  <button
+                    className="text-blue-500 hover:underline"
+                    onClick={() => {
+                      setIsOpenRoleDetails(true);
+                      setSelectedRole(role);
+                    }}
+                  >
                     Edit
                   </button>
                 </td>
               </tr>
             ))}
+            {filteredRoles && filteredRoles.length === 0 && (
+              <tr className="col-span-full border-t dark:border-neutral-700 bg-gray-100 dark:bg-neutral-800 hover:bg-neutral-300 transition-all">
+                <td colSpan="7" className="text-center py-4">
+                  No records found
+                </td>
+              </tr>
+            )}
           </NewTableComponent>
         </div>
       </div>
@@ -228,6 +256,7 @@ const PermissionRolesComponent = () => {
           <CreateNewDialog
             onClose={() => {
               setIsOpenCreateNewDialog(false);
+              setSelectedRole(null);
             }}
           ></CreateNewDialog>
         )}
@@ -263,6 +292,17 @@ const PermissionRolesComponent = () => {
           }}
         ></GrantRoleDialog>
       )}
+
+      <RoleDetailDialog
+        isOpen={isOpenRoleDetails && selectedRole}
+        onClose={() => {
+          setIsOpenRoleDetails(false);
+          setSelectedRole(null);
+        }}
+        role={selectedRole}
+      >
+        Role Details
+      </RoleDetailDialog>
     </div>
   );
 };
