@@ -95,7 +95,7 @@ const PermissionRolesComponent = () => {
   return (
     <div className="pl-4 pr-2 py-2 dark:bg-neutral-950">
       {loading && <Loader />}
-      <div className="flex flex-col md:flex-row md:items-center justify-between w-full gap-2">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">
         <p className="text-sm sm:text-base dark:text-neutral-500">
           Back to{" "}
           <Link
@@ -148,31 +148,19 @@ const PermissionRolesComponent = () => {
         />
         <CiSearch />
       </div>
-      <div className="overflow-x-auto custom-scrollbar">
-        <div className="bg-white dark:bg-neutral-900 min-w-[1000px]">
+      <div className="overflow-x-auto custom-scrollbar w-full">
+        <div className="bg-white dark:bg-neutral-900 min-w-max">
           <NewTableComponent
             tableColumns={[
               "ID",
               "Permission Role",
-              // "User Type",
               "Description",
-              // "Status",
-              // "RBP-Only",
               "Created By",
               "Last Modified",
               "Action",
             ]}
             buttons={
               <>
-                {/* <p
-                  className="flex items-center gap-1 hover:bg-blue-200 dark:hover:bg-neutral-800 p-1 rounded cursor-pointer text-sm transition-all"
-                  onClick={() => {
-                    setIsOpenCreateNewDialog(true);
-                  }}
-                >
-                  <IoIosAddCircleOutline className="text-xl text-blue-600" />
-                  <span>Create New</span>
-                </p> */}
                 <p
                   className="flex items-center gap-1 hover:bg-blue-200 dark:hover:bg-neutral-800 p-1 rounded cursor-pointer text-sm transition-all"
                   onClick={() => {
@@ -204,9 +192,9 @@ const PermissionRolesComponent = () => {
                 key={role.id}
                 className="border-t dark:border-neutral-700 bg-gray-100 dark:bg-neutral-800 hover:bg-neutral-300 transition-all"
               >
-                <td className="p-2">{index + 1}</td>
+                <td className="p-2 min-w-[60px]">{index + 1}</td>
                 <td
-                  className="p-2 text-blue-500 cursor-pointer hover:font-bold transition-all"
+                  className="p-2 text-blue-500 cursor-pointer hover:font-bold transition-all min-w-[200px]"
                   onClick={() => {
                     setIsOpenRoleDetails(true);
                     setSelectedRole(role);
@@ -214,20 +202,14 @@ const PermissionRolesComponent = () => {
                 >
                   {role?.name}
                 </td>
-                {/* <td className="p-2">{role.userType}</td> */}
-                <td className="p-2 line-clamp-1">{role?.description}</td>
-                {/* <td className="p-2">{role.status}</td> */}
-                {/* <td className="p-2">
-                  <input
-                    type="checkbox"
-                    checked={role.rbpOnly}
-                    readOnly
-                    className="cursor-pointer"
-                  />
-                </td> */}
-                <td className="p-2">{role?.created?.by}</td>
-                <td className="p-2">{getDateAndTime(role.updatedAt).date}</td>
-                <td className="p-2">
+                <td className="p-2 w-[450px] min-w-[300px]">
+                  <p className="line-clamp-1">{role?.description}</p>
+                </td>
+                <td className="p-2 min-w-[150px]">{role?.created?.by}</td>
+                <td className="p-2 min-w-[150px]">
+                  {getDateAndTime(role.updatedAt).date}
+                </td>
+                <td className="p-2 min-w-[100px]">
                   <button
                     className="text-blue-500 hover:underline"
                     onClick={() => {
@@ -250,6 +232,7 @@ const PermissionRolesComponent = () => {
           </NewTableComponent>
         </div>
       </div>
+
       {/* </div> */}
       <>
         {isOpenCreateNewDialog && (
