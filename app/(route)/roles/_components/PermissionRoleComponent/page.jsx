@@ -14,7 +14,13 @@ import GrantRoleDialog from "../GrantRoleDialog/page";
 import CreateNewPermissionForExternalUserDialog from "../CreateNewPermissionForExternalUserDialog/page";
 import CreateNewDialog from "../CreateNewDialog/page";
 import { useDispatch } from "react-redux";
-import { fetchAllRoles } from "@/lib/Feature/CreateRole";
+import {
+  fetchAllRoles,
+  setRoleDetails,
+  setSelectedGroupsForRole,
+  setSelectedUsersForRole,
+  setStatePermissions,
+} from "@/lib/Feature/CreateRole";
 import { useSelector } from "react-redux";
 import Loader from "@/app/_components/Loader/Loader";
 import RoleDetailDialog from "@/app/_components/RoleDetails Dialog/RoleDetailDialog";
@@ -40,13 +46,18 @@ const PermissionRolesComponent = () => {
 
   const dispatch = useDispatch();
 
-  const { roles, loading } = useSelector((state) => state.role);
+  const { roles, loading, selectedUsersForRole, selectedGroupsForRole } =
+    useSelector((state) => state.role);
   const [isOpenRoleDetails, setIsOpenRoleDetails] = useState(false);
   const [selectedRole, setSelectedRole] = useState(null);
 
   useEffect(() => {
     dispatch(fetchAllRoles());
   }, [dispatch]);
+
+  console.log("Slected Users =>", selectedUsersForRole);
+  console.log("Selected Groups =>", selectedGroupsForRole);
+  console.log("Roles =>", roles);
 
   function getDateAndTime(timestamp) {
     // Create a new Date object from the timestamp
@@ -213,8 +224,28 @@ const PermissionRolesComponent = () => {
                   <button
                     className="text-blue-500 hover:underline"
                     onClick={() => {
-                      setIsOpenRoleDetails(true);
-                      setSelectedRole(role);
+                      setIsOpen(true);
+                      dispatch(
+                        setRoleDetails({
+                          name: role?.name,
+                          description: role?.description,
+                        })
+                      );
+                      dispatch(setStatePermissions(role?.permissions));
+                      dispatch(
+                        setSelectedUsersForRole(
+                          role?.allotedUsers.map((user) => user._id)
+                        )
+                      );
+                      dispatch(
+                        setSelectedGroupsForRole(
+                          role?.allotedGroups.map((group) => group._id)
+                        )
+                      );
+                      localStorage.setItem(
+                        "permissions",
+                        JSON.stringify(role.permissions)
+                      );
                     }}
                   >
                     Edit

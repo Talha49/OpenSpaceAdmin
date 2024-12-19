@@ -9,12 +9,12 @@ const PermissionDialog = ({ children, onClose, onCreate, classes }) => {
         className={`relative bg-white dark:bg-neutral-900 rounded-lg shadow-lg w-full max-w-full min-h-[500px] max-h-[500px] overflow-y-auto mx-auto p-4 ${classes}`}
       >
         {/* Close Button */}
-        <button
+        {/* <button
           className="absolute top-3 right-3 text-gray-500 hover:text-gray-800 transition-colors"
           onClick={onClose}
         >
-          &#x2715; {/* Unicode for "X" */}
-        </button>
+          &#x2715;
+        </button> */}
 
         {/* Dialog Content */}
         {children}
