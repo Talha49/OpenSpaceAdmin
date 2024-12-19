@@ -135,12 +135,12 @@ const Sidebar = () => {
           {Menus.map((Menu, index) => (
             <div key={index}>
               <li
-                className={`flex items-center p-2 px-5 cursor-pointer hover:bg-blue-200 dark:hover:bg-neutral-700 text-neutral-800 dark:text-neutral-400 text-sm gap-x-4 ${
+                className={`flex items-center cursor-pointer px-5 hover:bg-blue-200 dark:hover:bg-neutral-700 text-neutral-800 dark:text-neutral-400 text-sm gap-x-4 ${
                   Menu.gap ? "mt-9" : "mt-2"
                 }`}
                 data-tooltip-id={index}
               >
-                <Link href={Menu.link} passHref>
+                <Link href={Menu.link} passHref className="py-2 w-full">
                   <div className="flex items-center gap-x-4">
                     <div className="flex-shrink-0 text-[20px] text-blue-500">
                       {Menu.icon}

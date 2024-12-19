@@ -5,7 +5,11 @@ import React, { useState, useEffect } from "react";
 import { CiMenuFries, CiSearch } from "react-icons/ci";
 import { IoIosAddCircleOutline, IoIosArrowForward } from "react-icons/io";
 import { LuChevronFirst, LuChevronLast, LuLoader } from "react-icons/lu";
-import { MdNavigateBefore, MdNavigateNext } from "react-icons/md";
+import {
+  MdDeleteOutline,
+  MdNavigateBefore,
+  MdNavigateNext,
+} from "react-icons/md";
 import { userPermissions } from "../UserPermissions";
 import { administratorPermissions } from "../AdministratorPermissions";
 import PermissionDialog from "../PermissionDialog/page";
@@ -25,6 +29,7 @@ import { useSelector } from "react-redux";
 import Loader from "@/app/_components/Loader/Loader";
 import RoleDetailDialog from "@/app/_components/RoleDetails Dialog/RoleDetailDialog";
 import { RxReload } from "react-icons/rx";
+import ConfirmationDialog from "@/app/_components/ConfirmationDialog/ConfirmationDialog";
 
 const PermissionRolesComponent = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -50,6 +55,9 @@ const PermissionRolesComponent = () => {
     useSelector((state) => state.role);
   const [isOpenRoleDetails, setIsOpenRoleDetails] = useState(false);
   const [selectedRole, setSelectedRole] = useState(null);
+  const [isOpenConfirmationDialog, setIsOpenConfirmationDialog] =
+    useState(false);
+  const [selectedRoleForDelete, setSelectedRoleForDelete] = useState(null);
 
   useEffect(() => {
     dispatch(fetchAllRoles());
@@ -220,9 +228,9 @@ const PermissionRolesComponent = () => {
                 <td className="p-2 min-w-[150px]">
                   {getDateAndTime(role.updatedAt).date}
                 </td>
-                <td className="p-2 min-w-[100px]">
+                <td className="p-2 min-w-[100px] flex gap-2">
                   <button
-                    className="text-blue-500 hover:underline"
+                    className="text-blue-500 hover:underline hover:font-semibold transition-all"
                     onClick={() => {
                       setIsOpen(true);
                       dispatch(
@@ -249,6 +257,15 @@ const PermissionRolesComponent = () => {
                     }}
                   >
                     Edit
+                  </button>
+                  <button
+                    className="text-red-500 hover:underline hover:font-semibold transition-all"
+                    onClick={() => {
+                      setIsOpenConfirmationDialog(true);
+                      setSelectedRoleForDelete(role);
+                    }}
+                  >
+                    Delete
                   </button>
                 </td>
               </tr>
@@ -317,6 +334,26 @@ const PermissionRolesComponent = () => {
       >
         Role Details
       </RoleDetailDialog>
+
+      <ConfirmationDialog
+        isOpen={isOpenConfirmationDialog}
+        onClose={() => {
+          setIsOpenConfirmationDialog(false);
+          setTimeout(() => {
+            setSelectedRoleForDelete(null);
+          }, 100);
+        }}
+        title={`Are you sure you want to delete this ${selectedRoleForDelete?.name}?`}
+        subtitle={`This action will permanently delete ${selectedRoleForDelete?.name}.`}
+        actionButtons={
+          <>
+            <button className="flex items-center gap-1 py-2 px-4 rounded-lg text-sm text-white bg-red-600 hover:bg-red-500 transition-all">
+              <MdDeleteOutline className="text-base" />
+              Confirm Delete
+            </button>
+          </>
+        }
+      />
     </div>
   );
 };
