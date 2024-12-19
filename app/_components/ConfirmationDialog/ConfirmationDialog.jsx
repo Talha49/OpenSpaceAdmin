@@ -1,4 +1,5 @@
 import React from "react";
+import { IoMdClose } from "react-icons/io";
 
 const ConfirmationDialog = ({
   isOpen,
@@ -18,7 +19,7 @@ const ConfirmationDialog = ({
         onClick={onClose}
       >
         <div
-          className={`h-fit md:w-1/2 w-full z-50 transition-transform duration-300 bg-white dark:bg-stone-950 border-l dark:border-neutral-700 shadow-lg rounded-2xl p-4 ${
+          className={`h-fit md:w-1/2 w-full z-50 transition-transform duration-300 bg-white dark:bg-neutral-800 border dark:border-neutral-700 shadow-lg rounded-2xl p-4 ${
             isOpen ? "translate-y-0" : "-translate-y-full"
           }`}
           onClick={(e) => e.stopPropagation()} // Prevent event propagation
@@ -35,7 +36,14 @@ const ConfirmationDialog = ({
             <h1 className="text-xl font-semibold">{title}</h1>
             <p>{subtitle}</p>
           </div>
-          <div className="mt-4 flex justify-end items-center">
+          <div className="mt-4 flex justify-end items-center gap-2 flex-wrap">
+            <button
+              className="flex items-center gap-1 py-2 px-4 rounded-lg text-sm border dark:border-neutral-600 bg-transparent hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-all"
+              onClick={onClose}
+            >
+              <IoMdClose className="text-base" />
+              Cancel
+            </button>
             {actionButtons}
           </div>
         </div>

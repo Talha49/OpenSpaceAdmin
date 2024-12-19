@@ -1,4 +1,4 @@
-import { resetRole } from "@/lib/Feature/CreateRole";
+import { resetRole } from "@/lib/Feature/RoleSlice";
 import React from "react";
 
 const PermissionDialog = ({ children, onClose, onCreate, classes }) => {

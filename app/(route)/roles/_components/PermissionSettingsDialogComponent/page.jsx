@@ -20,7 +20,7 @@ import {
 } from "react-icons/md";
 import { FaArrowRight } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
-import { setStatePermissions } from "@/lib/Feature/CreateRole";
+import { setStatePermissions } from "@/lib/Feature/RoleSlice";
 
 const PermissionSettingsDialog = ({ onClose }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);

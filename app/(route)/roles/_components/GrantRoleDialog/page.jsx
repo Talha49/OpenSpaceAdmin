@@ -9,7 +9,7 @@ import { fetchGroups } from "@/lib/Feature/GroupSlice";
 import {
   setSelectedGroupsForRole,
   setSelectedUsersForRole,
-} from "@/lib/Feature/CreateRole";
+} from "@/lib/Feature/RoleSlice";
 
 const GrantRoleDialog = ({ onClose }) => {
   const { users } = useSelector((state) => state.user);

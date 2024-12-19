@@ -7,7 +7,7 @@ import {
   resetRole,
   resetSelectedUsersAndGroups,
   setRoleDetails,
-} from "@/lib/Feature/CreateRole";
+} from "@/lib/Feature/RoleSlice";
 import { useToast } from "@/lib/toastContext";
 import Alert from "@/app/_components/Alert/Alert";
 

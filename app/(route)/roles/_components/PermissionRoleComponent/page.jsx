@@ -3,7 +3,11 @@ import NewTableComponent from "@/app/_HOC/Table/NewTableComponent";
 import Link from "next/link";
 import React, { useState, useEffect } from "react";
 import { CiMenuFries, CiSearch } from "react-icons/ci";
-import { IoIosAddCircleOutline, IoIosArrowForward } from "react-icons/io";
+import {
+  IoIosAddCircleOutline,
+  IoIosArrowForward,
+  IoMdClose,
+} from "react-icons/io";
 import { LuChevronFirst, LuChevronLast, LuLoader } from "react-icons/lu";
 import {
   MdDeleteOutline,
@@ -19,12 +23,13 @@ import CreateNewPermissionForExternalUserDialog from "../CreateNewPermissionForE
 import CreateNewDialog from "../CreateNewDialog/page";
 import { useDispatch } from "react-redux";
 import {
+  deleteRole,
   fetchAllRoles,
   setRoleDetails,
   setSelectedGroupsForRole,
   setSelectedUsersForRole,
   setStatePermissions,
-} from "@/lib/Feature/CreateRole";
+} from "@/lib/Feature/RoleSlice";
 import { useSelector } from "react-redux";
 import Loader from "@/app/_components/Loader/Loader";
 import RoleDetailDialog from "@/app/_components/RoleDetails Dialog/RoleDetailDialog";
@@ -347,7 +352,13 @@ const PermissionRolesComponent = () => {
         subtitle={`This action will permanently delete ${selectedRoleForDelete?.name}.`}
         actionButtons={
           <>
-            <button className="flex items-center gap-1 py-2 px-4 rounded-lg text-sm text-white bg-red-600 hover:bg-red-500 transition-all">
+            <button
+              className="flex items-center gap-1 py-2 px-4 rounded-lg text-sm text-white bg-red-600 hover:bg-red-500 transition-all"
+              onClick={() => {
+                dispatch(deleteRole(selectedRoleForDelete?._id));
+                setIsOpenConfirmationDialog(false);
+              }}
+            >
               <MdDeleteOutline className="text-base" />
               Confirm Delete
             </button>
