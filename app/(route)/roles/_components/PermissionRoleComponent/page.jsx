@@ -25,6 +25,7 @@ import { useDispatch } from "react-redux";
 import {
   deleteRole,
   fetchAllRoles,
+  setEditingRoleId,
   setRoleDetails,
   setRoleEditing,
   setSelectedGroupsForRole,
@@ -234,6 +235,7 @@ const PermissionRolesComponent = () => {
                   <button
                     className="text-blue-500 hover:underline hover:font-semibold transition-all"
                     onClick={() => {
+                      dispatch(setEditingRoleId(role));
                       dispatch(setRoleEditing(true));
                       setIsOpen(true);
                       dispatch(
@@ -245,12 +247,12 @@ const PermissionRolesComponent = () => {
                       dispatch(setStatePermissions(role?.permissions));
                       dispatch(
                         setSelectedUsersForRole(
-                          role?.allotedUsers.map((user) => user._id)
+                          role?.allotedUsers?.map((user) => user._id)
                         )
                       );
                       dispatch(
                         setSelectedGroupsForRole(
-                          role?.allotedGroups.map((group) => group._id)
+                          role?.allotedGroups?.map((group) => group._id)
                         )
                       );
                       localStorage.setItem(

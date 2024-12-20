@@ -99,7 +99,7 @@ const GrantRoleDialog = ({ onClose }) => {
                   }}
                   className="w-[350px] px-2 py-1 mt-1 outline focus:outline-2 outline-blue-500 rounded-lg text-left"
                 >
-                  {selectedUsersForRole.length === 0
+                  {selectedUsersForRole?.length === 0
                     ? "Select users"
                     : `${selectedUsersForRole.length} user(s) selected`}
                 </button>

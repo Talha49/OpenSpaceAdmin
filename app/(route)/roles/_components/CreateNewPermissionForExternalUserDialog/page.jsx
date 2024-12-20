@@ -8,6 +8,7 @@ import {
   resetSelectedUsersAndGroups,
   setRoleDetails,
   setRoleEditing,
+  updateRole,
 } from "@/lib/Feature/RoleSlice";
 import { useToast } from "@/lib/toastContext";
 import Alert from "@/app/_components/Alert/Alert";
@@ -29,6 +30,7 @@ const CreateNewPermissionForExternalUserDialog = ({
     loading,
     error,
     editing,
+    editingRole,
   } = useSelector((state) => state.role);
   const [alert, setAlert] = useState(null);
   const [updateChangesOccured, setUpdateChangesOccured] = useState(false);
@@ -125,7 +127,23 @@ const CreateNewPermissionForExternalUserDialog = ({
     }
   };
 
-  const handleUpdateRole = async () => {};
+  const handleUpdateRole = async (role) => {
+    try {
+      await dispatch(
+        updateRole({
+          name,
+          description,
+          permissions,
+          allotedUsers: selectedUsersForRole,
+          allotedGroups: selectedGroupsForRole,
+          id: role._id,
+        })
+      );
+      onClose();
+    } catch (error) {
+      console.error("Error updating role:", error);
+    }
+  };
 
   // Local state to manage form inputs
   const [roleName, setRoleName] = useState(name);
@@ -240,7 +258,9 @@ const CreateNewPermissionForExternalUserDialog = ({
             disabled={
               name === "" || description === "" || !updateChangesOccured
             }
-            onClick={handleUpdateRole}
+            onClick={() => {
+              handleUpdateRole(editingRole);
+            }}
           >
             {loading ? "Updating..." : "Update"}
           </button>
