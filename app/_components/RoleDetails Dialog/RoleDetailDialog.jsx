@@ -90,52 +90,58 @@ const RoleDetailDialog = ({ isOpen, onClose, children, role }) => {
             </h3>
             {Object.keys(form.tabs || {}).map((tabKey) => {
               const tab = form.tabs[tabKey];
-              return (
-                <div
-                  key={tabKey}
-                  className="mt-4 bg-white dark:bg-neutral-950 border dark:border-neutral-700 p-2 ml-5 rounded-lg shadow-md"
-                >
-                  <h4 className="text-lg font-medium flex items-center gap-1">
-                    <MdOutlineSubdirectoryArrowRight className="text-blue-600 text-lg" />
-                    {tab?.name}
-                  </h4>
-                  {Object.keys(tab.sections || {}).map((sectionKey) => {
-                    const section = tab.sections[sectionKey];
-                    return (
-                      <div
-                        key={sectionKey}
-                        className="mt-2 ml-6 bg-neutral-100 dark:bg-neutral-900 border dark:border-neutral-700 p-2 rounded-lg"
-                      >
-                        <h5 className="font-semibold flex items-center gap-1">
-                          <MdOutlineSubdirectoryArrowRight className="text-blue-600 text-lg" />
-                          {section?.name}
-                        </h5>
-                        <div className="bg-white dark:bg-neutral-950 border dark:border-neutral-700 p-2 rounded-lg mt-2 ml-6">
-                          {Object.keys(section.fields || {}).map((fieldKey) => {
-                            const field = section.fields[fieldKey];
-                            return (
-                              <div
-                                key={fieldKey}
-                                className="text-neutral-500 mt-1"
-                              >
-                                <div className="flex items-center gap-2">
-                                  <p className="flex items-center gap-1">
-                                    <MdOutlineSubdirectoryArrowRight className="text-blue-600 text-lg" />
-                                    {field.name}
-                                  </p>
-                                  <span className="bg-blue-600 text-white rounded text-xs px-2">
-                                    {field?.permission}
-                                  </span>
-                                </div>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              );
+              if (tab.view === true) {
+                return (
+                  <div
+                    key={tabKey}
+                    className="mt-4 bg-white dark:bg-neutral-950 border dark:border-neutral-700 p-2 ml-5 rounded-lg shadow-md"
+                  >
+                    <h4 className="text-lg font-medium flex items-center gap-1">
+                      <MdOutlineSubdirectoryArrowRight className="text-blue-600 text-lg" />
+                      {tab?.name}
+                    </h4>
+                    {Object.keys(tab.sections || {}).map((sectionKey) => {
+                      const section = tab.sections[sectionKey];
+                      if (section.view === true) {
+                        return (
+                          <div
+                            key={sectionKey}
+                            className="mt-2 ml-6 bg-neutral-100 dark:bg-neutral-900 border dark:border-neutral-700 p-2 rounded-lg"
+                          >
+                            <h5 className="font-semibold flex items-center gap-1">
+                              <MdOutlineSubdirectoryArrowRight className="text-blue-600 text-lg" />
+                              {section?.name}
+                            </h5>
+                            <div className="bg-white dark:bg-neutral-950 border dark:border-neutral-700 p-2 rounded-lg mt-2 ml-6">
+                              {Object.keys(section.fields || {}).map(
+                                (fieldKey) => {
+                                  const field = section.fields[fieldKey];
+                                  return (
+                                    <div
+                                      key={fieldKey}
+                                      className="text-neutral-500 mt-1"
+                                    >
+                                      <div className="flex items-center gap-2">
+                                        <p className="flex items-center gap-1">
+                                          <MdOutlineSubdirectoryArrowRight className="text-blue-600 text-lg" />
+                                          {field.name}
+                                        </p>
+                                        <span className="bg-blue-600 text-white rounded text-xs px-2">
+                                          {field?.permission}
+                                        </span>
+                                      </div>
+                                    </div>
+                                  );
+                                }
+                              )}
+                            </div>
+                          </div>
+                        );
+                      }
+                    })}
+                  </div>
+                );
+              }
             })}
           </div>
         );
