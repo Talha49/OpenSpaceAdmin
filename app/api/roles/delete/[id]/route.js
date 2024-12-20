@@ -1,5 +1,6 @@
 import dbConnect from "@/lib/connectdb/connection";
 import Role from "@/lib/models/Role";
+import User from "@/lib/models/User";
 import { NextResponse } from "next/server";
 
 export async function DELETE(req, { params }) {
@@ -8,13 +9,16 @@ export async function DELETE(req, { params }) {
     const { id } = params;
 
     // Check if the role exists
-    const existing = await Role.findById(id); // Correctly find the role by ID
-    if (!existing) {
+    const existingRole = await Role.findById(id); // Correctly find the role by ID
+    if (!existingRole) {
       return NextResponse.json({ message: "Role not found" }, { status: 404 });
     }
 
     // Delete the role
     await Role.findByIdAndDelete(id);
+
+    // Update users who have this role to set their role to null
+    await User.updateMany({ role: id }, { $set: { role: null } });
 
     return NextResponse.json(
       { message: "Role deleted successfully" },
