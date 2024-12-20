@@ -76,7 +76,6 @@ const RoleDetailDialog = ({ isOpen, onClose, children, role }) => {
 
   // Render form permissions
   const renderFormPermissions = () => {
-    console.log("formPermisions =>", role?.permissions?.formPermissions);
     return Object.keys(role?.permissions?.formPermissions || {}).map(
       (formKey) => {
         const form = role.permissions.formPermissions[formKey];

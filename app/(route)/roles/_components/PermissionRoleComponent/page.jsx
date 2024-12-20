@@ -26,6 +26,7 @@ import {
   deleteRole,
   fetchAllRoles,
   setRoleDetails,
+  setRoleEditing,
   setSelectedGroupsForRole,
   setSelectedUsersForRole,
   setStatePermissions,
@@ -67,10 +68,6 @@ const PermissionRolesComponent = () => {
   useEffect(() => {
     dispatch(fetchAllRoles());
   }, [dispatch]);
-
-  console.log("Slected Users =>", selectedUsersForRole);
-  console.log("Selected Groups =>", selectedGroupsForRole);
-  console.log("Roles =>", roles);
 
   function getDateAndTime(timestamp) {
     // Create a new Date object from the timestamp
@@ -237,6 +234,7 @@ const PermissionRolesComponent = () => {
                   <button
                     className="text-blue-500 hover:underline hover:font-semibold transition-all"
                     onClick={() => {
+                      dispatch(setRoleEditing(true));
                       setIsOpen(true);
                       dispatch(
                         setRoleDetails({

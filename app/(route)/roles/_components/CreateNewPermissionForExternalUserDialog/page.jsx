@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import PermissionDialog from "../PermissionDialog/page";
 import {
@@ -7,6 +7,7 @@ import {
   resetRole,
   resetSelectedUsersAndGroups,
   setRoleDetails,
+  setRoleEditing,
 } from "@/lib/Feature/RoleSlice";
 import { useToast } from "@/lib/toastContext";
 import Alert from "@/app/_components/Alert/Alert";
@@ -27,8 +28,65 @@ const CreateNewPermissionForExternalUserDialog = ({
     selectedGroupsForRole,
     loading,
     error,
+    editing,
   } = useSelector((state) => state.role);
   const [alert, setAlert] = useState(null);
+  const [updateChangesOccured, setUpdateChangesOccured] = useState(false);
+  const previousState = useRef({
+    name,
+    description,
+    permissions,
+    selectedUsersForRole,
+    selectedGroupsForRole,
+  });
+
+  const deepEqual = (obj1, obj2) => {
+    if (obj1 === obj2) return true;
+
+    if (
+      obj1 === null ||
+      obj2 === null ||
+      typeof obj1 !== "object" ||
+      typeof obj2 !== "object"
+    ) {
+      return false;
+    }
+
+    const keys1 = Object.keys(obj1);
+    const keys2 = Object.keys(obj2);
+
+    if (keys1.length !== keys2.length) return false;
+
+    for (const key of keys1) {
+      if (!keys2.includes(key) || !deepEqual(obj1[key], obj2[key])) {
+        return false;
+      }
+    }
+
+    return true;
+  };
+
+  useEffect(() => {
+    const currentState = {
+      name,
+      description,
+      permissions,
+      selectedUsersForRole,
+      selectedGroupsForRole,
+    };
+
+    if (!deepEqual(previousState.current, currentState)) {
+      setUpdateChangesOccured(true); // Changes occurred
+    } else {
+      setUpdateChangesOccured(false); // No changes occurred
+    }
+  }, [
+    name,
+    description,
+    permissions,
+    selectedUsersForRole,
+    selectedGroupsForRole,
+  ]);
 
   const createdBy = "Abdul Samad";
 
@@ -66,6 +124,8 @@ const CreateNewPermissionForExternalUserDialog = ({
       setTimeout(() => setAlert(null), 3000); // Hide alert after 3 seconds
     }
   };
+
+  const handleUpdateRole = async () => {};
 
   // Local state to manage form inputs
   const [roleName, setRoleName] = useState(name);
@@ -169,21 +229,34 @@ const CreateNewPermissionForExternalUserDialog = ({
             dispatch(resetRole());
             dispatch(resetSelectedUsersAndGroups());
             localStorage.removeItem("permissions");
+            dispatch(setRoleEditing(false));
           }}
         >
           Cancel
         </button>
-        <button
-          className="px-4 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition-all disabled:bg-neutral-400 disabled:cursor-not-allowed"
-          disabled={name === "" || description === ""}
-          title={
-            (name === "" || description === "" || loading) &&
-            "Please Specify Role Name and Description"
-          }
-          onClick={handleCreateRole}
-        >
-          {loading ? "Creating..." : "Create"}
-        </button>
+        {editing ? (
+          <button
+            className="px-4 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition-all disabled:bg-neutral-400 disabled:cursor-not-allowed"
+            disabled={
+              name === "" || description === "" || !updateChangesOccured
+            }
+            onClick={handleUpdateRole}
+          >
+            {loading ? "Updating..." : "Update"}
+          </button>
+        ) : (
+          <button
+            className="px-4 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition-all disabled:bg-neutral-400 disabled:cursor-not-allowed"
+            disabled={name === "" || description === ""}
+            title={
+              (name === "" || description === "" || loading) &&
+              "Please Specify Role Name and Description"
+            }
+            onClick={handleCreateRole}
+          >
+            {loading ? "Creating..." : "Create"}
+          </button>
+        )}
       </div>
     </PermissionDialog>
   );
