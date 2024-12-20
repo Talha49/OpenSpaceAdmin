@@ -140,6 +140,10 @@ const CreateNewPermissionForExternalUserDialog = ({
         })
       );
       onClose();
+      localStorage.removeItem("permissions");
+      dispatch(resetRole());
+      dispatch(setRoleEditing(null));
+      dispatch(setRoleEditing(false));
     } catch (error) {
       console.error("Error updating role:", error);
     }
