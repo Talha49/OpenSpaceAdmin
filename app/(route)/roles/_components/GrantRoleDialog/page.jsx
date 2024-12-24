@@ -101,7 +101,7 @@ const GrantRoleDialog = ({ onClose }) => {
                 >
                   {selectedUsersForRole?.length === 0
                     ? "Select users"
-                    : `${selectedUsersForRole.length} user(s) selected`}
+                    : `${selectedUsersForRole?.length} user(s) selected`}
                 </button>
 
                 {isOpenUserDropdown && (
@@ -124,7 +124,7 @@ const GrantRoleDialog = ({ onClose }) => {
                         <input
                           type="checkbox"
                           id={`user-${user._id}`}
-                          checked={selectedUsersForRole.includes(user._id)}
+                          checked={selectedUsersForRole?.includes(user._id)}
                           onChange={() => handleUserSelection(user._id)}
                           className="custom-circle-checkbox"
                         />
@@ -162,9 +162,9 @@ const GrantRoleDialog = ({ onClose }) => {
                   }}
                   className="w-[350px] px-2 py-1 mt-1 outline focus:outline-2 outline-blue-500 rounded-lg text-left"
                 >
-                  {selectedGroupsForRole.length === 0
+                  {selectedGroupsForRole?.length === 0
                     ? "Select groups"
-                    : `${selectedGroupsForRole.length} group(s) selected`}
+                    : `${selectedGroupsForRole?.length} group(s) selected`}
                 </button>
 
                 {isOpenGroupDropdown && (
