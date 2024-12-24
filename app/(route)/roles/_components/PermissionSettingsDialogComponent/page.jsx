@@ -58,7 +58,7 @@ const PermissionSettingsDialog = ({ onClose }) => {
                 id: submenu.id,
                 name: submenu.name,
                 included: false,
-                path: menu.path,
+                path: submenu.path,
                 permission: [],
               }))
             : [],
@@ -74,7 +74,7 @@ const PermissionSettingsDialog = ({ onClose }) => {
                 id: submenu.id,
                 name: submenu.name,
                 included: false,
-                path: menu.path,
+                path: submenu.path,
                 permission: [],
               }))
             : [],
