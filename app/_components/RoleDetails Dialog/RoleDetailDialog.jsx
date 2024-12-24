@@ -5,73 +5,147 @@ import { MdOutlineSubdirectoryArrowRight } from "react-icons/md";
 const RoleDetailDialog = ({ isOpen, onClose, children, role }) => {
   // Render menu permissions
   const renderMenuPermissions = () => {
-    return role?.permissions?.menuPermissions
-      ?.filter((menu) => menu.included === true)
-      .map((menu) => (
-        <div
-          key={menu.id}
-          className="bg-neutral-100 dark:bg-neutral-900 p-4 rounded-lg mb-4 text-neutral-950 dark:text-neutral-400 border dark:border-neutral-700 shadow-md"
-        >
-          <div className="flex items-center gap-2">
-            <h3 className="text-lg font-semibold flex items-center gap-1">
-              <FaArrowRight className="text-sm text-blue-600" />
-              {menu?.name}
-            </h3>
-            <div className="flex items-center gap-1 flex-wrap">
-              {menu?.permission?.map((perm) => (
-                <p className="bg-blue-600 text-white rounded text-xs px-2">
-                  {perm}
-                </p>
-              ))}
-              {menu.permission.length === 0 && (
-                <p className="bg-blue-600 text-white rounded text-xs px-2">
-                  view
-                </p>
+    return (
+      <>
+        <h1 className="text-center text-lg font-semibold">Basic Menu</h1>
+        {role?.permissions?.menuPermissions?.basicMenu
+          ?.filter((menu) => menu.included === true)
+          .map((menu) => (
+            <div
+              key={menu.id}
+              className="bg-neutral-100 dark:bg-neutral-900 p-4 rounded-lg mb-4 text-neutral-950 dark:text-neutral-400 border dark:border-neutral-700 shadow-md"
+            >
+              <div className="flex items-center gap-2">
+                <h3 className="text-lg font-semibold flex items-center gap-1">
+                  <FaArrowRight className="text-sm text-blue-600" />
+                  {menu?.name}
+                </h3>
+                <div className="flex items-center gap-1 flex-wrap">
+                  {menu?.permission?.map((perm) => (
+                    <p className="bg-blue-600 text-white rounded text-xs px-2">
+                      {perm}
+                    </p>
+                  ))}
+                  {menu.permission.length === 0 && (
+                    <p className="bg-blue-600 text-white rounded text-xs px-2">
+                      view
+                    </p>
+                  )}
+                </div>
+              </div>
+              <ul className="list-disc pl-5">
+                {menu.permission
+                  ?.filter((perm) => perm.included == true)
+                  .map((perm, index) => (
+                    <li key={index} className="text-neutral-600">
+                      {perm}
+                    </li>
+                  ))}
+              </ul>
+              {menu.submenus?.length > 0 && (
+                <div className="mt-2">
+                  {menu.submenus
+                    ?.filter((submenu) => submenu.included === true)
+                    .map((submenu) => (
+                      <div
+                        key={submenu.id}
+                        className="bg-neutral-50 dark:bg-neutral-800 p-2 border dark:border-neutral-700 rounded-lg mt-2 ml-5 shadow-sm"
+                      >
+                        <div className="flex items-center gap-2">
+                          <h4 className="text-md  flex items-center gap-1">
+                            <MdOutlineSubdirectoryArrowRight className="text-lg text-blue-600" />
+                            {submenu?.name}
+                          </h4>
+                          <div className="flex items-center gap-1 flex-wrap">
+                            {submenu?.permission?.map((perm) => (
+                              <p className="bg-blue-600 text-white rounded text-xs px-2">
+                                {perm}
+                              </p>
+                            ))}
+                            {submenu.permission.length === 0 && (
+                              <p className="bg-blue-600 text-white rounded text-xs px-2">
+                                view
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                </div>
               )}
             </div>
-          </div>
-          <ul className="list-disc pl-5">
-            {menu.permission
-              ?.filter((perm) => perm.included == true)
-              .map((perm, index) => (
-                <li key={index} className="text-neutral-600">
-                  {perm}
-                </li>
-              ))}
-          </ul>
-          {menu.submenus?.length > 0 && (
-            <div className="mt-2">
-              {menu.submenus
-                ?.filter((submenu) => submenu.included === true)
-                .map((submenu) => (
-                  <div
-                    key={submenu.id}
-                    className="bg-neutral-50 dark:bg-neutral-800 p-2 border dark:border-neutral-700 rounded-lg mt-2 ml-5 shadow-sm"
-                  >
-                    <div className="flex items-center gap-2">
-                      <h4 className="text-md  flex items-center gap-1">
-                        <MdOutlineSubdirectoryArrowRight className="text-lg text-blue-600" />
-                        {submenu?.name}
-                      </h4>
-                      <div className="flex items-center gap-1 flex-wrap">
-                        {submenu?.permission?.map((perm) => (
-                          <p className="bg-blue-600 text-white rounded text-xs px-2">
-                            {perm}
-                          </p>
-                        ))}
-                        {submenu.permission.length === 0 && (
-                          <p className="bg-blue-600 text-white rounded text-xs px-2">
-                            view
-                          </p>
-                        )}
+          ))}
+
+        <h1 className="text-center text-lg font-semibold">Admin Menu</h1>
+        {role?.permissions?.menuPermissions?.adminMenu
+          ?.filter((menu) => menu.included === true)
+          .map((menu) => (
+            <div
+              key={menu.id}
+              className="bg-neutral-100 dark:bg-neutral-900 p-4 rounded-lg mb-4 text-neutral-950 dark:text-neutral-400 border dark:border-neutral-700 shadow-md"
+            >
+              <div className="flex items-center gap-2">
+                <h3 className="text-lg font-semibold flex items-center gap-1">
+                  <FaArrowRight className="text-sm text-blue-600" />
+                  {menu?.name}
+                </h3>
+                <div className="flex items-center gap-1 flex-wrap">
+                  {menu?.permission?.map((perm) => (
+                    <p className="bg-blue-600 text-white rounded text-xs px-2">
+                      {perm}
+                    </p>
+                  ))}
+                  {menu.permission.length === 0 && (
+                    <p className="bg-blue-600 text-white rounded text-xs px-2">
+                      view
+                    </p>
+                  )}
+                </div>
+              </div>
+              <ul className="list-disc pl-5">
+                {menu.permission
+                  ?.filter((perm) => perm.included == true)
+                  .map((perm, index) => (
+                    <li key={index} className="text-neutral-600">
+                      {perm}
+                    </li>
+                  ))}
+              </ul>
+              {menu.submenus?.length > 0 && (
+                <div className="mt-2">
+                  {menu.submenus
+                    ?.filter((submenu) => submenu.included === true)
+                    .map((submenu) => (
+                      <div
+                        key={submenu.id}
+                        className="bg-neutral-50 dark:bg-neutral-800 p-2 border dark:border-neutral-700 rounded-lg mt-2 ml-5 shadow-sm"
+                      >
+                        <div className="flex items-center gap-2">
+                          <h4 className="text-md  flex items-center gap-1">
+                            <MdOutlineSubdirectoryArrowRight className="text-lg text-blue-600" />
+                            {submenu?.name}
+                          </h4>
+                          <div className="flex items-center gap-1 flex-wrap">
+                            {submenu?.permission?.map((perm) => (
+                              <p className="bg-blue-600 text-white rounded text-xs px-2">
+                                {perm}
+                              </p>
+                            ))}
+                            {submenu.permission.length === 0 && (
+                              <p className="bg-blue-600 text-white rounded text-xs px-2">
+                                view
+                              </p>
+                            )}
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                ))}
+                    ))}
+                </div>
+              )}
             </div>
-          )}
-        </div>
-      ));
+          ))}
+      </>
+    );
   };
 
   // Render form permissions

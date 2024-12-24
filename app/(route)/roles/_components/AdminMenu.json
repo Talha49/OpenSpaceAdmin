@@ -1,0 +1,100 @@
+[
+  {
+    "menuId": "1",
+    "name": "Users",
+    "path": "/users",
+    "submenus": [
+      {
+        "id": "1.1",
+        "name": "Active Users",
+        "path": "/users/active",
+        "submenus": []
+      },
+      {
+        "id": "1.2",
+        "name": "Deleted Users",
+        "path": "/users/deleted"
+      }
+    ]
+  },
+  {
+    "menuId": "2",
+    "name": "Groups",
+    "path": "/group",
+    "submenus": [
+      {
+        "id": "2.1",
+        "name": "Active Groups",
+        "path": "/group/ActiveGroups"
+      },
+      {
+        "id": "2.2",
+        "name": "Deleted Groups",
+        "path": "/group/DeleteGroups",
+        "submenus": []
+      }
+    ]
+  },
+  {
+    "menuId": "3",
+    "name": "Roles",
+    "path": "/roles"
+  },
+  {
+    "menuId": "4",
+    "name": "Resources",
+    "path": "/resources"
+  },
+  {
+    "menuId": "5",
+    "name": "Billing",
+    "path": "/billing",
+    "submenus": [
+      {
+        "id": "5.1",
+        "name": "Purchase Services",
+        "path": "/billing/purchase-services"
+      },
+      {
+        "id": "5.2",
+        "name": "Your Products",
+        "path": "/billing/your-products"
+      },
+      {
+        "id": "5.3",
+        "name": "Licenses",
+        "path": "/billing/licenses"
+      },
+      {
+        "id": "5.4",
+        "name": "Bills & Payments",
+        "path": "/billing/bills-payments"
+      },
+      {
+        "id": "5.5",
+        "name": "Billing Accounts",
+        "path": "/billing/billing-accounts"
+      },
+      {
+        "id": "5.6",
+        "name": "Payment Methods",
+        "path": "/billing/payment-methods"
+      },
+      {
+        "id": "5.7",
+        "name": "Billing Notifications",
+        "path": "/billing/billing-notifications"
+      }
+    ]
+  },
+  {
+    "menuId": "6",
+    "name": "Support",
+    "path": "/support"
+  },
+  {
+    "menuId": "7",
+    "name": "Settings",
+    "path": "/settings"
+  }
+]

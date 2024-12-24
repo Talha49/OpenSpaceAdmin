@@ -10,6 +10,7 @@ import { HiOutlineDocumentReport } from "react-icons/hi";
 
 // Import JSON data
 import menuData from "../../_components/Menu.json";
+import adminMenuData from "../../_components/AdminMenu.json";
 import formData from "../../_components/Form.json";
 import reportData from "../../_components/Report.json";
 import wrokflowData from "../../_components/Workflow.json";
@@ -45,20 +46,40 @@ const PermissionSettingsDialog = ({ onClose }) => {
 
     // If no saved state, return the default structure
     return {
-      menuPermissions: menuData.map((menu) => ({
-        id: menu.menuId,
-        name: menu.name,
-        included: false,
-        permission: [],
-        submenus: menu.submenus
-          ? menu.submenus.map((submenu) => ({
-              id: submenu.id,
-              name: submenu.name,
-              included: false,
-              permission: [],
-            }))
-          : [],
-      })),
+      menuPermissions: {
+        basicMenu: menuData.map((menu) => ({
+          id: menu.menuId,
+          name: menu.name,
+          included: false,
+          path: menu.path,
+          permission: [],
+          submenus: menu.submenus
+            ? menu.submenus.map((submenu) => ({
+                id: submenu.id,
+                name: submenu.name,
+                included: false,
+                path: menu.path,
+                permission: [],
+              }))
+            : [],
+        })),
+        adminMenu: adminMenuData.map((menu) => ({
+          id: menu.menuId,
+          name: menu.name,
+          included: false,
+          path: menu.path,
+          permission: [],
+          submenus: menu.submenus
+            ? menu.submenus.map((submenu) => ({
+                id: submenu.id,
+                name: submenu.name,
+                included: false,
+                path: menu.path,
+                permission: [],
+              }))
+            : [],
+        })),
+      },
       formPermissions: formData.map((page) => ({
         name: page.pageName,
         tabs: page.tabs.map((tab) => ({
@@ -110,8 +131,8 @@ const PermissionSettingsDialog = ({ onClose }) => {
 
   const role = useSelector((state) => state.role);
 
-  // console.log("Permissions =>", permissions);
-  // console.log("Role =>", role);
+  console.log("Permissions =>", permissions);
+  console.log("Role =>", role);
 
   // Handle checkbox change (View, etc.)
   const handleCheckboxChange = (path, checked) => {
@@ -325,69 +346,52 @@ const PermissionSettingsDialog = ({ onClose }) => {
                 <div className=" py-1">
                   {selectedItem === "menu" && (
                     <div className="px-2 space-y-3">
-                      {selectedContent.map((menu, index) => (
-                        <div
-                          key={index}
-                          className="border dark:border-neutral-600 p-2 rounded-lg shadow-md"
-                        >
-                          <div className="font-semibold flex items-center gap-2 text-blue-600">
+                      <h1 className="text-lg text-center font-semibold">
+                        Basic Permissions
+                      </h1>
+                      {menuData.map((menu, index) => (
+                        <div key={index} className="border p-2 rounded-lg">
+                          <div className="flex items-center gap-2">
                             {menu.submenus && (
                               <FaArrowRight onClick={() => toggleMenu(index)} />
                             )}
                             <input
                               type="checkbox"
-                              name="checkbox"
-                              id={index}
                               checked={
-                                permissions.menuPermissions[index]?.included
+                                permissions.menuPermissions.basicMenu[index]
+                                  ?.included
                               }
                               onChange={() => {
                                 const updatedPermissions =
-                                  permissions.menuPermissions.map(
+                                  permissions.menuPermissions.basicMenu.map(
                                     (menuItem, i) => {
                                       if (i === index) {
-                                        const newMenuItem = {
+                                        const included = !menuItem.included;
+                                        return {
                                           ...menuItem,
-                                          included: !menuItem.included,
+                                          included,
+                                          submenus: menuItem.submenus.map(
+                                            (submenu) => ({
+                                              ...submenu,
+                                              included,
+                                            })
+                                          ),
                                         };
-                                        if (newMenuItem.submenus) {
-                                          newMenuItem.submenus =
-                                            newMenuItem.submenus.map(
-                                              (submenu) => ({
-                                                ...submenu,
-                                                included: newMenuItem.included, // Sync submenus with the parent menu
-                                              })
-                                            );
-                                        }
-                                        return newMenuItem;
                                       }
                                       return menuItem;
                                     }
                                   );
-
-                                setPermissions({
-                                  ...permissions,
-                                  menuPermissions: updatedPermissions,
-                                });
+                                setPermissions((prev) => ({
+                                  ...prev,
+                                  menuPermissions: {
+                                    ...prev.menuPermissions,
+                                    basicMenu: updatedPermissions,
+                                  },
+                                }));
                               }}
-                              className="h-4 w-4"
                             />
                             {menu.name}
-                            {menu.submenus && (
-                              <button
-                                className="ml-auto text-blue-500 text-2xl transition-all"
-                                onClick={() => toggleMenu(index)}
-                              >
-                                <MdExpandMore
-                                  className={`${
-                                    openMenuIndex === index ? "rotate-180" : ""
-                                  } transition-all`}
-                                />
-                              </button>
-                            )}
                           </div>
-
-                          {/* Render permission checkboxes for the menu */}
                           <div className="flex gap-4 ml-9">
                             {["create", "view", "edit", "delete"].map(
                               (permission) => (
@@ -398,51 +402,45 @@ const PermissionSettingsDialog = ({ onClose }) => {
                                   <input
                                     type="checkbox"
                                     disabled={
-                                      !permissions.menuPermissions[index]
-                                        ?.included
+                                      !permissions.menuPermissions.basicMenu[
+                                        index
+                                      ]?.included
                                     }
-                                    checked={permissions.menuPermissions[
+                                    checked={permissions.menuPermissions.basicMenu[
                                       index
                                     ]?.permission.includes(permission)}
                                     onChange={() => {
                                       const updatedPermissions =
-                                        permissions.menuPermissions.map(
+                                        permissions.menuPermissions.basicMenu.map(
                                           (menuItem, i) => {
                                             if (i === index) {
-                                              const newMenuItem = {
+                                              const newPermissions =
+                                                menuItem.permission.includes(
+                                                  permission
+                                                )
+                                                  ? menuItem.permission.filter(
+                                                      (perm) =>
+                                                        perm !== permission
+                                                    )
+                                                  : [
+                                                      ...menuItem.permission,
+                                                      permission,
+                                                    ];
+                                              return {
                                                 ...menuItem,
+                                                permission: newPermissions,
                                               };
-                                              const currentPermissions = [
-                                                ...newMenuItem.permission,
-                                              ];
-                                              const permissionIndex =
-                                                currentPermissions.indexOf(
-                                                  permission
-                                                );
-
-                                              if (permissionIndex !== -1) {
-                                                currentPermissions.splice(
-                                                  permissionIndex,
-                                                  1
-                                                );
-                                              } else {
-                                                currentPermissions.push(
-                                                  permission
-                                                );
-                                              }
-
-                                              newMenuItem.permission =
-                                                currentPermissions;
-                                              return newMenuItem;
                                             }
                                             return menuItem;
                                           }
                                         );
-
-                                      setPermissions({
-                                        ...permissions,
-                                        menuPermissions: updatedPermissions,
-                                      });
+                                      setPermissions((prev) => ({
+                                        ...prev,
+                                        menuPermissions: {
+                                          ...prev.menuPermissions,
+                                          basicMenu: updatedPermissions,
+                                        },
+                                      }));
                                     }}
                                   />
                                   {permission.charAt(0).toUpperCase() +
@@ -451,165 +449,376 @@ const PermissionSettingsDialog = ({ onClose }) => {
                               )
                             )}
                           </div>
-
-                          {/* Render submenus only if this menu is open */}
-                          {openMenuIndex === index && menu.submenus && (
-                            <div className="ml-4">
-                              {menu.submenus.map((submenu, subIndex) => (
-                                <div
-                                  key={subIndex}
-                                  className="border dark:border-neutral-600 bg-blue-50 dark:bg-neutral-950/90 my-3 p-2 rounded-lg"
-                                >
-                                  <div className="text-blue-600 flex items-center gap-2">
-                                    <MdOutlineSubdirectoryArrowRight className="text-lg" />
-                                    <input
-                                      type="checkbox"
-                                      name="checkbox"
-                                      id={subIndex}
-                                      checked={
-                                        permissions.menuPermissions[index]
-                                          ?.submenus[subIndex]?.included
-                                      }
-                                      onChange={() => {
-                                        const updatedPermissions =
-                                          permissions.menuPermissions.map(
-                                            (menuItem, i) => {
-                                              if (i === index) {
-                                                const newMenuItem = {
-                                                  ...menuItem,
-                                                };
-                                                const newSubmenus = [
-                                                  ...newMenuItem.submenus,
-                                                ];
-
-                                                const currentSubmenu = {
-                                                  ...newSubmenus[subIndex],
-                                                }; // Create a new submenu object
-                                                currentSubmenu.included =
-                                                  !currentSubmenu.included;
-
-                                                newSubmenus[subIndex] =
-                                                  currentSubmenu; // Update the submenu
-                                                newMenuItem.submenus =
-                                                  newSubmenus; // Update the menu with the new submenus
-
-                                                // Check if any submenus are still checked, if not, uncheck the parent menu
-                                                const allSubmenusUnchecked =
-                                                  newSubmenus.every(
-                                                    (sub) => !sub.included
-                                                  );
-                                                if (allSubmenusUnchecked) {
-                                                  newMenuItem.included = false; // Uncheck the parent if all submenus are unchecked
-                                                } else {
-                                                  // If any submenu is checked, make sure parent is checked
-                                                  newMenuItem.included = true;
-                                                }
-
-                                                return newMenuItem; // Return the updated menu item
-                                              }
-                                              return menuItem;
-                                            }
-                                          );
-
-                                        setPermissions({
-                                          ...permissions,
-                                          menuPermissions: updatedPermissions,
-                                        });
-                                      }}
-                                      className="h-4 w-4"
-                                    />
-                                    {submenu.name}
-                                  </div>
-
-                                  {/* Render permission checkboxes for the submenu */}
-                                  <div className="flex gap-4 ml-10">
-                                    {["create", "view", "edit", "delete"].map(
-                                      (permission) => (
-                                        <label
-                                          key={permission}
-                                          className="flex items-center gap-1"
-                                        >
-                                          <input
-                                            type="checkbox"
-                                            disabled={
-                                              !permissions.menuPermissions[
-                                                index
-                                              ]?.submenus[subIndex]?.included
-                                            }
-                                            checked={permissions.menuPermissions[
-                                              index
-                                            ]?.submenus[
-                                              subIndex
-                                            ]?.permission.includes(permission)}
-                                            onChange={() => {
-                                              const updatedPermissions =
-                                                permissions.menuPermissions.map(
-                                                  (menuItem, i) => {
-                                                    if (i === index) {
-                                                      const newMenuItem = {
-                                                        ...menuItem,
+                          {openMenuIndex === index &&
+                            menu.submenus &&
+                            menu.submenus.map((submenu, subIndex) => (
+                              <div key={subIndex} className="ml-4">
+                                <div className="flex items-center gap-2">
+                                  <MdOutlineSubdirectoryArrowRight />
+                                  <input
+                                    type="checkbox"
+                                    checked={
+                                      permissions.menuPermissions.basicMenu[
+                                        index
+                                      ]?.submenus[subIndex]?.included
+                                    }
+                                    onChange={() => {
+                                      const updatedPermissions =
+                                        permissions.menuPermissions.basicMenu.map(
+                                          (menuItem, i) => {
+                                            if (i === index) {
+                                              const updatedSubmenus =
+                                                menuItem.submenus.map(
+                                                  (submenuItem, j) => {
+                                                    if (j === subIndex) {
+                                                      return {
+                                                        ...submenuItem,
+                                                        included:
+                                                          !submenuItem.included,
                                                       };
-                                                      const newSubmenus = [
-                                                        ...newMenuItem.submenus,
-                                                      ];
-
-                                                      const currentSubmenu = {
-                                                        ...newSubmenus[
-                                                          subIndex
-                                                        ],
-                                                      };
-                                                      const currentPermissions =
-                                                        [
-                                                          ...currentSubmenu.permission,
-                                                        ];
-                                                      const permissionIndex =
-                                                        currentPermissions.indexOf(
-                                                          permission
-                                                        );
-
-                                                      if (
-                                                        permissionIndex !== -1
-                                                      ) {
-                                                        currentPermissions.splice(
-                                                          permissionIndex,
-                                                          1
-                                                        );
-                                                      } else {
-                                                        currentPermissions.push(
-                                                          permission
-                                                        );
-                                                      }
-
-                                                      currentSubmenu.permission =
-                                                        currentPermissions;
-                                                      newSubmenus[subIndex] =
-                                                        currentSubmenu;
-                                                      newMenuItem.submenus =
-                                                        newSubmenus;
-
-                                                      return newMenuItem;
                                                     }
-                                                    return menuItem;
+                                                    return submenuItem;
                                                   }
                                                 );
-
-                                              setPermissions({
-                                                ...permissions,
-                                                menuPermissions:
-                                                  updatedPermissions,
-                                              });
-                                            }}
-                                          />
-                                          {permission.charAt(0).toUpperCase() +
-                                            permission.slice(1)}
-                                        </label>
-                                      )
-                                    )}
-                                  </div>
+                                              const parentIncluded =
+                                                updatedSubmenus.some(
+                                                  (sub) => sub.included
+                                                );
+                                              return {
+                                                ...menuItem,
+                                                included: parentIncluded,
+                                                submenus: updatedSubmenus,
+                                              };
+                                            }
+                                            return menuItem;
+                                          }
+                                        );
+                                      setPermissions((prev) => ({
+                                        ...prev,
+                                        menuPermissions: {
+                                          ...prev.menuPermissions,
+                                          basicMenu: updatedPermissions,
+                                        },
+                                      }));
+                                    }}
+                                  />
+                                  {submenu.name}
                                 </div>
-                              ))}
-                            </div>
-                          )}
+                                <div className="flex gap-4 ml-10">
+                                  {["create", "view", "edit", "delete"].map(
+                                    (permission) => (
+                                      <label
+                                        key={permission}
+                                        className="flex items-center gap-1"
+                                      >
+                                        <input
+                                          type="checkbox"
+                                          disabled={
+                                            !permissions.menuPermissions
+                                              .basicMenu[index]?.submenus[
+                                              subIndex
+                                            ]?.included
+                                          }
+                                          checked={permissions.menuPermissions.basicMenu[
+                                            index
+                                          ]?.submenus[
+                                            subIndex
+                                          ]?.permission.includes(permission)}
+                                          onChange={() => {
+                                            const updatedPermissions =
+                                              permissions.menuPermissions.basicMenu.map(
+                                                (menuItem, i) => {
+                                                  if (i === index) {
+                                                    const updatedSubmenus =
+                                                      menuItem.submenus.map(
+                                                        (submenuItem, j) => {
+                                                          if (j === subIndex) {
+                                                            const newPermissions =
+                                                              submenuItem.permission.includes(
+                                                                permission
+                                                              )
+                                                                ? submenuItem.permission.filter(
+                                                                    (perm) =>
+                                                                      perm !==
+                                                                      permission
+                                                                  )
+                                                                : [
+                                                                    ...submenuItem.permission,
+                                                                    permission,
+                                                                  ];
+                                                            return {
+                                                              ...submenuItem,
+                                                              permission:
+                                                                newPermissions,
+                                                            };
+                                                          }
+                                                          return submenuItem;
+                                                        }
+                                                      );
+                                                    return {
+                                                      ...menuItem,
+                                                      submenus: updatedSubmenus,
+                                                    };
+                                                  }
+                                                  return menuItem;
+                                                }
+                                              );
+                                            setPermissions((prev) => ({
+                                              ...prev,
+                                              menuPermissions: {
+                                                ...prev.menuPermissions,
+                                                basicMenu: updatedPermissions,
+                                              },
+                                            }));
+                                          }}
+                                        />
+                                        {permission.charAt(0).toUpperCase() +
+                                          permission.slice(1)}
+                                      </label>
+                                    )
+                                  )}
+                                </div>
+                              </div>
+                            ))}
+                        </div>
+                      ))}
+                      <h1 className="text-xl text-center font-semibold">
+                        Admin Permissions
+                      </h1>
+                      {adminMenuData.map((menu, index) => (
+                        <div key={index} className="border p-2 rounded-lg">
+                          <div className="flex items-center gap-2 text-blue-600 text-lg">
+                            {menu.submenus && (
+                              <FaArrowRight onClick={() => toggleMenu(index)} />
+                            )}
+                            <input
+                              type="checkbox"
+                              checked={
+                                permissions.menuPermissions.adminMenu[index]
+                                  ?.included
+                              }
+                              onChange={() => {
+                                const updatedPermissions =
+                                  permissions.menuPermissions.adminMenu.map(
+                                    (menuItem, i) => {
+                                      if (i === index) {
+                                        const included = !menuItem.included;
+                                        return {
+                                          ...menuItem,
+                                          included,
+                                          submenus: menuItem.submenus.map(
+                                            (submenu) => ({
+                                              ...submenu,
+                                              included,
+                                            })
+                                          ),
+                                        };
+                                      }
+                                      return menuItem;
+                                    }
+                                  );
+                                setPermissions((prev) => ({
+                                  ...prev,
+                                  menuPermissions: {
+                                    ...prev.menuPermissions,
+                                    adminMenu: updatedPermissions,
+                                  },
+                                }));
+                              }}
+                            />
+                            {menu.name}
+                          </div>
+                          <div className="flex gap-4 ml-9">
+                            {["create", "view", "edit", "delete"].map(
+                              (permission) => (
+                                <label
+                                  key={permission}
+                                  className="flex items-center gap-1"
+                                >
+                                  <input
+                                    type="checkbox"
+                                    disabled={
+                                      !permissions.menuPermissions.adminMenu[
+                                        index
+                                      ]?.included
+                                    }
+                                    checked={permissions.menuPermissions.adminMenu[
+                                      index
+                                    ]?.permission.includes(permission)}
+                                    onChange={() => {
+                                      const updatedPermissions =
+                                        permissions.menuPermissions.adminMenu.map(
+                                          (menuItem, i) => {
+                                            if (i === index) {
+                                              const newPermissions =
+                                                menuItem.permission.includes(
+                                                  permission
+                                                )
+                                                  ? menuItem.permission.filter(
+                                                      (perm) =>
+                                                        perm !== permission
+                                                    )
+                                                  : [
+                                                      ...menuItem.permission,
+                                                      permission,
+                                                    ];
+                                              return {
+                                                ...menuItem,
+                                                permission: newPermissions,
+                                              };
+                                            }
+                                            return menuItem;
+                                          }
+                                        );
+                                      setPermissions((prev) => ({
+                                        ...prev,
+                                        menuPermissions: {
+                                          ...prev.menuPermissions,
+                                          adminMenu: updatedPermissions,
+                                        },
+                                      }));
+                                    }}
+                                  />
+                                  {permission.charAt(0).toUpperCase() +
+                                    permission.slice(1)}
+                                </label>
+                              )
+                            )}
+                          </div>
+                          {openMenuIndex === index &&
+                            menu.submenus &&
+                            menu.submenus.map((submenu, subIndex) => (
+                              <div
+                                key={subIndex}
+                                className="ml-4 bg-blue-100 rounded-lg my-2 p-2"
+                              >
+                                <div className="flex items-center gap-2 text-blue-600">
+                                  <MdOutlineSubdirectoryArrowRight className="text-lg text-blue-600" />
+                                  <input
+                                    type="checkbox"
+                                    checked={
+                                      permissions.menuPermissions.adminMenu[
+                                        index
+                                      ]?.submenus[subIndex]?.included
+                                    }
+                                    onChange={() => {
+                                      const updatedPermissions =
+                                        permissions.menuPermissions.adminMenu.map(
+                                          (menuItem, i) => {
+                                            if (i === index) {
+                                              const updatedSubmenus =
+                                                menuItem.submenus.map(
+                                                  (submenuItem, j) => {
+                                                    if (j === subIndex) {
+                                                      return {
+                                                        ...submenuItem,
+                                                        included:
+                                                          !submenuItem.included,
+                                                      };
+                                                    }
+                                                    return submenuItem;
+                                                  }
+                                                );
+                                              const parentIncluded =
+                                                updatedSubmenus.some(
+                                                  (sub) => sub.included
+                                                );
+                                              return {
+                                                ...menuItem,
+                                                included: parentIncluded,
+                                                submenus: updatedSubmenus,
+                                              };
+                                            }
+                                            return menuItem;
+                                          }
+                                        );
+                                      setPermissions((prev) => ({
+                                        ...prev,
+                                        menuPermissions: {
+                                          ...prev.menuPermissions,
+                                          adminMenu: updatedPermissions,
+                                        },
+                                      }));
+                                    }}
+                                  />
+                                  {submenu.name}
+                                </div>
+                                <div className="flex gap-4 ml-10">
+                                  {["create", "view", "edit", "delete"].map(
+                                    (permission) => (
+                                      <label
+                                        key={permission}
+                                        className="flex items-center gap-1"
+                                      >
+                                        <input
+                                          type="checkbox"
+                                          disabled={
+                                            !permissions.menuPermissions
+                                              .adminMenu[index]?.submenus[
+                                              subIndex
+                                            ]?.included
+                                          }
+                                          checked={permissions.menuPermissions.adminMenu[
+                                            index
+                                          ]?.submenus[
+                                            subIndex
+                                          ]?.permission.includes(permission)}
+                                          onChange={() => {
+                                            const updatedPermissions =
+                                              permissions.menuPermissions.adminMenu.map(
+                                                (menuItem, i) => {
+                                                  if (i === index) {
+                                                    const updatedSubmenus =
+                                                      menuItem.submenus.map(
+                                                        (submenuItem, j) => {
+                                                          if (j === subIndex) {
+                                                            const newPermissions =
+                                                              submenuItem.permission.includes(
+                                                                permission
+                                                              )
+                                                                ? submenuItem.permission.filter(
+                                                                    (perm) =>
+                                                                      perm !==
+                                                                      permission
+                                                                  )
+                                                                : [
+                                                                    ...submenuItem.permission,
+                                                                    permission,
+                                                                  ];
+                                                            return {
+                                                              ...submenuItem,
+                                                              permission:
+                                                                newPermissions,
+                                                            };
+                                                          }
+                                                          return submenuItem;
+                                                        }
+                                                      );
+                                                    return {
+                                                      ...menuItem,
+                                                      submenus: updatedSubmenus,
+                                                    };
+                                                  }
+                                                  return menuItem;
+                                                }
+                                              );
+                                            setPermissions((prev) => ({
+                                              ...prev,
+                                              menuPermissions: {
+                                                ...prev.menuPermissions,
+                                                adminMenu: updatedPermissions,
+                                              },
+                                            }));
+                                          }}
+                                        />
+                                        {permission.charAt(0).toUpperCase() +
+                                          permission.slice(1)}
+                                      </label>
+                                    )
+                                  )}
+                                </div>
+                              </div>
+                            ))}
                         </div>
                       ))}
                     </div>

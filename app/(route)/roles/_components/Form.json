@@ -1,118 +1,48 @@
 [
   {
-    "pageId": "page1",
-    "pageName": "RFI Form",
-    "pageDescription": "On this page we enter the RFI",
+    "pageId": "1",
+    "pageName": "User Creation Form",
+    "pageDescription": "On this page we create new users",
     "tabs": [
       {
         "tabId": 1,
-        "tabName": "General Information",
-        "tabDescription": "We enter the RFI basic information in it",
+        "tabName": "User Information",
+        "tabDescription": "We enter the user user information in it",
         "sections": [
           {
             "sectionId": 1,
             "sectionName": "Basic Info",
-            "sectionDescription": "Enter only contact information in this section",
+            "sectionDescription": "Enter only basic information of user in this section",
             "fields": [
               {
                 "fieldId": 1,
-                "fieldName": "Name",
+                "fieldName": "Full Name",
                 "fieldElement": "textbox",
                 "permissionType": ["Edit"]
               },
               {
                 "fieldId": 2,
-                "fieldName": "Age",
-                "fieldElement": "textbox",
-                "permissionType": ["Readonly"]
-              },
-              {
-                "fieldId": 3,
-                "fieldName": "Date of Birth",
-                "fieldElement": "calendar",
-                "permissionType": ["Readonly"]
-              }
-            ]
-          },
-          {
-            "sectionId": 2,
-            "sectionName": "Advance Info",
-            "sectionDescription": "Enter additional information in this section",
-            "fields": [
-              {
-                "fieldId": 1,
-                "fieldName": "Address",
+                "fieldName": "Email Address",
                 "fieldElement": "textbox",
                 "permissionType": ["Edit"]
               },
               {
-                "fieldId": 2,
-                "fieldName": "Gender",
-                "fieldElement": "radio",
-                "permissionType": ["Readonly"]
-              },
-              {
                 "fieldId": 3,
-                "fieldName": "File",
-                "fieldElement": "browse",
-                "permissionType": ["Readonly"]
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "tabId": 2,
-        "tabName": "Additional Info",
-        "tabDescription": "More information related to the RFI",
-        "sections": [
-          {
-            "sectionId": 1,
-            "sectionName": "Basic Info",
-            "sectionDescription": "Enter the basic information in this section",
-            "fields": [
-              {
-                "fieldId": 1,
-                "fieldName": "Name",
+                "fieldName": "Address / Street",
                 "fieldElement": "textbox",
                 "permissionType": ["Edit"]
               },
               {
-                "fieldId": 2,
-                "fieldName": "Age",
-                "fieldElement": "radio",
-                "permissionType": ["Readonly"]
-              },
-              {
-                "fieldId": 3,
-                "fieldName": "Date of Birth",
-                "fieldElement": "calendar",
-                "permissionType": ["Readonly"]
-              }
-            ]
-          },
-          {
-            "sectionId": 2,
-            "sectionName": "Advanced Info",
-            "sectionDescription": "Enter further advanced details in this section",
-            "fields": [
-              {
-                "fieldId": 1,
-                "fieldName": "Address",
+                "fieldId": 4,
+                "fieldName": "City",
                 "fieldElement": "textbox",
                 "permissionType": ["Edit"]
               },
               {
-                "fieldId": 2,
-                "fieldName": "Gender",
-                "fieldElement": "radio",
-                "permissionType": ["Readonly"]
-              },
-              {
-                "fieldId": 3,
-                "fieldName": "File",
-                "fieldElement": "browse",
-                "permissionType": ["Readonly"]
+                "fieldId": 5,
+                "fieldName": "Contact",
+                "fieldElement": "textbox",
+                "permissionType": ["Edit"]
               }
             ]
           }
@@ -121,62 +51,37 @@
     ]
   },
   {
-    "pageId": "page2",
-    "pageName": "XYZ Form",
-    "pageDescription": "On this page we enter the RFI",
+    "pageId": "2",
+    "pageName": "Group Creation Form",
+    "pageDescription": "On this page we create new groups",
     "tabs": [
       {
-        "tabId": 4,
-        "tabName": "General Information of user",
-        "tabDescription": "We enter the RFI basic information in it",
+        "tabId": 1,
+        "tabName": "Group Type",
+        "tabDescription": "We enter the user group information in it",
         "sections": [
           {
             "sectionId": 1,
-            "sectionName": "Basic Info",
-            "sectionDescription": "Enter only contact information in this section",
+            "sectionName": "Group Types",
+            "sectionDescription": "Enter only basic information of group in this section",
             "fields": [
               {
                 "fieldId": 1,
-                "fieldName": "Name",
-                "fieldElement": "textbox",
-                "permissionType": ["Edit"]
-              },
-              {
-                "fieldId": 2,
-                "fieldName": "Age",
-                "fieldElement": "textbox",
-                "permissionType": ["Readonly"]
-              },
-              {
-                "fieldId": 3,
-                "fieldName": "Date of Birth",
-                "fieldElement": "calendar",
-                "permissionType": ["Readonly"]
-              }
-            ]
-          },
-          {
-            "sectionId": 2,
-            "sectionName": "Advance Info",
-            "sectionDescription": "Enter additional information in this section",
-            "fields": [
-              {
-                "fieldId": 1,
-                "fieldName": "Address",
-                "fieldElement": "textbox",
-                "permissionType": ["Edit"]
-              },
-              {
-                "fieldId": 2,
-                "fieldName": "Gender",
+                "fieldName": "Type 1",
                 "fieldElement": "radio",
-                "permissionType": ["Readonly"]
+                "permissionType": ["Edit"]
+              },
+              {
+                "fieldId": 2,
+                "fieldName": "Type 2",
+                "fieldElement": "radio",
+                "permissionType": ["Edit"]
               },
               {
                 "fieldId": 3,
-                "fieldName": "File",
-                "fieldElement": "browse",
-                "permissionType": ["Readonly"]
+                "fieldName": "Type 3",
+                "fieldElement": "radio",
+                "permissionType": ["Edit"]
               }
             ]
           }
@@ -184,56 +89,190 @@
       },
       {
         "tabId": 2,
-        "tabName": "Additional Info",
-        "tabDescription": "More information related to the RFI",
+        "tabName": "basic Information",
+        "tabDescription": "We enter the group information in it",
         "sections": [
           {
             "sectionId": 1,
             "sectionName": "Basic Info",
-            "sectionDescription": "Enter the basic information in this section",
+            "sectionDescription": "Enter only basic information of group in this section",
             "fields": [
               {
                 "fieldId": 1,
-                "fieldName": "Name",
+                "fieldName": "Group Name",
                 "fieldElement": "textbox",
                 "permissionType": ["Edit"]
               },
               {
                 "fieldId": 2,
-                "fieldName": "Age",
-                "fieldElement": "radio",
-                "permissionType": ["Readonly"]
+                "fieldName": "Group Description",
+                "fieldElement": "textbox",
+                "permissionType": ["Edit"]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "tabId": 3,
+        "tabName": "Owners",
+        "tabDescription": "We select the group owners in it",
+        "sections": [
+          {
+            "sectionId": 1,
+            "sectionName": "Assign owners",
+            "sectionDescription": "Owners Selection in this section",
+            "fields": []
+          }
+        ]
+      },
+      {
+        "tabId": 4,
+        "tabName": "Members",
+        "tabDescription": "We select the group members in it",
+        "sections": [
+          {
+            "sectionId": 1,
+            "sectionName": "Assign members",
+            "sectionDescription": "Members Selection in this section",
+            "fields": []
+          }
+        ]
+      },
+      {
+        "tabId": 5,
+        "tabName": "Finish",
+        "tabDescription": "We create group in it",
+        "sections": [
+          {
+            "sectionId": 1,
+            "sectionName": "Create Group",
+            "sectionDescription": "Group Creation in it",
+            "fields": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "pageId": "3",
+    "pageName": "Role Creation Form",
+    "pageDescription": "On this page we create new roles",
+    "tabs": [
+      {
+        "tabId": 1,
+        "tabName": "Permission Role Details",
+        "tabDescription": "We enter the role information in it",
+        "sections": [
+          {
+            "sectionId": 1,
+            "sectionName": "Basic Info",
+            "sectionDescription": "Enter only basic information of role in this section",
+            "fields": [
+              {
+                "fieldId": 1,
+                "fieldName": "Role Name",
+                "fieldElement": "textbox",
+                "permissionType": ["Edit"]
               },
               {
-                "fieldId": 3,
-                "fieldName": "Date of Birth",
-                "fieldElement": "calendar",
-                "permissionType": ["Readonly"]
+                "fieldId": 2,
+                "fieldName": "Role Description",
+                "fieldElement": "textbox",
+                "permissionType": ["Edit"]
               }
             ]
           },
           {
             "sectionId": 2,
-            "sectionName": "Advanced Info",
-            "sectionDescription": "Enter further advanced details in this section",
+            "sectionName": "Permissions",
+            "sectionDescription": "Enter only permissions of role in this section",
+            "fields": []
+          },
+          {
+            "sectionId": 2,
+            "sectionName": "Grant This Role To",
+            "sectionDescription": "select audiance of role in this section",
+            "fields": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "pageId": "4",
+    "pageName": "RFI Creation Form",
+    "pageDescription": "On this page we create new RFI",
+    "tabs": [
+      {
+        "tabId": 1,
+        "tabName": "RFI Details",
+        "tabDescription": "We enter the RFI information in it",
+        "sections": [
+          {
+            "sectionId": 1,
+            "sectionName": "RFI Info",
+            "sectionDescription": "Enter only basic information of permission in this section",
             "fields": [
               {
                 "fieldId": 1,
-                "fieldName": "Address",
+                "fieldName": "Description",
                 "fieldElement": "textbox",
                 "permissionType": ["Edit"]
               },
               {
                 "fieldId": 2,
-                "fieldName": "Gender",
-                "fieldElement": "radio",
-                "permissionType": ["Readonly"]
+                "fieldName": "Priority",
+                "fieldElement": "textbox",
+                "permissionType": ["Edit"]
               },
               {
                 "fieldId": 3,
-                "fieldName": "File",
-                "fieldElement": "browse",
-                "permissionType": ["Readonly"]
+                "fieldName": "Room",
+                "fieldElement": "textbox",
+                "permissionType": ["Edit"]
+              },
+              {
+                "fieldId": 4,
+                "fieldName": "Status",
+                "fieldElement": "textbox",
+                "permissionType": ["Edit"]
+              },
+              {
+                "fieldId": 5,
+                "fieldName": "Floor",
+                "fieldElement": "textbox",
+                "permissionType": ["Edit"]
+              },
+              {
+                "fieldId": 6,
+                "fieldName": "Tags",
+                "fieldElement": "textbox",
+                "permissionType": ["Edit"]
+              },
+              {
+                "fieldId": 7,
+                "fieldName": "Due Date",
+                "fieldElement": "textbox",
+                "permissionType": ["Edit"]
+              },
+              {
+                "fieldId": 8,
+                "fieldName": "Attachements",
+                "fieldElement": "file",
+                "permissionType": ["Edit"]
+              },
+              {
+                "fieldId": 9,
+                "fieldName": "Site Inspection Photos",
+                "fieldElement": "file",
+                "permissionType": ["Edit"]
+              },
+              {
+                "fieldId": 10,
+                "fieldName": "Floor Plans",
+                "fieldElement": "file",
+                "permissionType": ["Edit"]
               }
             ]
           }

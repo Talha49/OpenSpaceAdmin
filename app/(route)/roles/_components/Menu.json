@@ -2,40 +2,46 @@
   {
     "menuId": "1",
     "name": "Home",
-    "path": "/page1"
+    "path": "/"
   },
   {
     "menuId": "2",
-    "name": "Users",
-    "submenus": [
-      {
-        "id": "2.1",
-        "name": "Active Users",
-        "path": "/page1",
-        "submenus": []
-      },
-      {
-        "id": "2.2",
-        "name": "Deleted Users",
-        "path": "/page2"
-      }
-    ]
+    "name": "Dashboard",
+    "path": "/Dashboard"
   },
   {
     "menuId": "3",
-    "name": "Groups",
-    "submenus": [
-      {
-        "id": "3.1",
-        "name": "Active Groups",
-        "path": "/page3"
-      },
-      {
-        "id": "3.2",
-        "name": "Deleted Groups",
-        "path": "/page4",
-        "submenus": []
-      }
-    ]
+    "name": "Projects",
+    "path": "/Projects"
+  },
+  {
+    "menuId": "4",
+    "name": "Admin",
+    "path": "http://localhost:3001"
+  },
+  {
+    "menuId": "5",
+    "name": "Workflow",
+    "path": "http://localhost:3001"
+  },
+  {
+    "menuId": "6",
+    "name": "Active",
+    "path": "/Active"
+  },
+  {
+    "menuId": "7",
+    "name": "Captures",
+    "path": null
+  },
+  {
+    "menuId": "8",
+    "name": "FieldNotes",
+    "path": null
+  },
+  {
+    "menuId": "9",
+    "name": "VirtualTour",
+    "path": "/VirtualTour"
   }
 ]
