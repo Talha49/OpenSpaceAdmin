@@ -279,5 +279,104 @@
         ]
       }
     ]
+  },
+  {
+    "pageId": "5",
+    "pageName": "Profile Management Form",
+    "pageDescription": "On this page we manage our",
+    "tabs": [
+      {
+        "tabId": 1,
+        "tabName": "Profile Information",
+        "tabDescription": "We enter the Profile information in it",
+        "sections": [
+          {
+            "sectionId": 1,
+            "sectionName": "Profile Information",
+            "sectionDescription": "Enter only basic information of profile in this section",
+            "fields": [
+              {
+                "fieldId": 1,
+                "fieldName": "Full Name",
+                "fieldElement": "textbox",
+                "permissionType": ["Edit"]
+              },
+              {
+                "fieldId": 2,
+                "fieldName": "Address",
+                "fieldElement": "textbox",
+                "permissionType": ["Edit"]
+              },
+              {
+                "fieldId": 3,
+                "fieldName": "City",
+                "fieldElement": "textbox",
+                "permissionType": ["Edit"]
+              },
+              {
+                "fieldId": 4,
+                "fieldName": "Contact",
+                "fieldElement": "textbox",
+                "permissionType": ["Edit"]
+              },
+              {
+                "fieldId": 5,
+                "fieldName": "News Updates",
+                "fieldElement": "switch",
+                "permissionType": ["Edit"]
+              },
+              {
+                "fieldId": 6,
+                "fieldName": "Capture Uploaded",
+                "fieldElement": "switch",
+                "permissionType": ["Edit"]
+              },
+              {
+                "fieldId": 7,
+                "fieldName": "Capture Preview",
+                "fieldElement": "switch",
+                "permissionType": ["Edit"]
+              },
+              {
+                "fieldId": 8,
+                "fieldName": "Capture Published",
+                "fieldElement": "switch",
+                "permissionType": ["Edit"]
+              },
+              {
+                "fieldId": 9,
+                "fieldName": "Capture Reminder",
+                "fieldElement": "switch",
+                "permissionType": ["Edit"]
+              },
+              {
+                "fieldId": 10,
+                "fieldName": "3D Capture Uploaded",
+                "fieldElement": "switch",
+                "permissionType": ["Edit"]
+              },
+              {
+                "fieldId": 11,
+                "fieldName": "BIM Model Ready",
+                "fieldElement": "switch",
+                "permissionType": ["Edit"]
+              },
+              {
+                "fieldId": 12,
+                "fieldName": "Fieldnote Uploaded",
+                "fieldElement": "switch",
+                "permissionType": ["Edit"]
+              },
+              {
+                "fieldId": 12,
+                "fieldName": "Fieldnote Updated",
+                "fieldElement": "switch",
+                "permissionType": ["Edit"]
+              }
+            ]
+          }
+        ]
+      }
+    ]
   }
 ]

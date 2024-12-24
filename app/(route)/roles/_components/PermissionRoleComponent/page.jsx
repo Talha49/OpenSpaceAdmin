@@ -187,6 +187,7 @@ const PermissionRolesComponent = () => {
                   className="flex items-center gap-1 hover:bg-blue-200 dark:hover:bg-neutral-800 p-1 rounded cursor-pointer text-sm transition-all"
                   onClick={() => {
                     setIsOpen(true);
+                    localStorage.removeItem("permissions");
                   }}
                 >
                   <IoIosAddCircleOutline className="text-xl text-blue-600" />

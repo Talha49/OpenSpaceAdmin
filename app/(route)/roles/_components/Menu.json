@@ -43,5 +43,15 @@
     "menuId": "9",
     "name": "VirtualTour",
     "path": "/VirtualTour"
+  },
+  {
+    "menuId": "10",
+    "name": "Profile",
+    "path": "/Profile"
+  },
+  {
+    "menuId": "11",
+    "name": "Upload Fieldnote",
+    "path": "/Upload"
   }
 ]
