@@ -7,7 +7,7 @@ import { NextResponse } from "next/server";
 export async function PUT(req, { params }) {
   try {
     await dbConnect();
-    const { id } = params;
+    const { id } = params; // Role ID
     const { name, description, permissions, allotedUsers, allotedGroups } =
       await req.json();
 
@@ -16,11 +16,25 @@ export async function PUT(req, { params }) {
       return NextResponse.json({ message: "Role not found" }, { status: 404 });
     }
 
+    // Update role details
     existingRole.name = name || existingRole.name;
     existingRole.description = description || existingRole.description;
     existingRole.permissions = permissions || existingRole.permissions;
-
     await existingRole.save();
+
+    // Find all users with the given role ID
+    const usersWithRole = await User.find({ role: id });
+
+    // Identify users who need their role set to null (not in allotedUsers)
+    const usersToUnsetRole = usersWithRole.filter(
+      (user) => !allotedUsers.includes(user._id.toString())
+    );
+
+    // Update users to remove the role
+    await User.updateMany(
+      { _id: { $in: usersToUnsetRole.map((user) => user._id) } },
+      { $set: { role: null } }
+    );
 
     // Update all the users in `allotedUsers` to reference the new role
     const updatedUsers = await User.updateMany(
@@ -36,12 +50,9 @@ export async function PUT(req, { params }) {
 
     // Now, update the users in each group in `allotedGroups` (group members)
     for (const groupId of allotedGroups) {
-      // Fetch the group by its ID
       const group = await Group.findById(groupId);
       if (group) {
-        // Combine groupOwnerID and groupTargetID arrays
         const groupMembers = [...group.groupTargetID];
-        // Update the users in this group with the new role
         await User.updateMany(
           { _id: { $in: groupMembers } },
           { $set: { role: existingRole._id } }
@@ -49,10 +60,14 @@ export async function PUT(req, { params }) {
       }
     }
 
-    return NextResponse.json(
-      { message: "Role updated successfully", role: existingRole },
-      { status: 200 }
-    );
+    const users = await User.find({ role: existingRole._id }); // Match users with the role ID
+    const groups = await Group.find({ role: existingRole._id }); // Match groups with the role ID
+
+    return NextResponse.json({
+      ...existingRole.toObject(),
+      allotedUsers: users,
+      allotedGroups: groups,
+    });
   } catch (error) {
     console.log("Error updating role =>", error);
     return NextResponse.json(

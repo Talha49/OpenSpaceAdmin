@@ -19,6 +19,8 @@ const GrantRoleDialog = ({ onClose }) => {
   );
   const dispatch = useDispatch();
 
+  console.log("selectedUsersForRole", selectedUsersForRole);
+
   const [isOpenUserDropdown, setIsOpenUserDropdown] = useState(false);
   const [isOpenGroupDropdown, setIsOpenGroupDropdown] = useState(false);
   const [userSearch, setUserSearch] = useState(""); // State for user search query
@@ -56,6 +58,8 @@ const GrantRoleDialog = ({ onClose }) => {
   const filteredUsers = users.filter((user) =>
     user.fullName.toLowerCase().includes(userSearch.toLowerCase())
   );
+
+  console.log("filteredUsers", filteredUsers);	
 
   // Filter groups based on search query
   const filteredGroups = groups.filter((group) =>

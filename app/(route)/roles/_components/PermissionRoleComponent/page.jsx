@@ -66,6 +66,8 @@ const PermissionRolesComponent = () => {
     useState(false);
   const [selectedRoleForDelete, setSelectedRoleForDelete] = useState(null);
 
+  console.log("Roles =>", roles);
+
   useEffect(() => {
     dispatch(fetchAllRoles());
   }, [dispatch]);
@@ -248,12 +250,12 @@ const PermissionRolesComponent = () => {
                       dispatch(setStatePermissions(role?.permissions));
                       dispatch(
                         setSelectedUsersForRole(
-                          role?.allotedUsers?.map((user) => user._id)
+                          role?.allotedUsers?.map((user) => user._id) || []
                         )
                       );
                       dispatch(
                         setSelectedGroupsForRole(
-                          role?.allotedGroups?.map((group) => group._id)
+                          role?.allotedGroups?.map((group) => group._id) || []
                         )
                       );
                       localStorage.setItem(
