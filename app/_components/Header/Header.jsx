@@ -1,13 +1,26 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { GiSpaceShuttle } from "react-icons/gi";
 import { FaQuestion } from "react-icons/fa";
 import Image from "next/image";
 import Link from "next/link";
 import ModeToggler from "../ModeToggler/page";
+import { getSession } from "@/lib/getSession";
+import { usePathname } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 const Header = () => {
   const [showDialog, setShowDialog] = useState(false);
+  const [authenticatedUser, setAuthenticatedUser] = useState(null);
+  const pathname = usePathname();
+  const { data: session, status } = useSession();
+
+  useEffect(() => {
+    console.log("Session From Header => ", session);
+    setAuthenticatedUser(session?.user?.userData);
+  }, [session, status, pathname]);
+
+  const profileImage = authenticatedUser?.image || "/avatar.png";
 
   const handleDialog = () => {
     setShowDialog(!showDialog);
@@ -18,26 +31,22 @@ const Header = () => {
       <div className="flex gap-2 items-center">
         <div>
           {/* <GiSpaceShuttle className="md:text-[35px] sm:text-sm text-blue-400" /> */}
-          <Image
-            src="/images/logo.png"
-            width={35}
-            height={35}
-            alt="Profile"
-          />
+          <Image src="/images/logo.png" width={50} height={50} alt="Profile" />
         </div>
         <div className="md:text-[16px] sm:text-[12px]">SIJM - Admin</div>
       </div>
       <div className="flex items-center gap-2 relative">
-        {/* <ModeToggler /> */}
-        <p>
-          <FaQuestion />
-        </p>
-        <div className="bg-slate-400 rounded-full p-1" onClick={handleDialog}>
+        <span className="text-blue-500  text-base">
+          {authenticatedUser?.fullName || "Guest"}
+        </span>
+        {/* <FaQuestion className="text-lg text-blue-500" /> */}
+        <div className="bg-blue-500 rounded-full shadow-md overflow-hidden w-[40px] h-[40px]">
           <Image
-            src="/images/avatar.png"
-            width={35}
-            height={35}
+            src={profileImage}
+            width={40}
+            height={40}
             alt="Profile"
+            className="rounded-full object-cover"
           />
         </div>
 
