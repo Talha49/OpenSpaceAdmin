@@ -408,7 +408,9 @@ const PermissionSettingsDialog = ({ onClose }) => {
                                     }
                                     checked={permissions.menuPermissions.basicMenu[
                                       index
-                                    ]?.permission.includes(permission)}
+                                    ]?.permission.includes(permission) && permissions.menuPermissions.basicMenu[
+                                      index
+                                    ]?.included}
                                     onChange={() => {
                                       const updatedPermissions =
                                         permissions.menuPermissions.basicMenu.map(
