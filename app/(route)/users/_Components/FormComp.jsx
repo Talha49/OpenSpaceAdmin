@@ -1,19 +1,23 @@
-import { useSelector, useDispatch } from 'react-redux';
-import { useRouter } from 'next/navigation';
-import { addUser, clearSelectedUser, updateUser } from '@/lib/Feature/UserSlice';
-import { useEffect, useState } from 'react';
-import { fetchUsers } from '@/lib/Feature/UserSlice';
+import { useSelector, useDispatch } from "react-redux";
+import { useRouter } from "next/navigation";
+import {
+  addUser,
+  clearSelectedUser,
+  updateUser,
+} from "@/lib/Feature/UserSlice";
+import { useEffect, useState } from "react";
+import { fetchUsers } from "@/lib/Feature/UserSlice";
 const FormComp = () => {
   const router = useRouter();
   const dispatch = useDispatch();
-  const selectedUser = useSelector(state => state.user.selectedUser);
+  const selectedUser = useSelector((state) => state.user.selectedUser);
 
   const [formData, setFormData] = useState({
-    fullName: selectedUser ? selectedUser.fullName : '',
-    email: selectedUser ? selectedUser.email : '',
-    address: selectedUser ? selectedUser.address : '',
-    city: selectedUser ? selectedUser.city : '',
-    contact: selectedUser ? selectedUser.contact : '',
+    fullName: selectedUser ? selectedUser.fullName : "",
+    email: selectedUser ? selectedUser.email : "",
+    address: selectedUser ? selectedUser.address : "",
+    city: selectedUser ? selectedUser.city : "",
+    contact: selectedUser ? selectedUser.contact : "",
   });
 
   const [errors, setErrors] = useState({});
@@ -37,29 +41,29 @@ const FormComp = () => {
 
   const validateForm = () => {
     const newErrors = {};
-    
+
     if (!formData.fullName) {
-      newErrors.fullName = 'Full Name is required';
+      newErrors.fullName = "Full Name is required";
     }
 
     if (!formData.email) {
-      newErrors.email = 'Email Address is required';
+      newErrors.email = "Email Address is required";
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Email Address is invalid';
+      newErrors.email = "Email Address is invalid";
     }
 
     if (!formData.address) {
-      newErrors.address = 'Address is required';
+      newErrors.address = "Address is required";
     }
 
     if (!formData.city) {
-      newErrors.city = 'City is required';
+      newErrors.city = "City is required";
     }
 
     if (!formData.contact) {
-      newErrors.contact = 'Contact number is required';
+      newErrors.contact = "Contact number is required";
     } else if (!/^\d{11}$/.test(formData.contact)) {
-      newErrors.contact = 'Contact number is invalid';
+      newErrors.contact = "Contact number is invalid";
     }
 
     setErrors(newErrors);
@@ -68,99 +72,111 @@ const FormComp = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     if (!validateForm()) {
       return;
     }
-  
+
     const userData = {
       ...formData,
       createdByAdmin: !selectedUser, // If there's no selected user, it's a new user created by admin
     };
-  
+
     if (selectedUser) {
       // Update user
       dispatch(updateUser({ ...userData, id: selectedUser.id }));
       try {
-        const response = await fetch('/api/Users/updateUser', {
-          method: 'PUT',
+        const response = await fetch("/api/Users/updateUser", {
+          method: "PUT",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({ ...userData, id: selectedUser.id }),
         });
-  
+
         if (response.ok) {
-          alert('User updated successfully!');
+          alert("User updated successfully!");
         } else {
           const errorData = await response.json();
           alert(`Failed to update user: ${errorData.error}`);
         }
       } catch (error) {
-        alert('An error occurred while updating the user');
+        alert("An error occurred while updating the user");
       }
     } else {
       // Add new user
       dispatch(addUser(userData));
       try {
-        const response = await fetch('/api/Users/saveUser', {
-          method: 'POST',
+        const response = await fetch("/api/Users/saveUser", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify(userData),
         });
-  
+
         if (response.ok) {
-          alert('User saved successfully!');
-          
+          alert("User saved successfully!");
         } else {
           const errorData = await response.json();
           alert(`Failed to save user: ${errorData.error}`);
+          console.log("Error =>", errorData);
         }
       } catch (error) {
-        alert('An error occurred while saving the user');
+        alert("An error occurred while saving the user");
       }
     }
-  
+
     setFormData({
-      fullName: '',
-      email: '',
-      address: '',
-      city: '',
-      contact: '',
+      fullName: "",
+      email: "",
+      address: "",
+      city: "",
+      contact: "",
     });
-  
+
     dispatch(clearSelectedUser()); // Clear selected user after submitting
-    router.push('/users/active');
+    router.push("/users/active");
   };
-  
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: value
+      [name]: value,
     });
-  }
+  };
 
-const handleCancel =() => {
-  router.push('/users/active');
-}
+  const handleCancel = () => {
+    router.push("/users/active");
+  };
 
   return (
     <div className="w-full max-w-7xl mx-auto p-6 dark:bg-neutral-950">
-      <h2 className="text-xl font-semibold text-neutral-800 dark:text-neutral-400 mb-1">User Form</h2>
-      <p className="text-sm text-neutral-500 dark:text-neutral-600 mb-6">Fill date for the user. Give it a try.</p>
+      <h2 className="text-xl font-semibold text-neutral-800 dark:text-neutral-400 mb-1">
+        User Form
+      </h2>
+      <p className="text-sm text-neutral-500 dark:text-neutral-600 mb-6">
+        Fill date for the user. Give it a try.
+      </p>
 
       <div className="bg-white dark:bg-neutral-900 rounded-lg shadow-md p-8">
         <div className="flex flex-col md:flex-row justify-around">
           {/* Left Section */}
           <div className="mb-6 md:mb-0">
-            <h3 className="text-lg font-semibold text-neutral-800 dark:text-neutral-400 mb-1">Personal Details</h3>
-            <p className="text-sm text-neutral-500 dark:text-neutral-500 mb-4">Please fill out all the fields.</p>
+            <h3 className="text-lg font-semibold text-neutral-800 dark:text-neutral-400 mb-1">
+              Personal Details
+            </h3>
+            <p className="text-sm text-neutral-500 dark:text-neutral-500 mb-4">
+              Please fill out all the fields.
+            </p>
             <div className="space-y-2">
-              <button className="w-full py-2 px-4  text-gray-700 rounded-md blue-button focus:outline-none focus:ring-2 focus:ring-gray-400">Delete</button>
-              <button className="w-full py-2 px-4  text-gray-700 rounded-md blue-button focus:outline-none focus:ring-2 focus:ring-gray-400">Edit</button>
+              <button className="w-full py-2 px-4  text-gray-700 rounded-md blue-button focus:outline-none focus:ring-2 focus:ring-gray-400">
+                Delete
+              </button>
+              <button className="w-full py-2 px-4  text-gray-700 rounded-md blue-button focus:outline-none focus:ring-2 focus:ring-gray-400">
+                Edit
+              </button>
             </div>
           </div>
 
@@ -168,20 +184,34 @@ const handleCancel =() => {
           <div>
             <form className="space-y-4" onSubmit={handleSubmit}>
               <div>
-                <label htmlFor="fullName" className="block text-sm font-medium text-neutral-800 dark:text-neutral-500 mb-1">Full Name</label>
+                <label
+                  htmlFor="fullName"
+                  className="block text-sm font-medium text-neutral-800 dark:text-neutral-500 mb-1"
+                >
+                  Full Name
+                </label>
                 <input
                   type="text"
                   id="fullName"
                   name="fullName"
                   value={formData.fullName}
                   onChange={handleChange}
-                  className={`w-full px-3 py-2 border ${errors.fullName ? 'border-red-500' : 'border-neutral-500'} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                  className={`w-full px-3 py-2 border ${
+                    errors.fullName ? "border-red-500" : "border-neutral-500"
+                  } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
                 />
-                {errors.fullName && <p className="text-red-500 text-sm mt-1">{errors.fullName}</p>}
+                {errors.fullName && (
+                  <p className="text-red-500 text-sm mt-1">{errors.fullName}</p>
+                )}
               </div>
 
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-neutral-800 dark:text-neutral-500 mb-1">Email Address</label>
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-neutral-800 dark:text-neutral-500 mb-1"
+                >
+                  Email Address
+                </label>
                 <input
                   type="email"
                   id="email"
@@ -189,61 +219,97 @@ const handleCancel =() => {
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="email@domain.com"
-                  className={`w-full px-3 py-2 border ${errors.email ? 'border-red-500' : 'border-neutral-500'} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                  className={`w-full px-3 py-2 border ${
+                    errors.email ? "border-red-500" : "border-neutral-500"
+                  } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
                 />
-                {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+                {errors.email && (
+                  <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+                )}
               </div>
 
               <div className="flex flex-col md:flex-row md:space-x-4">
                 <div className="md:w-1/2 mb-4 md:mb-0">
-                  <label htmlFor="address" className="block text-sm font-medium text-neutral-800 dark:text-neutral-500 mb-1">Address / Street</label>
+                  <label
+                    htmlFor="address"
+                    className="block text-sm font-medium text-neutral-800 dark:text-neutral-500 mb-1"
+                  >
+                    Address / Street
+                  </label>
                   <input
                     type="text"
                     id="address"
                     name="address"
                     value={formData.address}
                     onChange={handleChange}
-                    className={`w-full px-3 py-2 border ${errors.address ? 'border-red-500' : 'border-neutral-500'} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                    className={`w-full px-3 py-2 border ${
+                      errors.address ? "border-red-500" : "border-neutral-500"
+                    } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
                   />
-                  {errors.address && <p className="text-red-500 text-sm mt-1">{errors.address}</p>}
+                  {errors.address && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.address}
+                    </p>
+                  )}
                 </div>
 
                 <div className="md:w-1/2">
-                  <label htmlFor="city" className="block text-sm font-medium text-neutral-800 dark:text-neutral-500 mb-1">City</label>
+                  <label
+                    htmlFor="city"
+                    className="block text-sm font-medium text-neutral-800 dark:text-neutral-500 mb-1"
+                  >
+                    City
+                  </label>
                   <input
                     type="text"
                     id="city"
                     name="city"
                     value={formData.city}
                     onChange={handleChange}
-                    className={`w-full px-3 py-2 border ${errors.city ? 'border-red-500' : 'border-neutral-500'} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                    className={`w-full px-3 py-2 border ${
+                      errors.city ? "border-red-500" : "border-neutral-500"
+                    } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
                   />
-                  {errors.city && <p className="text-red-500 text-sm mt-1">{errors.city}</p>}
+                  {errors.city && (
+                    <p className="text-red-500 text-sm mt-1">{errors.city}</p>
+                  )}
                 </div>
               </div>
 
               <div>
-                <label htmlFor="contact" className="block text-sm font-medium text-neutral-800 dark:text-neutral-500 mb-1">Contact</label>
+                <label
+                  htmlFor="contact"
+                  className="block text-sm font-medium text-neutral-800 dark:text-neutral-500 mb-1"
+                >
+                  Contact
+                </label>
                 <input
                   type="tel"
                   id="contact"
                   name="contact"
                   value={formData.contact}
                   onChange={handleChange}
-                  className={`w-full px-3 py-2 border ${errors.contact ? 'border-red-500' : 'border-neutral-500'} rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                  className={`w-full px-3 py-2 border ${
+                    errors.contact ? "border-red-500" : "border-neutral-500"
+                  } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
                 />
-                {errors.contact && <p className="text-red-500 text-sm mt-1">{errors.contact}</p>}
+                {errors.contact && (
+                  <p className="text-red-500 text-sm mt-1">{errors.contact}</p>
+                )}
               </div>
 
               <div className="mt-6">
-                <button type="submit" className="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                  {selectedUser ? 'Update' : 'Create'}
-                </button>
-                <button type="button" // Prevent the form from submitting
-              className="px-6 ml-3 py-2 bg-gray-400 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              onClick={handleCancel} // Use onClick instead of onSubmit
+                <button
+                  type="submit"
+                  className="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                 >
-                  
+                  {selectedUser ? "Update" : "Create"}
+                </button>
+                <button
+                  type="button" // Prevent the form from submitting
+                  className="px-6 ml-3 py-2 bg-gray-400 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  onClick={handleCancel} // Use onClick instead of onSubmit
+                >
                   Cancel
                 </button>
               </div>
@@ -253,6 +319,6 @@ const handleCancel =() => {
       </div>
     </div>
   );
-}
+};
 
 export default FormComp;

@@ -1,14 +1,15 @@
-import dbConnect from '@/lib/connectdb/connection';
-import User from '@/lib/models/User';
-import bcrypt from 'bcrypt';
-import nodemailer from 'nodemailer';
-import { v4 as uuidv4 } from 'uuid';
-import { NextResponse } from 'next/server';
+import dbConnect from "@/lib/connectdb/connection";
+import User from "@/lib/models/User";
+import bcrypt from "bcrypt";
+import nodemailer from "nodemailer";
+import { v4 as uuidv4 } from "uuid";
+import { NextResponse } from "next/server";
 
 // Generate random password
 const generateRandomPassword = (length = 8) => {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+';
-  let password = '';
+  const chars =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+";
+  let password = "";
   for (let i = 0; i < length; i++) {
     password += chars.charAt(Math.floor(Math.random() * chars.length));
   }
@@ -20,7 +21,7 @@ const sendEmail = async (email, password, fullName) => {
   const mailOptions = {
     from: process.env.EMAIL_USER,
     to: email,
-    subject: 'Your New Account Login Details',
+    subject: "Your New Account Login Details",
     html: `
       <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: auto; border: 1px solid #ddd; border-radius: 8px; overflow: hidden;">
         <!-- Header Section -->
@@ -63,7 +64,7 @@ const sendEmail = async (email, password, fullName) => {
   };
 
   const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    service: "gmail",
     auth: {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS,
@@ -72,9 +73,9 @@ const sendEmail = async (email, password, fullName) => {
 
   try {
     const info = await transporter.sendMail(mailOptions);
-    console.log('✅ Email sent:', info.response);
+    console.log("✅ Email sent:", info.response);
   } catch (error) {
-    console.error('❌ Error sending email:', error);
+    console.error("❌ Error sending email:", error);
     throw error;
   }
 };
@@ -82,37 +83,65 @@ const sendEmail = async (email, password, fullName) => {
 // Main API handler
 export async function POST(request) {
   try {
+    // Connect to the database
     await dbConnect();
 
+    // Parse the request data
     const data = await request.json();
-    console.log('📦 Received data:', data);
+    // console.log("📦 Received data:", data);
 
+    // Generate a random password and hash it
     const randomPassword = generateRandomPassword();
     const hashedPassword = await bcrypt.hash(randomPassword, 10);
 
-    const fullName = data.fullName || 'User'; // Default to "User" if fullName is missing
+    // Default fullName to "User" if it's not provided
+    const fullName = data.fullName || "User";
 
+    // Check if the user already exists with the provided email
+    const existing = await User.find({ email: data.email });
+    // console.log("Existing user: ", existing);
+
+    // If the user already exists, return an error
+    if (existing.length > 0) {
+      return NextResponse.json(
+        { error: "User already exists with this email" },
+        { status: 400 }
+      );
+    }
+
+    // Create a new user object
     const newUser = new User({
-      id: uuidv4(),
+      id: uuidv4(), // Ensure uuidv4 is correctly imported
       fullName,
       email: data.email,
       address: data.address,
       city: data.city,
       contact: data.contact,
-      status: data.createdByAdmin ? 'active' : 'pending',
+      status: data.createdByAdmin ? "active" : "pending",
       createdByAdmin: data.createdByAdmin || false,
       password: hashedPassword,
     });
 
+    // Save the new user to the database
     await newUser.save();
-    console.log('✅ User saved to database:', newUser);
+    // console.log("✅ User saved to database:", newUser);
 
+    // Send the email to the user with their generated password
     await sendEmail(data.email, randomPassword, fullName);
-    console.log(`📧 Email sent to ${data.email}`);
+    // console.log(`📧 Email sent to ${data.email}`);
 
-    return NextResponse.json({ message: 'User saved successfully', user: newUser });
+    // Return success response
+    return NextResponse.json({
+      message: "User saved successfully",
+      user: newUser,
+    });
   } catch (error) {
-    console.error('❌ Error handling request:', error);
-    return NextResponse.json({ error: 'Error handling request' }, { status: 500 });
+    // console.error("❌ Error handling request:", error);
+
+    // Return error response in case of failure
+    return NextResponse.json(
+      { error: "Error handling request" },
+      { status: 500 }
+    );
   }
 }
