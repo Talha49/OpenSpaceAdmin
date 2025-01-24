@@ -22,7 +22,7 @@
   {
     "menuId": "5",
     "name": "Workflow",
-    "path": "http://localhost:3001"
+    "path": "http://localhost:3002"
   },
   {
     "menuId": "6",
