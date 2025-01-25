@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { IoIosAddCircleOutline } from "react-icons/io";
@@ -7,20 +9,27 @@ import { LuChevronFirst, LuChevronLast } from "react-icons/lu";
 const NewTableComponent = ({
   children,
   tableColumns,
-  rowsPerPage,
-  totalRows,
-  currentPage,
+  rowsPerPage = 10,
+  totalRows = 0,
+  currentPage = 1,
   onPageChange,
   handleRowsPerPageChange,
   setIsOpen,
   buttons,
 }) => {
-  const totalPages = Math.ceil(totalRows / rowsPerPage);
+  const totalPages = Math.max(1, Math.ceil(totalRows / rowsPerPage));
 
   // Filter out null or undefined elements in tableColumns
   const filteredColumns = tableColumns?.filter(
     (column) => column !== null && column !== undefined
   );
+
+  // Clamp onPageChange to prevent invalid transitions
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      onPageChange(newPage);
+    }
+  };
 
   return (
     <div className="bg-blue-100 dark:bg-neutral-700 mt-4 rounded p-2 my-2">
@@ -43,24 +52,36 @@ const NewTableComponent = ({
           </div>
           <div className="flex items-center gap-1">
             <LuChevronFirst
-              onClick={() => onPageChange(1)}
-              className="cursor-pointer"
+              onClick={() => handlePageChange(1)}
+              className={`cursor-pointer ${
+                currentPage === 1 ? "opacity-50 pointer-events-none" : ""
+              }`}
             />
             <MdNavigateBefore
-              onClick={() => onPageChange(currentPage - 1)}
-              className="cursor-pointer text-lg"
+              onClick={() => handlePageChange(currentPage - 1)}
+              className={`cursor-pointer text-lg ${
+                currentPage === 1 ? "opacity-50 pointer-events-none" : ""
+              }`}
             />
             <p className="text-sm">
               Page <span className="p-1">{currentPage}</span> of{" "}
               <span className="p-1">{totalPages}</span>
             </p>
             <MdNavigateNext
-              onClick={() => onPageChange(currentPage + 1)}
-              className="cursor-pointer text-lg"
+              onClick={() => handlePageChange(currentPage + 1)}
+              className={`cursor-pointer text-lg ${
+                currentPage === totalPages || totalPages === 0
+                  ? "opacity-50 pointer-events-none"
+                  : ""
+              }`}
             />
             <LuChevronLast
-              onClick={() => onPageChange(totalPages)}
-              className="cursor-pointer"
+              onClick={() => handlePageChange(totalPages)}
+              className={`cursor-pointer ${
+                currentPage === totalPages || totalPages === 0
+                  ? "opacity-50 pointer-events-none"
+                  : ""
+              }`}
             />
           </div>
         </div>
@@ -69,7 +90,7 @@ const NewTableComponent = ({
       {/* Table Wrapper for Horizontal Scrolling */}
       <div className="overflow-x-auto">
         <table className="table-auto min-w-full text-xs md:text-sm border-collapse border dark:border-neutral-800">
-          <thead className="sticky top-0 bg-neutral-200 dark:bg-neutral-800 z-0">
+          <thead className="sticky top-0 bg-neutral-200 dark:bg-neutral-800">
             <tr className="text-left">
               {filteredColumns?.map((column, index) => (
                 <th key={index} className="py-3 px-2">
@@ -87,7 +108,7 @@ const NewTableComponent = ({
       {/* Pagination Controls */}
       <div className="flex justify-end items-center px-4 pt-4 gap-4">
         <button
-          onClick={() => onPageChange(currentPage - 1)}
+          onClick={() => handlePageChange(currentPage - 1)}
           disabled={currentPage === 1}
           className="px-3 py-1 bg-blue-200 dark:bg-neutral-800 border dark:border-none border-blue-400 rounded disabled:opacity-50"
         >
@@ -97,8 +118,8 @@ const NewTableComponent = ({
           {currentPage} / {totalPages}
         </div>
         <button
-          onClick={() => onPageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages || totalPages === 0}
           className="px-3 py-1 bg-blue-200 dark:bg-neutral-800 border dark:border-none border-blue-400 rounded disabled:opacity-50"
         >
           <FaChevronRight />

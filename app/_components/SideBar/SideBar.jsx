@@ -9,6 +9,7 @@ import {
   MdSupport,
   MdPayment,
   MdInsertDriveFile,
+  MdOutlineSubdirectoryArrowRight,
 } from "react-icons/md";
 import { BsChevronDown } from "react-icons/bs";
 import { Tooltip } from "react-tooltip";
@@ -24,18 +25,19 @@ const Menus = [
   {
     title: "Users",
     icon: <MdPeople />,
-    link: "/users",
+    link: "/users/main",
     subMenus: [
+      { title: "Create / Manage", link: "/users" },
       { title: "Active users", link: "/users/active" },
-     // { title: "Guest users", link: "/users/guest" },//remove on sir send error ppt file 
       { title: "Deleted users", link: "/users/deleted" },
     ],
   },
   {
     title: "Groups",
     icon: <MdGroup />,
-    link: "/group",
+    link: "/group/main",
     subMenus: [
+      { title: "Create", link: "/group" },
       { title: "Active groups", link: "/group/ActiveGroups" },
       { title: "Deleted groups", link: "/group/DeleteGroups" },
     ],
@@ -120,7 +122,7 @@ const Sidebar = () => {
     >
       <div
         className={`${
-          open ? "w-56" : "w-16"
+          open ? "w-64" : "w-16"
         } bg-white dark:bg-neutral-950 h-full overflow-x-hidden overflow-y-auto relative duration-200 shadow-md border-r border-t dark:border-neutral-800 custom-scrollbar`}
       >
         <ul>
@@ -140,7 +142,7 @@ const Sidebar = () => {
                 }`}
                 data-tooltip-id={index}
               >
-                <Link href={Menu.link} passHref className="py-2 w-full">
+                <Link href={Menu?.link || ""} passHref className="py-2 w-full">
                   <div className="flex items-center gap-x-4">
                     <div className="flex-shrink-0 text-[20px] text-blue-500">
                       {Menu.icon}
@@ -172,8 +174,9 @@ const Sidebar = () => {
                     <Link href={subMenuItem.link} key={idx} passHref>
                       <li
                         key={idx}
-                        className="flex px-5 min-w-48 cursor-pointer text-center text-sm text-neutral-800 dark:text-neutral-400 hover:bg-blue-200 dark:hover:bg-neutral-700 py-1"
+                        className="flex gap-1 pl-14 min-w-48 cursor-pointer text-center text-sm text-neutral-800 dark:text-neutral-400 hover:bg-blue-200 dark:hover:bg-neutral-700 py-1"
                       >
+                        <MdOutlineSubdirectoryArrowRight className="text-lg text-blue-500" />
                         {subMenuItem.title}
                       </li>
                     </Link>

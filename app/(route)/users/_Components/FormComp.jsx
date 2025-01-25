@@ -170,14 +170,14 @@ const FormComp = () => {
             <p className="text-sm text-neutral-500 dark:text-neutral-500 mb-4">
               Please fill out all the fields.
             </p>
-            <div className="space-y-2">
+            {/* <div className="space-y-2">
               <button className="w-full py-2 px-4  text-gray-700 rounded-md blue-button focus:outline-none focus:ring-2 focus:ring-gray-400">
                 Delete
               </button>
               <button className="w-full py-2 px-4  text-gray-700 rounded-md blue-button focus:outline-none focus:ring-2 focus:ring-gray-400">
                 Edit
               </button>
-            </div>
+            </div> */}
           </div>
 
           {/* Right Section - Form */}
