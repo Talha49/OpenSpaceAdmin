@@ -315,10 +315,10 @@ const GroupFormComp = () => {
             </button>
 
             <div className="grid grid-cols-2 mt-7">
-              <div className="flex items-center gap-10">
+              {/* <div className="flex items-center gap-10">
                 <input type="radio" />
                 <p>Display Name</p>
-              </div>
+              </div> */}
             </div>
 
             <ul className="mt-4">
@@ -367,10 +367,10 @@ const GroupFormComp = () => {
             </button>
 
             <div className="grid grid-cols-2 mt-7">
-              <div className="flex items-center gap-10">
+              {/* <div className="flex items-center gap-10">
                 <input type="radio" />
                 <p>Display Name</p>
-              </div>
+              </div> */}
             </div>
 
             <div className="mt-4 p-2 overflow-auto h-40">
@@ -399,28 +399,71 @@ const GroupFormComp = () => {
             </div>
           </div>
         );
-      case 4:
-        return (
-          <div className="flex items-center justify-between">
-            <img
-              src="/images/Checklist.png"
-              width={"50%"}
-              height={400}
-              alt="Checklist"
-              className="mix-blend-multiply"
-            />
-            <div className="flex flex-col w-full items-center justify-center">
-              <h1 className="text-gray-600 text-xl font-bold mb-5">
-                All Steps Completed
-              </h1>
-              <button
-                className="blue-button px-3 py-2 rounded-lg h-fit"
-                onClick={handleCreateGroup}
-              >
-                Finish
-              </button>
+        case 4:
+          return (
+            <div className="flex flex-col items-center justify-center w-full p-10 bg-gray-50 dark:bg-neutral-800 rounded-lg shadow-lg">
+              <img
+                src="/images/Checklist.png"
+                width="40%"
+                height={300}
+                alt="Checklist"
+                className="mix-blend-multiply mb-8"
+              />
+              
+              <h1 className="text-2xl font-bold text-gray-800 dark:text-white mb-5">All Steps Completed</h1>
+        
+              <div className="w-full max-w-2xl bg-white dark:bg-neutral-900 p-6 rounded-lg shadow-md">
+                <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">Group Details</h2>
+        
+                <div className="space-y-3">
+                  <p className="text-gray-600 dark:text-gray-300"><strong>Group Type:</strong> {stepperFormData.groupType}</p>
+                  <p className="text-gray-600 dark:text-gray-300"><strong>Group Name:</strong> {stepperFormData.basics.name}</p>
+                  <p className="text-gray-600 dark:text-gray-300"><strong>Description:</strong> {stepperFormData.basics.description}</p>
+                  
+                  <div>
+                    <h3 className="font-semibold text-lg text-gray-800 dark:text-white mt-5">Owners:</h3>
+                    {stepperFormData.owners.length > 0 ? (
+                      <ul className="space-y-2">
+                        {stepperFormData.owners.map((owner, index) => (
+                          <li key={index} className="flex justify-between p-3 bg-gray-100 dark:bg-neutral-700 rounded-md">
+                            <span>{owner.fullName}</span>
+                            <span className="text-gray-500">{owner.email}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="text-gray-500 dark:text-gray-400">No owners selected</p>
+                    )}
+                  </div>
+        
+                  <div>
+                    <h3 className="font-semibold text-lg text-gray-800 dark:text-white mt-5">Members:</h3>
+                    {stepperFormData.members.length > 0 ? (
+                      <ul className="space-y-2">
+                        {stepperFormData.members.map((member, index) => (
+                          <li key={index} className="flex justify-between p-3 bg-gray-100 dark:bg-neutral-700 rounded-md">
+                            <span>{member.fullName}</span>
+                            <span className="text-gray-500">{member.email}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="text-gray-500 dark:text-gray-400">No members selected</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+        
+              <div className="flex justify-center gap-5 mt-8">
+                <button
+                  className="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition duration-300"
+                  onClick={handleCreateGroup}
+                >
+                  Finish
+                </button>
+              </div>
             </div>
-          </div>
+         
         );
       default:
         return <div>Unknown Step</div>;

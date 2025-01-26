@@ -136,9 +136,21 @@ const TableRoute = () => {
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [userDetails, setUserDetails] = useState(null);
 
+  const handleRowClick = (user) => {
+    setClickedUser(user);  // Set the clicked user for the modal
+    setIsUpdateModalOpen(true); // Open the modal
+  };
 
-
-
+  // Handle icon click to open/close the 3-dot menu
+  const handleIconClick = (rowIndex) => {
+    if (isModalOpen === rowIndex) {
+      // If the same row's menu is open, close it
+      setIsModalOpen(null);
+    } else {
+      // If the different row is clicked, open its menu
+      setIsModalOpen(rowIndex);
+    }
+  };
   const handlePasswordUpdateModalOpen = (user) => {
     setNewPassword(''); // Clear previous password when opening the modal
     setSelectedUser(user);
@@ -197,6 +209,9 @@ const TableRoute = () => {
       setIsUpdatingPassword(false); // Set loading state to false on error
       alert("Error updating password!");
     }
+    finally {
+      setIsUpdatingPassword(false); // End loading state
+    }
   };
 
 
@@ -225,9 +240,6 @@ const TableRoute = () => {
       });
   }, [dispatch]);
 
-  const handleIconClick = (rowIndex) => {
-    setIsModalOpen(isModalOpen === rowIndex ? null : rowIndex);
-  };
 
   const handleSort = (key) => {
     let direction = "ascending";
@@ -540,7 +552,7 @@ const TableRoute = () => {
                 setIsSelectable(false); // Exit selection mode
 
                 // After all deletions are done, refresh the users list
-                await dispatch(fetchUsers());
+                dispatch(fetchUsers());
 
                 // Navigate to the active users page
                 router.push("/users/active");
@@ -582,22 +594,18 @@ const TableRoute = () => {
       )}
 
       <div className="pl-4 pr-2 relative shadow-md rounded-lg ">
+
         <NewTableComponent
           tableColumns={[
             isSelectable || isGroupSelection ? (
-
               <th className="flex items-center justify-between w-[50px]">
                 <input
                   type="checkbox"
                   className="custom-circle-checkbox"
-                  checked={
-                    paginatedUsers.length > 0 &&
-                    selectedUsers.length === paginatedUsers.length
-                  }
+                  checked={paginatedUsers.length > 0 && selectedUsers.length === paginatedUsers.length}
                   onChange={handleSelectAll}
                 />
               </th>
-
             ) : null,
             ...tableColumns.map((col) => (
               <div
@@ -621,7 +629,6 @@ const TableRoute = () => {
               >
                 <IoMdPersonAdd className="text-blue-500" />
                 <span className="text-sm">Add User</span>
-                {/* Loader above the table */}
                 {isLoading && (
                   <div className="flex justify-center items-center ">
                     <FaSpinner className="animate-spin text-blue-500" size={20} />
@@ -635,7 +642,6 @@ const TableRoute = () => {
           currentPage={currentPage}
           onPageChange={(page) => setCurrentPage(page)}
           handleRowsPerPageChange={handleRowsPerPageChange}
-
         >
           {paginatedUsers.map((user, rowIndex) => (
             <tr
@@ -646,11 +652,8 @@ const TableRoute = () => {
                 <td>
                   <input
                     type="checkbox"
-
                     className="mx-2 custom-circle-checkbox"
-                    checked={selectedUsers.some(
-                      (selectedUser) => selectedUser._id === user._id
-                    )}
+                    checked={selectedUsers.some((selectedUser) => selectedUser._id === user._id)}
                     onChange={(e) => {
                       e.stopPropagation(); // Prevent triggering row click
                       handleCheckboxChange(user);
@@ -660,11 +663,19 @@ const TableRoute = () => {
               ) : null}
               <td className="p-3 text-gray-700 dark:text-neutral-400 w-[200px]">
                 <div className="flex items-center justify-between relative">
-                  <span className="hover:text-blue-600">{user.fullName}</span>
+                  <span
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevent triggering row click
+                      handleRowClick(user);  // Open the user details modal
+                    }}
+                    className="hover:text-blue-600 cursor-pointer"
+                  >
+                    {user.fullName}
+                  </span>
                   <span
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleIconClick(rowIndex, user);
+                      handleIconClick(rowIndex);  // Toggle 3-dot menu
                     }}
                     className="cursor-pointer relative"
                   >
@@ -673,16 +684,16 @@ const TableRoute = () => {
                       <div
                         ref={(ref) => (modalRef.current = ref)} // For detecting clicks outside
                         className="absolute top-full left-0 mt-2 w-64 bg-white dark:bg-neutral-950 border border-gray-300 dark:border-neutral-800 rounded-lg shadow-lg z-50"
-
                       >
                         <ul className="flex flex-col gap-2 p-2">
                           <li
                             onClick={(e) => {
                               e.stopPropagation();
+                              setShowInfoModal(false);  // Close the detail modal
                               handleOpenUpdateModal(user);
-                              setIsModalOpen(null); // Close the modal after selection
+                              setIsModalOpen(null); // Close the menu after selection
                             }}
-                            className="cursor-pointer flex items-center gap-2 text-gray-700  dark:text-neutral-300 hover:bg-gray-100 dark:hover:bg-neutral-700 p-2 rounded-md"
+                            className="cursor-pointer flex items-center gap-2 text-gray-700 dark:text-neutral-300 hover:bg-gray-100 dark:hover:bg-neutral-700 p-2 rounded-md"
                           >
                             <MdEventNote className="text-lg text-gray-500 dark:text-blue-500" />
                             <span>Manage username & password</span>
@@ -701,16 +712,16 @@ const TableRoute = () => {
                           <li
                             onClick={(e) => {
                               e.stopPropagation();
-                              setShowInfoModal(false);
+                              setIsUpdateModalOpen(false);
                               setTimeout(() => {
                                 setClickedUser(user);
-                                setShowInfoModal(true);
+                                setShowInfoModal(true); // Show the user details modal
                               }, 0);
-                              setIsModalOpen(null);
+                              setIsModalOpen(null); // Close the menu after clicking
                             }}
-                            className="cursor-pointer flex items-center gap-2 text-gray-700  dark:text-neutral-300 hover:bg-gray-100 dark:hover:bg-neutral-700 p-2 rounded-md"
+                            className="cursor-pointer flex items-center gap-2 text-gray-700 dark:text-neutral-300 hover:bg-gray-100 dark:hover:bg-neutral-700 p-2 rounded-md"
                           >
-                            <FaInfoCircle className="text-lg  dark:text-blue-500 text-gray-500" />
+                            <FaInfoCircle className="text-lg dark:text-blue-500 text-gray-500" />
                             <span>View Details</span>
                           </li>
                         </ul>
@@ -722,10 +733,7 @@ const TableRoute = () => {
               <td className="p-3 text-gray-700 dark:text-neutral-400 w-[250px]">
                 {user.email}
               </td>
-              <td
-                className="p-3 text-gray-700 dark:text-neutral-400 max-w-[300px] truncate"
-                title={user.address}
-              >
+              <td className="p-3 text-gray-700 dark:text-neutral-400 max-w-[300px] truncate" title={user.address}>
                 {user.address}
               </td>
               <td className="p-3 text-gray-700 dark:text-neutral-400 w-[200px]">
@@ -736,7 +744,6 @@ const TableRoute = () => {
               </td>
             </tr>
           ))}
-
           <MFAModal
             isOpen={isMFAModalOpen}
             onClose={() => setIsMFAModalOpen(false)}
@@ -857,6 +864,12 @@ const TableRoute = () => {
             />
           )}
         </NewTableComponent>
+
+        <UserDetailDialog
+          user={selectedUser}
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}  // Close the modal when clicked
+        />
         <Dialog
           isOpen={isDialogOpen}
           onClose={closeDialog}

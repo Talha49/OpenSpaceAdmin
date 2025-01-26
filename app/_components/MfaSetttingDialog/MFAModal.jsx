@@ -8,6 +8,8 @@ export function MFAModal({ isOpen, onClose }) {
   const [changedUsers, setChangedUsers] = useState(new Set());
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(false); // Loading state to track fetching process
+  const [saving, setSaving] = useState(false); // New state to track saving process
+  const [errorMessage, setErrorMessage] = useState(''); // State to store any error messages
 
   useEffect(() => {
     if (isOpen) {
@@ -60,6 +62,8 @@ export function MFAModal({ isOpen, onClose }) {
 
   // Handle saving changes to the database
   const handleSave = async () => {
+    setSaving(true); // Start saving process
+    setErrorMessage(''); // Reset error message before starting save
     try {
       // Loop over each user whose MFA status has changed
       for (const userId of changedUsers) {
@@ -77,23 +81,38 @@ export function MFAModal({ isOpen, onClose }) {
 
           if (!response.ok) {
             const errorData = await response.json();
-            console.error('Error updating MFA:', errorData.message);
+            throw new Error(errorData.message); // Throw error if response is not OK
           }
         }
       }
+      setSaving(false); // Stop saving process
       onClose(); // This will trigger the modal to close
       // Reset changedUsers set after successful save
       setChangedUsers(new Set());
     } catch (error) {
-      console.error('Error saving MFA updates:', error);
+      setSaving(false); // Stop saving process
+      setErrorMessage(error.message || 'Error saving MFA updates'); // Show error message
     }
   };
 
-  // Filter users based on search query
+  // Filter users based on search query (alphabet match)
   const filteredUsers = activeUsers.filter((user) =>
-    user.fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    user.email.toLowerCase().includes(searchQuery.toLowerCase())
+    user.fullName.toLowerCase().startsWith(searchQuery.toLowerCase()) ||
+    user.email.toLowerCase().startsWith(searchQuery.toLowerCase())
   );
+
+  // Function to highlight matching text in the name or email
+  const highlightText = (text, query) => {
+    if (!query) return text; // If no query, return text as is
+    const parts = text.split(new RegExp(`(${query})`, 'gi'));
+    return parts.map((part, index) =>
+      part.toLowerCase() === query.toLowerCase() ? (
+        <span key={index} className="bg-yellow-300">{part}</span>
+      ) : (
+        part
+      )
+    );
+  };
 
   if (!isOpen) return null;
 
@@ -105,11 +124,18 @@ export function MFAModal({ isOpen, onClose }) {
         {/* Search Bar */}
         <input
           type="text"
-          placeholder="Search by name or email..."
+          placeholder="Search by alphabet..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="w-full p-2 mb-4 border border-gray-300 dark:bg-gray-800 dark:text-white rounded-lg"
         />
+
+        {/* Error Message */}
+        {errorMessage && (
+          <div className="text-red-500 text-center mb-4">
+            {errorMessage}
+          </div>
+        )}
 
         {/* User List with Scroll */}
         <div className="mt-4 space-y-4 max-h-60 overflow-y-auto scrollbar-hidden">
@@ -117,12 +143,20 @@ export function MFAModal({ isOpen, onClose }) {
             <div className="flex justify-center items-center">
               <FaSpinner className="animate-spin text-blue-500 text-3xl" /> {/* Loading Spinner */}
             </div>
+          ) : filteredUsers.length === 0 ? (
+            <div className="text-center text-gray-500 dark:text-gray-300">
+              No users found.
+            </div>
           ) : (
             filteredUsers.map((user) => (
               <div key={user._id} className="flex items-center justify-between">
                 <div>
-                  <p className="font-medium">{user.fullName}</p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">{user.email}</p>
+                  <p className="font-medium">
+                    {highlightText(user.fullName, searchQuery)}
+                  </p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    {highlightText(user.email, searchQuery)}
+                  </p>
                 </div>
                 <label className="relative inline-flex items-center cursor-pointer">
                   <input
@@ -149,9 +183,9 @@ export function MFAModal({ isOpen, onClose }) {
           <button
             onClick={handleSave}
             className="w-1/2 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-200"
-            disabled={changedUsers.size === 0} // Disable if no changes
+            disabled={changedUsers.size === 0 || saving} // Disable if no changes or saving
           >
-            Save
+            {saving ? 'Saving...' : 'Save'}
           </button>
         </div>
       </div>

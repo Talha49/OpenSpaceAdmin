@@ -13,7 +13,7 @@ const UserUpdateDialog = ({ user, onClose, onSave }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [formData, setFormData] = useState({ ...user });
     const [isEditable, setIsEditable] = useState(false); // Track edit state
-    const [profileImage, setProfileImage] = useState(user.profileImage || null);
+    const [profileImage, setProfileImage] = useState(user?.profileImage || null);
     const fileInputRef = useRef(null); // Ref for file input
     const [showOldPassword, setShowOldPassword] = useState(false); // Toggle visibility of old password
     const [newPassword, setNewPassword] = useState(""); // Generated new password
@@ -27,7 +27,7 @@ const UserUpdateDialog = ({ user, onClose, onSave }) => {
             handleRefresh(); // Fetch active user data on mount
         }
     }, [formData.email]);
-    
+
     useEffect(() => {
         if (user) {
             setIsOpen(true);
@@ -141,24 +141,24 @@ const UserUpdateDialog = ({ user, onClose, onSave }) => {
             fileInputRef.current.click(); // Trigger file input click
         }
     };
-    
+
     const handleRefresh = async () => {
         try {
             const response = await fetch("/api/Users/getUser"); // Fetch all active users
             if (!response.ok) {
                 throw new Error("Failed to fetch users.");
             }
-    
+
             const users = await response.json(); // Parse the JSON response
             console.log("Fetched active users:", users);
-    
+
             // Find the current user in the fetched users list
             const currentUser = users.find((u) => u.email === formData.email);
-    
+
             if (!currentUser) {
                 throw new Error("Current user not found among active users.");
             }
-    
+
             // Update state with the current user's data
             setFormData({
                 fullName: currentUser.fullName || "",
@@ -167,17 +167,17 @@ const UserUpdateDialog = ({ user, onClose, onSave }) => {
                 city: currentUser.city || "",
                 image: currentUser.image || "/images/avatar.png",
             });
-    
+
             setProfileImage(currentUser.image || "/images/avatar.png");
         } catch (error) {
             console.error("Error refreshing active user details:", error);
             alert("Failed to refresh user details. Please try again.");
         }
     };
-    
-    
-    
-    
+
+
+
+
     const generateRandomPassword = () => {
         const generatedPassword = Math.random().toString(36).slice(-8); // Generate an 8-character password
         setNewPassword(generatedPassword);
@@ -283,12 +283,13 @@ const UserUpdateDialog = ({ user, onClose, onSave }) => {
                             onChange={handleChange}
                             readOnly={!isEditable} // Make non-editable if not in edit mode
                             className={`mt-1 block w-full px-4 py-2 border ${isEditable
-                                ? "bg-white border-neutral-300 dark:border-neutral-800"
-                                : "bg-gray-100 dark:bg-neutral-800 border-transparent"
-                                } rounded-md text-neutral-700 dark:text-neutral-300`}
+                                    ? "bg-white border-neutral-300 dark:border-neutral-800 dark:bg-neutral-900 text-neutral-700 dark:text-neutral-200"
+                                    : "bg-gray-100 dark:bg-neutral-800 border-transparent text-neutral-700 dark:text-neutral-300"
+                                } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2`}
                         />
                     </div>
 
+                    {/* Email */}
                     <div className="relative group">
                         <label
                             htmlFor="email"
@@ -303,13 +304,11 @@ const UserUpdateDialog = ({ user, onClose, onSave }) => {
                             value={formData.email}
                             readOnly
                             className={`mt-1 block w-full px-4 py-2 border ${isEditable
-                                ? "bg-white border-neutral-300 dark:border-neutral-800"
-                                : "bg-gray-100 dark:bg-neutral-800 border-transparent"
-                                } rounded-md text-neutral-700 dark:text-neutral-300 cursor-not-allowed`}
+                                    ? "bg-white border-neutral-300 dark:border-neutral-800 dark:bg-neutral-900 text-neutral-700 dark:text-neutral-200"
+                                    : "bg-gray-100 dark:bg-neutral-800 border-transparent text-neutral-700 dark:text-neutral-300 cursor-not-allowed"
+                                } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2`}
                         />
-
                     </div>
-
 
                     {/* Address */}
                     <div>
@@ -327,9 +326,9 @@ const UserUpdateDialog = ({ user, onClose, onSave }) => {
                             onChange={handleChange}
                             readOnly={!isEditable}
                             className={`mt-1 block w-full px-4 py-2 border ${isEditable
-                                ? "bg-white border-neutral-300 dark:border-neutral-800"
-                                : "bg-gray-100 dark:bg-neutral-800 border-transparent"
-                                } rounded-md text-neutral-700 dark:text-neutral-300`}
+                                    ? "bg-white border-neutral-300 dark:border-neutral-800 dark:bg-neutral-900 text-neutral-700 dark:text-neutral-200"
+                                    : "bg-gray-100 dark:bg-neutral-800 border-transparent text-neutral-700 dark:text-neutral-300"
+                                } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2`}
                         />
                     </div>
 
@@ -349,43 +348,54 @@ const UserUpdateDialog = ({ user, onClose, onSave }) => {
                             onChange={handleChange}
                             readOnly={!isEditable}
                             className={`mt-1 block w-full px-4 py-2 border ${isEditable
-                                ? "bg-white border-neutral-300 dark:border-neutral-800"
-                                : "bg-gray-100 dark:bg-neutral-800 border-transparent"
-                                } rounded-md text-neutral-700 dark:text-neutral-300`}
+                                    ? "bg-white border-neutral-300 dark:border-neutral-800 dark:bg-neutral-900 text-neutral-700 dark:text-neutral-200"
+                                    : "bg-gray-100 dark:bg-neutral-800 border-transparent text-neutral-700 dark:text-neutral-300"
+                                } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2`}
                         />
                     </div>
 
-
-
                     {/* New Password */}
                     {isEditable && (
-                        <div>
-                            <label
-                                className="block text-sm font-medium text-neutral-600 dark:text-neutral-400"
-                            >
-                                New Password
-                            </label>
-                            <div className="relative mt-2">
-                                <input
-                                    type="password" // Mask the password
-                                    placeholder="New password"
-                                    value={newPassword}
-                                    readOnly
-                                    className="block w-full px-4 py-2 border bg-white dark:bg-neutral-900 border-neutral-300 rounded-md text-neutral-700 dark:text-neutral-300"
-                                />
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        const generatedPassword = Math.random().toString(36).slice(-8); // Generate a random password
-                                        setNewPassword(generatedPassword); // Update the newPassword state
-                                    }}
-                                    className="absolute inset-y-0 right-3 bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-600"
-                                >
-                                    Generate
-                                </button>
-                            </div>
-                        </div>
-                    )}
+  <div>
+    <label className="block text-sm font-medium text-neutral-600 dark:text-neutral-400">
+      New Password
+    </label>
+    <div className="relative mt-2">
+      <input
+        type="password" // Mask the password
+        placeholder="New password"
+        disabled
+        value={newPassword}
+        readOnly
+        className="block w-full px-4 py-2 border bg-white dark:bg-neutral-900 border-neutral-300 rounded-md text-neutral-700 dark:text-neutral-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+      />
+      <button
+        type="button"
+        onClick={() => {
+          const generatedPassword = Math.random().toString(36).slice(-8); // Generate a random password
+          setNewPassword(generatedPassword); // Update the newPassword state
+        }}
+        className="absolute inset-y-0 right-0 bg-blue-500 text-white px-4 py-1  hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+        aria-label="Generate Password"
+      >
+        Generate
+      </button>
+    </div>
+
+    {/* Clear Button */}
+    {/* Smaller Clear Button */}
+    <div className="mt-2">
+      <button
+        type="button"
+        onClick={() => setNewPassword('')} // Clear the password field
+        className="py-1 px-3 text-sm bg-gray-500 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+      >
+        Clear
+      </button>
+    </div>
+  </div>
+)}
+
 
 
                     {/* Action Buttons */}

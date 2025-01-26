@@ -1,13 +1,16 @@
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch  } from 'react-redux';
 import { useRouter } from 'next/navigation';
 import { addUser, clearSelectedUser, updateUser } from '@/lib/Feature/UserSlice';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { fetchUsers } from '@/lib/Feature/UserSlice';
 const FormComp = () => {
   const router = useRouter();
   const dispatch = useDispatch();
   const selectedUser = useSelector(state => state.user.selectedUser);
+  const emailInputRef = useRef(null); // Create the ref
 
+  const [message, setMessage] = useState({ text: "", type: "" }); // For success/error messages
+  const [isLoading, setIsLoading] = useState(false); // Track button loading state
   const [formData, setFormData] = useState({
     fullName: selectedUser ? selectedUser.fullName : '',
     email: selectedUser ? selectedUser.email : '',
@@ -35,9 +38,17 @@ const FormComp = () => {
     }
   }, [selectedUser]);
 
+  useEffect(() => {
+    if (message.type === 'error' && message.text.includes('email')) {
+      if (emailInputRef.current) {
+        emailInputRef.current.focus();
+        emailInputRef.current.select(); // Select the text in the email input
+      }
+    }
+  }, [message]);
   const validateForm = () => {
     const newErrors = {};
-    
+
     if (!formData.fullName) {
       newErrors.fullName = 'Full Name is required';
     }
@@ -65,76 +76,101 @@ const FormComp = () => {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
   
     if (!validateForm()) {
       return;
     }
+    setIsLoading(true); // Set loading state to true when submission starts
   
     const userData = {
       ...formData,
-      createdByAdmin: !selectedUser, // If there's no selected user, it's a new user created by admin
+      createdByAdmin: !selectedUser, // New user if no selected user
     };
   
     if (selectedUser) {
       // Update user
       dispatch(updateUser({ ...userData, id: selectedUser.id }));
+  
       try {
-        const response = await fetch('/api/Users/updateUser', {
-          method: 'PUT',
+        const response = await fetch("/api/Users/updateUser", {
+          method: "PUT",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({ ...userData, id: selectedUser.id }),
         });
   
         if (response.ok) {
-          alert('User updated successfully!');
+          showMessage("User updated successfully!", "success");
         } else {
           const errorData = await response.json();
-          alert(`Failed to update user: ${errorData.error}`);
+          showMessage(`Failed to update user: ${errorData.error}`, "error");
         }
       } catch (error) {
-        alert('An error occurred while updating the user');
+        showMessage("An error occurred while updating the user.", "error");
       }
     } else {
       // Add new user
       dispatch(addUser(userData));
+  
       try {
-        const response = await fetch('/api/Users/saveUser', {
-          method: 'POST',
+        const response = await fetch("/api/Users/saveUser", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify(userData),
         });
   
         if (response.ok) {
-          alert('User saved successfully!');
-          
+          showMessage("User saved successfully!", "success");
+  
+          setFormData({
+            fullName: "",
+            email: "",
+            address: "",
+            city: "",
+            contact: "",
+          });
+  
+          dispatch(clearSelectedUser());
+          router.push("/users/active");
         } else {
           const errorData = await response.json();
-          alert(`Failed to save user: ${errorData.error}`);
+          if (errorData.message === "User with this email already exists") {
+            showMessage("User with this email already exists.", "error");
+  
+            // Focus on the email field and select the text
+            if (emailInputRef.current) {
+              emailInputRef.current.focus();
+              emailInputRef.current.select(); // Select the text in the email input
+            }
+          } else {
+            showMessage(`Failed to save user: ${errorData.error}`, "error");
+          }
         }
       } catch (error) {
-        alert('An error occurred while saving the user');
+        showMessage("An error occurred while saving the user.", "error");
+      }
+      finally {
+        setIsLoading(false); // Reset loading state once request completes
       }
     }
-  
-    setFormData({
-      fullName: '',
-      email: '',
-      address: '',
-      city: '',
-      contact: '',
-    });
-  
-    dispatch(clearSelectedUser()); // Clear selected user after submitting
-    router.push('/users/active');
   };
   
+  // Helper function to show a message with timeout
+  const showMessage = (text, type) => {
+    setMessage({ text, type });
+
+    // Hide message after 2 seconds
+    setTimeout(() => {
+      setMessage({ text: "", type: "" });
+    }, 3000);
+  };
+
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -143,9 +179,9 @@ const FormComp = () => {
     });
   }
 
-const handleCancel =() => {
-  router.push('/users/active');
-}
+  const handleCancel = () => {
+    router.push('/users/active');
+  }
 
   return (
     <div className="w-full max-w-7xl mx-auto p-6 dark:bg-neutral-950">
@@ -166,6 +202,14 @@ const handleCancel =() => {
 
           {/* Right Section - Form */}
           <div>
+            {message.text && (
+              <div
+                className={`p-4 mb-4 text-sm rounded-lg ${message.type === "success" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
+                  }`}
+              >
+                {message.text}
+              </div>
+            )}
             <form className="space-y-4" onSubmit={handleSubmit}>
               <div>
                 <label htmlFor="fullName" className="block text-sm font-medium text-neutral-800 dark:text-neutral-500 mb-1">Full Name</label>
@@ -184,6 +228,8 @@ const handleCancel =() => {
                 <label htmlFor="email" className="block text-sm font-medium text-neutral-800 dark:text-neutral-500 mb-1">Email Address</label>
                 <input
                   type="email"
+                   ref={emailInputRef} // Attach the ref to the email input
+          
                   id="email"
                   name="email"
                   value={formData.email}
@@ -236,14 +282,21 @@ const handleCancel =() => {
               </div>
 
               <div className="mt-6">
-                <button type="submit" className="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                  {selectedUser ? 'Update' : 'Create'}
+                <button
+                  type="submit"
+                  className={`px-6 py-2 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 ${isLoading
+                      ? 'bg-blue-400 cursor-not-allowed'
+                      : 'bg-blue-500 hover:bg-blue-600 focus:ring-blue-500'
+                    }`}
+                  disabled={isLoading} // Disable button while loading
+                >
+                  {isLoading ? 'Creating...' : selectedUser ? 'Update' : 'Create'}
                 </button>
                 <button type="button" // Prevent the form from submitting
-              className="px-6 ml-3 py-2 bg-gray-400 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              onClick={handleCancel} // Use onClick instead of onSubmit
+                  className="px-6 ml-3 py-2 bg-gray-400 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  onClick={handleCancel} // Use onClick instead of onSubmit
                 >
-                  
+
                   Cancel
                 </button>
               </div>

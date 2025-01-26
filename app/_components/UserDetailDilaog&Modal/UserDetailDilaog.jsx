@@ -90,7 +90,7 @@ const UserDetailDialog = ({ user, onClose }) => {
               type="text"
               id="email"
               value={user.email}
-              readOnly
+              disabled // Disabled to make it non-selectable
               className="mt-1 block w-full px-4 py-2 border border-neutral-300 dark:border-neutral-800 rounded-md bg-gray-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300"
             />
           </div>
@@ -107,7 +107,7 @@ const UserDetailDialog = ({ user, onClose }) => {
               type="text"
               id="address"
               value={user.address || "Not Provided"}
-              readOnly
+              disabled // Disabled to make it non-selectable
               className="mt-1 block w-full px-4 py-2 border border-neutral-300 dark:border-neutral-800 rounded-md bg-gray-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300"
             />
           </div>
@@ -124,7 +124,7 @@ const UserDetailDialog = ({ user, onClose }) => {
               type="text"
               id="city"
               value={user.city || "Not Provided"}
-              readOnly
+              disabled // Disabled to make it non-selectable
               className="mt-1 block w-full px-4 py-2 border border-neutral-300 dark:border-neutral-800 rounded-md bg-gray-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300"
             />
           </div>
@@ -141,7 +141,24 @@ const UserDetailDialog = ({ user, onClose }) => {
               type="text"
               id="contact"
               value={user.contact || "Not Provided"}
-              readOnly
+              disabled // Disabled to make it non-selectable
+              className="mt-1 block w-full px-4 py-2 border border-neutral-300 dark:border-neutral-800 rounded-md bg-gray-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300"
+            />
+          </div>
+
+          {/* MFA Detail (example) */}
+          <div>
+            <label
+              htmlFor="mfa"
+              className="block text-sm font-medium text-neutral-600 dark:text-neutral-400"
+            >
+              MFA Status
+            </label>
+            <input
+              type="text"
+              id="mfa"
+              value={user.multifactorAuthentication ? "Enabled" : "Not Enabled"}
+              disabled // Disabled to make it non-selectable
               className="mt-1 block w-full px-4 py-2 border border-neutral-300 dark:border-neutral-800 rounded-md bg-gray-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300"
             />
           </div>
