@@ -71,11 +71,11 @@ const Header = () => {
             />
             <div>
               <p className="flex items-center gap-2 font-semibold leading-tight text-neutral-900 dark:text-white text-lg">
-                {authenticatedUser?.fullName}
+                {authenticatedUser?.fullName || "Guest"}
                 <span className="text-xs bg-blue-500 text-white px-2 rounded-full">{authenticatedUser?.role?.name}</span>
               </p>
               <p className="text-gray-500 leading-tight text-sm dark:text-gray-400">
-              {authenticatedUser?.email}
+              {authenticatedUser?.email || "This is guest user"}
               </p>
             </div>
           </div>
