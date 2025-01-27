@@ -15,6 +15,7 @@ import { BsChevronDown } from "react-icons/bs";
 import { Tooltip } from "react-tooltip";
 import Link from "next/link";
 import { IoMdMenu } from "react-icons/io";
+import { CiLock, CiUnlock } from "react-icons/ci";
 
 const Menus = [
   {
@@ -82,12 +83,17 @@ const Sidebar = () => {
   const [open, setOpen] = useState(false);
   const [subMenuOpen, setSubMenuOpen] = useState({});
   const [isSmallScreen, setIsSmallScreen] = useState(false);
+  const [locked, setLocked] = useState(false);
 
   // Check screen size and update state
   useEffect(() => {
     const checkScreenSize = () => {
       setIsSmallScreen(window.innerWidth < 640); // small screens considered below 640px (tailwind sm breakpoint)
     };
+
+    if (isSmallScreen) {
+      setLocked(false);
+    }
 
     checkScreenSize();
     window.addEventListener("resize", checkScreenSize);
@@ -103,23 +109,41 @@ const Sidebar = () => {
   };
 
   const handleMouseEnter = () => {
-    if (!isSmallScreen) {
+    if (!isSmallScreen && !locked) {
       setOpen(true);
     }
   };
 
   const handleMouseLeave = () => {
-    if (!isSmallScreen) {
+    if (!isSmallScreen && !locked) {
       setOpen(false);
+    }
+  };
+
+  const toggleLock = () => {
+    setLocked(!locked);
+    if (!locked) {
+      setOpen(true);
     }
   };
 
   return (
     <div
-      className="h-full fixed top-[60px] z-10"
+      className={`h-full ${locked ? "relative h-screen" : "fixed top-[60px]"}  z-10`}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
+      <button
+        onClick={toggleLock}
+        className={`${
+          isSmallScreen && "hidden"
+        } absolute top-2 right-2 z-50 p-2 rounded-full bg-blue-100 dark:bg-neutral-800 text-blue-500 dark:text-blue-400 hover:bg-blue-200 dark:hover:bg-neutral-700 transition-all duration-200 ${
+          open ? "opacity-100" : "opacity-0"
+        }`}
+        aria-label={locked ? "Unlock sidebar" : "Lock sidebar"}
+      >
+        {locked ? <CiUnlock size={20} /> : <CiLock size={20} />}
+      </button>
       <div
         className={`${
           open ? "w-64" : "w-16"

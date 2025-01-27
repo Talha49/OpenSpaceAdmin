@@ -17,6 +17,8 @@ const GrantRoleDialog = ({ onClose }) => {
   const { selectedUsersForRole, selectedGroupsForRole } = useSelector(
     (state) => state.role
   );
+  const [initialUsers, setInitialUsers] = useState([]);
+  const [initialGroups, setInitialGroups] = useState([]);
   const dispatch = useDispatch();
 
   console.log("selectedUsersForRole", selectedUsersForRole);
@@ -30,6 +32,11 @@ const GrantRoleDialog = ({ onClose }) => {
     dispatch(fetchUsers());
     dispatch(fetchGroups());
   }, [dispatch]);
+
+  useEffect(() => {
+    setInitialUsers([...selectedUsersForRole]);
+    setInitialGroups([...selectedGroupsForRole]);
+  }, []);
 
   // Capitalize the first letter of each word in the string
   function capitalizeFirstLetter(str) {
@@ -59,12 +66,40 @@ const GrantRoleDialog = ({ onClose }) => {
     user.fullName.toLowerCase().includes(userSearch.toLowerCase())
   );
 
-  console.log("filteredUsers", filteredUsers);	
+  console.log("filteredUsers", filteredUsers);
 
   // Filter groups based on search query
   const filteredGroups = groups.filter((group) =>
     group.groupName.toLowerCase().includes(groupSearch.toLowerCase())
   );
+
+  // Handle Cancel button click
+  const handleCancel = () => {
+    // Clear selected users and groups
+    dispatch(setSelectedUsersForRole(initialUsers));
+    dispatch(setSelectedGroupsForRole(initialGroups));
+    // Close the dialog
+    onClose();
+  };
+
+  // Handle Done button click
+  const handleDone = () => {
+    // Validate if at least one user or group is selected
+    // if (selectedUsersForRole.length === 0 && selectedGroupsForRole.length === 0) {
+    //   alert("Please select at least one user or group before proceeding.");
+    //   return;
+    // }
+
+    // Close all dropdowns
+    setIsOpenUserDropdown(false);
+    setIsOpenGroupDropdown(false);
+
+    // You can add additional logic here to save the selections or perform other actions
+    // For example, you might want to make an API call to update permissions
+
+    // Close the dialog
+    onClose();
+  };
 
   return (
     <PermissionDialog onClose={onClose}>
@@ -209,6 +244,20 @@ const GrantRoleDialog = ({ onClose }) => {
             </div>
           </div>
         </div>
+      </div>
+      <div className="flex items-center justify-end gap-2 w-full mt-4 px-4">
+        <button
+          onClick={handleCancel}
+          className="bg-blue-50 hover:bg-blue-100 text-blue-600 border border-blue-600 transition-all px-2 py-1 min-w-20 rounded-lg"
+        >
+          Cancel
+        </button>
+        <button
+          onClick={handleDone}
+          className="bg-blue-500 hover:bg-blue-600 text-white transition-all px-2 py-1 min-w-20 rounded-lg"
+        >
+          Done
+        </button>
       </div>
     </PermissionDialog>
   );

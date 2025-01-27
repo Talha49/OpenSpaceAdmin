@@ -12,6 +12,8 @@ import {
 } from "@/lib/Feature/RoleSlice";
 import { useToast } from "@/lib/toastContext";
 import Alert from "@/app/_components/Alert/Alert";
+import { fetchUsers } from "@/lib/Feature/UserSlice";
+import { fetchGroups } from "@/lib/Feature/GroupSlice";
 
 const CreateNewPermissionForExternalUserDialog = ({
   onClose,
@@ -42,6 +44,25 @@ const CreateNewPermissionForExternalUserDialog = ({
     selectedGroupsForRole,
   });
 
+  const [isNoSelectedPermission, setIsNoSelectedPermission] = useState(false);
+  const { users } = useSelector((state) => state.user);
+  const { groups } = useSelector((state) => state.group);
+
+  useEffect(() => {
+    if (
+      [
+        "menuPermissions",
+        "formPermissions",
+        "reportPermissions",
+        "workflowPermissions",
+      ].some((key) => permissions[key].length === 0)
+    ) {
+      setIsNoSelectedPermission(true);
+    } else {
+      setIsNoSelectedPermission(false);
+    }
+  }, [permissions]);
+
   const deepEqual = (obj1, obj2) => {
     if (obj1 === obj2) return true;
 
@@ -67,6 +88,11 @@ const CreateNewPermissionForExternalUserDialog = ({
 
     return true;
   };
+
+  useEffect(() => {
+    dispatch(fetchUsers());
+    dispatch(fetchGroups());
+  }, [dispatch]);
 
   useEffect(() => {
     const currentState = {
@@ -166,9 +192,18 @@ const CreateNewPermissionForExternalUserDialog = ({
     dispatch(setRoleDetails({ name: roleName, description: newDescription })); // Dispatch the update to Redux
   };
 
+  function capitalizeFirstLetter(input) {
+    if (typeof input !== "string" || input.length === 0) {
+      return input; // Return the input unchanged if it's not a valid string
+    }
+    return input.charAt(0).toUpperCase() + input.slice(1);
+  }
+
+  // console.log("permissions =>", permissions);
+
   return (
     <PermissionDialog onClose={onClose}>
-      <h1 className="text-2xl font-semibold my-4 dark:text-neutral-500">
+      <h1 className="text-2xl font-semibold my-4 dark:text-neutral-300">
         Permission Role Details
       </h1>
       {alert && (
@@ -180,7 +215,7 @@ const CreateNewPermissionForExternalUserDialog = ({
       )}{" "}
       {/* Display the alert */}
       <div className="shadow-md w-full px-4 py-2 border dark:border-neutral-800 rounded">
-        <h1 className="text-lg font-semibold dark:text-neutral-500">
+        <h1 className="text-lg font-semibold dark:text-neutral-300">
           1. Name & Description
         </h1>
         <form className="flex flex-col gap-4 mt-2">
@@ -213,7 +248,7 @@ const CreateNewPermissionForExternalUserDialog = ({
         </form>
       </div>
       <div className="shadow-md w-full px-4 py-1 my-2 border dark:border-neutral-800 rounded">
-        <h1 className="text-lg font-semibold dark:text-neutral-500">
+        <h1 className="text-lg font-semibold dark:text-neutral-300">
           2. Permission Settings
         </h1>
         <div className="dark:text-neutral-700">
@@ -224,10 +259,118 @@ const CreateNewPermissionForExternalUserDialog = ({
           >
             Permissions...
           </button>
+          <div className="border dark:border-neutral-700 p-4 rounded-lg shadow-md mb-2 dark:text-neutral-300">
+            <h1 className="font-semibold">Selected Permissions</h1>
+            <div className="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-2 ">
+              {/* Menu Permissions */}
+              <div className="max-h-[300px] overflow-y-auto custom-scrollbar border dark:border-neutral-700 rounded-lg p-2 bg-neutral-100 dark:bg-neutral-900">
+                <h1 className="font-semibold">Menu Permissions</h1>
+                {Object.keys(permissions?.menuPermissions).map((item, i) => (
+                  <>
+                    <p key={i}>{item}:</p>
+                    {permissions?.menuPermissions[item]
+                      .filter((menu) => menu.included)
+                      .map((menu, i) => (
+                        <li key={i} className="list-disc ml-6">
+                          {menu.name}
+                        </li>
+                      ))}
+                  </>
+                ))}
+              </div>
+              {/* Form Permissions */}
+              <div className="max-h-[300px] overflow-y-auto custom-scrollbar border dark:border-neutral-700 rounded-lg p-2 bg-neutral-100 dark:bg-neutral-900">
+                <h1 className="font-semibold">Form Permissions</h1>
+                {Object.values(permissions.formPermissions).map((form, i) => (
+                  <>
+                    <ul key={i}>{form.name}</ul>
+                    {Object.values(form?.tabs)
+                      ?.filter((tab) => tab?.view)
+                      ?.map((tab, i) => (
+                        <li key={i} className="list-disc ml-6">
+                          {tab.name}
+                        </li>
+                      ))}
+                  </>
+                ))}
+              </div>
+              {/* Report Permissions */}
+              <div className="max-h-[300px] overflow-y-auto custom-scrollbar border dark:border-neutral-700 rounded-lg p-2 bg-neutral-100 dark:bg-neutral-900">
+                <h1 className="font-semibold">Report Permissions</h1>
+                {permissions.reportPermissions
+                  .filter((report) => report.included)
+                  .map((report, i) => (
+                    <ul key={i} className="text-sm">
+                      <li className="font-medium">{report.name}</li>
+                      <ul className="ml-6 list-disc">
+                        {report?.subReports
+                          ?.filter((subreport) => subreport.included)
+                          ?.map((subreport, j) => (
+                            <li key={j}>
+                              {subreport?.name}
+                              <div className="flex items-center gap-1 ml-5">
+                                {subreport.view && (
+                                  <span className="bg-blue-600 text-white px-1 text-xs rounded">
+                                    view
+                                  </span>
+                                )}
+                                {subreport.expport && (
+                                  <span className="bg-blue-600 text-white px-1 text-xs rounded">
+                                    export
+                                  </span>
+                                )}
+                                {subreport.generate && (
+                                  <span className="bg-blue-600 text-white px-1 text-xs rounded">
+                                    generate
+                                  </span>
+                                )}
+                              </div>{" "}
+                            </li>
+                          ))}
+                      </ul>
+                    </ul>
+                  ))}
+              </div>
+
+              {/* Workflow Permissions */}
+              <div className="max-h-[300px] overflow-y-auto custom-scrollbar border dark:border-neutral-700 rounded-lg p-2 bg-neutral-100 dark:bg-neutral-900">
+                <h1 className="font-semibold">Workflow Permissions</h1>
+                <div>
+                  {permissions.workflowPermissions.map((diagram, i) => (
+                    <li key={i} className="ml-6 list-disc text-sm">
+                      {diagram.name}
+                      <div className="flex items-center gap-1 ml-5">
+                        {diagram.view && (
+                          <span className="bg-blue-600 text-white px-1 text-xs rounded">
+                            view
+                          </span>
+                        )}
+                        {diagram.create && (
+                          <span className="bg-blue-600 text-white px-1 text-xs rounded">
+                            create
+                          </span>
+                        )}
+                        {diagram.edit && (
+                          <span className="bg-blue-600 text-white px-1 text-xs rounded">
+                            edit
+                          </span>
+                        )}
+                        {diagram.delete && (
+                          <span className="bg-blue-600 text-white px-1 text-xs rounded">
+                            delete
+                          </span>
+                        )}
+                      </div>{" "}
+                    </li>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <div className="shadow-md w-full px-4 py-1 my-2 border dark:border-neutral-800 rounded">
-        <h1 className="text-lg font-semibold dark:text-neutral-500">
+        <h1 className="text-lg font-semibold dark:text-neutral-300">
           3. Grant This Role To...
         </h1>
         <div className="dark:text-neutral-700">
@@ -241,6 +384,40 @@ const CreateNewPermissionForExternalUserDialog = ({
           >
             Add...
           </button>
+          <div className="grid md:grid-cols-2 grid-cols-1 gap-2 dark:text-neutral-300">
+            <div className="border dark:border-neutral-700 p-4 rounded-lg shadow-md mb-2 bg-neutral-100 dark:bg-neutral-900">
+              <h1 className="font-semibold">Selected Indivisual Users</h1>
+              <div>
+                {selectedUsersForRole.length === 0 && (
+                  <p className="text-sm">No indivisual user selected</p>
+                )}
+                <div>
+                  {users
+                    .filter((item) => selectedUsersForRole.includes(item._id))
+                    .map((user, i) => (
+                      <div key={i} className="flex items-center gap-1">
+                        <li className="list-disc ml-6">{user?.fullName}</li>
+                      </div>
+                    ))}
+                </div>
+              </div>
+            </div>
+            <div className="border dark:border-neutral-700 p-4 rounded-lg shadow-md mb-2 bg-neutral-100 dark:bg-neutral-900">
+              <h1 className="font-semibold">Selected Group</h1>
+              {selectedGroupsForRole.length === 0 && (
+                <p className="text-sm">No group selected</p>
+              )}
+              <div>
+                  {groups
+                    .filter((item) => selectedGroupsForRole.includes(item._id))
+                    .map((group, i) => (
+                      <div key={i} className="flex items-center gap-1">
+                        <li className="list-disc ml-6">{group?.groupName}</li>
+                      </div>
+                    ))}
+                </div>
+            </div>
+          </div>
         </div>
       </div>
       <div className="flex justify-end mt-2 gap-2 ">
