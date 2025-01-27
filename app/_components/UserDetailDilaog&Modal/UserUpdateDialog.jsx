@@ -20,13 +20,19 @@ const UserUpdateDialog = ({ user, onClose, onSave }) => {
     const [isSaving, setIsSaving] = useState(false); // Track saving state
     const [users, setUsers] = useState([]); // State for storing all users
     const dispatch = useDispatch();
+    const [isRefreshing, setIsRefreshing] = useState(false); // Track refresh state
+
     const router = useRouter();
 
+    // Remove automatic refresh when formData.email changes
     useEffect(() => {
-        if (formData.email) {
-            handleRefresh(); // Fetch active user data on mount
+        if (user) {
+            setIsOpen(true);
+            setFormData({ ...user });
+            setProfileImage(user.profileImage || null);
         }
-    }, [formData.email]);
+    }, [user]);
+
 
     useEffect(() => {
         if (user) {
@@ -79,12 +85,17 @@ const UserUpdateDialog = ({ user, onClose, onSave }) => {
 
             if (!response.ok) {
                 const errorData = await response.json();
+                setIsRefreshing(false); // Stop spinning
+
+
                 // Parse the response JSON
 
                 throw new Error(errorData.message || "Failed to update user.");
 
             }
             dispatch(fetchUsers());
+            setIsRefreshing(false); // Stop spinning
+
             router.push("/users/active");
             const result = await response.json();
             console.log("API Response Data:", result);
@@ -93,6 +104,7 @@ const UserUpdateDialog = ({ user, onClose, onSave }) => {
                 setFormData(result.user); // Update the form with the latest user details
                 console.log("User updated and email sent successfully.");
                 setIsEditable(false); // Disable editing
+                setIsRefreshing(false); // Stop spinning
             }
         } catch (error) {
             console.error("Error saving user details:", error);
@@ -100,9 +112,11 @@ const UserUpdateDialog = ({ user, onClose, onSave }) => {
         } finally {
             setIsSaving(false); // Re-enable Save button
             setIsEditable(false); // Exit edit mode if the user confirms
+            setIsRefreshing(false); // Stop spinning
+
+
         }
     };
-
 
 
     //handle image upload and also handle image upload to firebase
@@ -133,6 +147,9 @@ const UserUpdateDialog = ({ user, onClose, onSave }) => {
             console.error("Error uploading image to Firebase:", error);
             throw error; // Let the caller handle the error
         }
+        finally {
+            setIsRefreshing(false); // Stop spinning
+        }
     };
 
 
@@ -143,23 +160,41 @@ const UserUpdateDialog = ({ user, onClose, onSave }) => {
     };
 
     const handleRefresh = async () => {
+        setIsRefreshing(true); // Start spinning
         try {
-            const response = await fetch("/api/Users/getUser"); // Fetch all active users
-            if (!response.ok) {
-                throw new Error("Failed to fetch users.");
+            if (!formData.email) {
+                console.error("Email is missing from formData. Cannot refresh user details.");
+                alert("Email is required to refresh user details.");
+                return;
             }
 
-            const users = await response.json(); // Parse the JSON response
+            const response = await fetch("/api/Users/getUser");
+            if (!response.ok) {
+                const errorDetails = await response.text(); // Log server error details
+                throw new Error(`Failed to fetch users. Server responded: ${response.status} - ${errorDetails}`);
+            }
+
+            const users = await response.json();
             console.log("Fetched active users:", users);
 
-            // Find the current user in the fetched users list
-            const currentUser = users.find((u) => u.email === formData.email);
-
-            if (!currentUser) {
-                throw new Error("Current user not found among active users.");
+            if (!Array.isArray(users)) {
+                throw new Error("Unexpected API response format. Expected an array of users.");
             }
 
-            // Update state with the current user's data
+            const currentUser = users.find((u) => u.email === formData.email);
+            if (!currentUser) {
+                console.warn("Current user not found. Fallback to default data.");
+                setFormData({
+                    fullName: "",
+                    email: formData.email, // Keep the entered email
+                    address: "",
+                    city: "",
+                    image: "/images/avatar.png",
+                });
+                setProfileImage("/images/avatar.png");
+                return;
+            }
+
             setFormData({
                 fullName: currentUser.fullName || "",
                 email: currentUser.email || "",
@@ -167,11 +202,13 @@ const UserUpdateDialog = ({ user, onClose, onSave }) => {
                 city: currentUser.city || "",
                 image: currentUser.image || "/images/avatar.png",
             });
-
             setProfileImage(currentUser.image || "/images/avatar.png");
         } catch (error) {
-            console.error("Error refreshing active user details:", error);
-            alert("Failed to refresh user details. Please try again.");
+            console.error("Error refreshing active user details:", error.message);
+            alert(`Failed to refresh user details: ${error.message}`);
+        }
+        finally {
+            setIsRefreshing(false); // Stop spinning
         }
     };
 
@@ -249,12 +286,16 @@ const UserUpdateDialog = ({ user, onClose, onSave }) => {
                                 {user.fullName}
                             </h2>
                             <button
-                                className="text-sm text-blue-500 hover:underline"
+                                className="text-sm text-blue-500 hover:underline flex items-center"
                                 onClick={handleRefresh}
+                                disabled={isRefreshing} // Optionally disable the button while refreshing
                             >
-                                <FaSyncAlt className="inline mr-1" />
-                                Refresh details
+                                <FaSyncAlt
+                                    className={`inline mr-1 ${isRefreshing ? "animate-spin" : ""}`} // Add spin animation
+                                />
+                                {isRefreshing ? "Refreshing..." : "Refresh details"}
                             </button>
+
                         </div>
                     </div>
                     <button
@@ -283,13 +324,16 @@ const UserUpdateDialog = ({ user, onClose, onSave }) => {
                             onChange={handleChange}
                             readOnly={!isEditable} // Make non-editable if not in edit mode
                             className={`mt-1 block w-full px-4 py-2 border ${isEditable
-                                    ? "bg-white border-neutral-300 dark:border-neutral-800 dark:bg-neutral-900 text-neutral-700 dark:text-neutral-200"
-                                    : "bg-gray-100 dark:bg-neutral-800 border-transparent text-neutral-700 dark:text-neutral-300"
+                                ? "bg-white border-neutral-300 dark:border-neutral-800 dark:bg-neutral-900 text-neutral-700 dark:text-neutral-200"
+                                : "bg-gray-100 dark:bg-neutral-800 border-transparent text-neutral-700 dark:text-neutral-300"
                                 } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2`}
+                            style={{
+                                cursor: isEditable ? "text" : "not-allowed",  // Block cursor when not editable
+                                pointerEvents: isEditable ? "auto" : "none",  // Prevent interaction when not editable
+                            }}
                         />
                     </div>
 
-                    {/* Email */}
                     <div className="relative group">
                         <label
                             htmlFor="email"
@@ -307,7 +351,14 @@ const UserUpdateDialog = ({ user, onClose, onSave }) => {
                                     ? "bg-white border-neutral-300 dark:border-neutral-800 dark:bg-neutral-900 text-neutral-700 dark:text-neutral-200"
                                     : "bg-gray-100 dark:bg-neutral-800 border-transparent text-neutral-700 dark:text-neutral-300 cursor-not-allowed"
                                 } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2`}
+                            style={{
+                                pointerEvents: 'none', // Prevent interaction
+                            }}
                         />
+                        {/* Tooltip */}
+                        <div className="absolute top-full left-0 mt-1 hidden w-max bg-blue-500 text-white text-xs px-2 py-1 rounded-md group-hover:block">
+                            This field is not editable.
+                        </div>
                     </div>
 
                     {/* Address */}
@@ -324,11 +375,15 @@ const UserUpdateDialog = ({ user, onClose, onSave }) => {
                             name="address"
                             value={formData.address || ""}
                             onChange={handleChange}
-                            readOnly={!isEditable}
+                            readOnly={!isEditable} // Make non-editable if not in edit mode
                             className={`mt-1 block w-full px-4 py-2 border ${isEditable
-                                    ? "bg-white border-neutral-300 dark:border-neutral-800 dark:bg-neutral-900 text-neutral-700 dark:text-neutral-200"
-                                    : "bg-gray-100 dark:bg-neutral-800 border-transparent text-neutral-700 dark:text-neutral-300"
+                                ? "bg-white border-neutral-300 dark:border-neutral-800 dark:bg-neutral-900 text-neutral-700 dark:text-neutral-200"
+                                : "bg-gray-100 dark:bg-neutral-800 border-transparent text-neutral-700 dark:text-neutral-300"
                                 } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2`}
+                            style={{
+                                cursor: isEditable ? "text" : "not-allowed",  // Block cursor when not editable
+                                pointerEvents: isEditable ? "auto" : "none",  // Prevent interaction when not editable
+                            }}
                         />
                     </div>
 
@@ -346,57 +401,58 @@ const UserUpdateDialog = ({ user, onClose, onSave }) => {
                             name="city"
                             value={formData.city || ""}
                             onChange={handleChange}
-                            readOnly={!isEditable}
+                            readOnly={!isEditable} // Make non-editable if not in edit mode
                             className={`mt-1 block w-full px-4 py-2 border ${isEditable
-                                    ? "bg-white border-neutral-300 dark:border-neutral-800 dark:bg-neutral-900 text-neutral-700 dark:text-neutral-200"
-                                    : "bg-gray-100 dark:bg-neutral-800 border-transparent text-neutral-700 dark:text-neutral-300"
+                                ? "bg-white border-neutral-300 dark:border-neutral-800 dark:bg-neutral-900 text-neutral-700 dark:text-neutral-200"
+                                : "bg-gray-100 dark:bg-neutral-800 border-transparent text-neutral-700 dark:text-neutral-300"
                                 } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2`}
+                            style={{
+                                cursor: isEditable ? "text" : "not-allowed",  // Block cursor when not editable
+                                pointerEvents: isEditable ? "auto" : "none",  // Prevent interaction when not editable
+                            }}
                         />
                     </div>
 
                     {/* New Password */}
                     {isEditable && (
-  <div>
-    <label className="block text-sm font-medium text-neutral-600 dark:text-neutral-400">
-      New Password
-    </label>
-    <div className="relative mt-2">
-      <input
-        type="password" // Mask the password
-        placeholder="New password"
-        disabled
-        value={newPassword}
-        readOnly
-        className="block w-full px-4 py-2 border bg-white dark:bg-neutral-900 border-neutral-300 rounded-md text-neutral-700 dark:text-neutral-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-      />
-      <button
-        type="button"
-        onClick={() => {
-          const generatedPassword = Math.random().toString(36).slice(-8); // Generate a random password
-          setNewPassword(generatedPassword); // Update the newPassword state
-        }}
-        className="absolute inset-y-0 right-0 bg-blue-500 text-white px-4 py-1  hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-        aria-label="Generate Password"
-      >
-        Generate
-      </button>
-    </div>
+                        <div>
+                            <label className="block text-sm font-medium text-neutral-600 dark:text-neutral-400">
+                                New Password
+                            </label>
+                            <div className="relative mt-2">
+                                <input
+                                    type="password" // Mask the password
+                                    placeholder="New password"
+                                    disabled
+                                    value={newPassword}
+                                    readOnly
+                                    className="block w-full px-4 py-2 border bg-white dark:bg-neutral-900 border-neutral-300 rounded-md text-neutral-700 dark:text-neutral-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        const generatedPassword = Math.random().toString(36).slice(-8); // Generate a random password
+                                        setNewPassword(generatedPassword); // Update the newPassword state
+                                    }}
+                                    className="absolute inset-y-0 right-0 bg-blue-500 text-white px-4 py-1  hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                                    aria-label="Generate Password"
+                                >
+                                    Generate
+                                </button>
+                            </div>
 
-    {/* Clear Button */}
-    {/* Smaller Clear Button */}
-    <div className="mt-2">
-      <button
-        type="button"
-        onClick={() => setNewPassword('')} // Clear the password field
-        className="py-1 px-3 text-sm bg-gray-500 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
-      >
-        Clear
-      </button>
-    </div>
-  </div>
-)}
-
-
+                            {/* Clear Button */}
+                            <div className="mt-2">
+                                <button
+                                    type="button"
+                                    onClick={() => setNewPassword('')} // Clear the password field
+                                    className="py-1 px-3 text-sm bg-gray-500 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+                                >
+                                    Clear
+                                </button>
+                            </div>
+                        </div>
+                    )}
 
                     {/* Action Buttons */}
                     {isEditable ? (
@@ -423,6 +479,7 @@ const UserUpdateDialog = ({ user, onClose, onSave }) => {
                         </button>
                     )}
                 </div>
+
             </Transition>
         </>
     );

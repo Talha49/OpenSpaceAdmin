@@ -17,10 +17,12 @@ import NewTableComponent from "@/app/_HOC/Table/NewTableComponent";
 import { fetchDeletedUsers } from "@/lib/Feature/UserSlice";
 import DeleteFilterModal from "@/app/_components/UserDetailDilaog&Modal/DeleteFilterModal";
 import * as XLSX from "xlsx";
+import UserStatusUpdateModal from "@/app/_components/UserDetailDilaog&Modal/UserStatusUpdateModal";
 
 const DeletedUsers = () => {
   const dispatch = useDispatch();
 
+  const [selectedUser, setSelectedUser] = useState(null);  // Store selected user
   const [deletedUsers, setDeletedUsers] = useState([]); // State to store deleted users
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -56,6 +58,13 @@ const DeletedUsers = () => {
     setIsLoading(false); // Set loading to false after fetch is complete
   }, [dispatch]);  // Only depend on dispatch, not on status
 
+  const handleOpenUpdateUserModal = (user) => {
+    setSelectedUser(user); // Set the selected user
+  };
+
+  const handleCloseUpdateUserModal = () => {
+    setSelectedUser(null); // Close modal when done
+  };
 
   const handleRowsPerPageChange = (e) => {
     setRowsPerPage(Number(e.target.value));
@@ -277,6 +286,7 @@ const DeletedUsers = () => {
           {paginatedDeletedUsers.map((user) => (
             <tr
               key={user.id}
+              onClick={() => handleOpenUpdateUserModal(user)} // Open modal on click
               className="odd:bg-gray-100 even:bg-white dark:odd:bg-neutral-800 dark:even:bg-neutral-900 cursor-pointer hover:bg-gray-300 dark:hover:bg-neutral-600 hover:text-blue-700 transition-all duration-200 "
             >
               <td className="p-3 text-gray-700 dark:text-neutral-400">
@@ -297,6 +307,12 @@ const DeletedUsers = () => {
           onClose={handleCloseFilterModal}
           onApplyFilter={handleApplyFilter}
           initialFilterCriteria={filterCriteria}
+        />
+      )}
+      {selectedUser && (
+        <UserStatusUpdateModal
+          user={selectedUser}
+          onClose={handleCloseUpdateUserModal}
         />
       )}
     </div>

@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "name": "Managerial Group",
+    "description": "A group consisting of senior managers and team leaders who are responsible for the strategic direction and decision-making of the organization."
+  },
+  {
+    "id": 2,
+    "name": "Permanent Employees",
+    "description": "A group consisting of full-time employees with long-term contracts who are a permanent part of the organization."
+  },
+  {
+    "id": 3,
+    "name": "Temporary Hired",
+    "description": "A group of temporary employees who are hired for short-term assignments or to fulfill seasonal needs."
+  },
+  {
+    "id": 4,
+    "name": "Freelancers",
+    "description": "A group of self-employed individuals who offer their services to organizations on a contractual basis."
+  },
+  {
+    "id": 5,
+    "name": "Interns",
+    "description": "A group consisting of students or recent graduates working for the organization temporarily to gain practical experience in their field of study."
+  },
+  {
+    "id": 6,
+    "name": "Consultants",
+    "description": "A group of external professionals providing expert advice and services to the organization on a short-term or project basis."
+  }
+]

@@ -8,6 +8,7 @@ import { IoMdClose } from "react-icons/io";
 import { createGroup } from "@/lib/Feature/GroupSlice";
 import { useRouter } from "next/navigation";
 import { fetchGroups } from "@/lib/Feature/GroupSlice";
+import groupTypes from "./groupType/groupTypes.json";
 const Dialog = ({ children, onClose }) => {
   return (
     <div className="absolute top-0 h-screen w-[91vw] flex items-center justify-center">
@@ -31,10 +32,9 @@ const GroupFormComp = () => {
   const [activeStep, setActiveStep] = useState(0);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [dialogType, setDialogType] = useState(null); // 'owners' or 'members'
-  const [groupType, setGroupType] = useState("Type 1");
-
+  const [groupType, setGroupType] = useState(groupTypes[0].name);
   const [stepperFormData, setStepperFormData] = useState({
-    groupType: "Type 1",
+    groupType: groupTypes[0].name,
     basics: {
       name: "",
       description: "",
@@ -190,77 +190,32 @@ const GroupFormComp = () => {
     switch (activeStep) {
       case 0:
         return (
-          <div className="">
+          <div>
             <h1 className="text-2xl font-bold">Choose a group type</h1>
             <p className="my-7">
               Choose the group type that best meets your team's needs.
             </p>
             <ul>
-              <div className="pb-5">
-                <li className="flex items-center gap-4">
-                  <input
-                    type="radio"
-                    name="groupType"
-                    checked={groupType === "Type 1"}
-                    onChange={() => {
-                      setGroupType("Type 1");
-                      setStepperFormData({
-                        ...stepperFormData,
-                        groupType: "Type 1",
-                      });
-                    }}
-                  />
-                  <h1 className="font-bold">Type 1</h1>
+              {groupTypes.map((type) => (
+                <li key={type.id} className="pb-5">
+                  <div className="flex items-center gap-4">
+                    <input
+                      type="radio"
+                      name="groupType"
+                      checked={groupType === type.name}
+                      onChange={() => {
+                        setGroupType(type.name);
+                        setStepperFormData({ ...stepperFormData, groupType: type.name });
+                      }}
+                    />
+                    <h1 className="font-bold">{type.name}</h1>
+                  </div>
+                  <p className="ml-[29px] text-sm">{type.description}</p>
                 </li>
-                <p className="ml-[29px] text-sm">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Ab
-                  recusandae.
-                </p>
-              </div>
-              <div className="pb-5">
-                <li className="flex items-center gap-4">
-                  <input
-                    type="radio"
-                    name="groupType"
-                    checked={groupType === "Type 2"}
-                    onChange={() => {
-                      setGroupType("Type 2");
-                      setStepperFormData({
-                        ...stepperFormData,
-                        groupType: "Type 2",
-                      });
-                    }}
-                  />
-                  <h1 className="font-bold">Type 2</h1>
-                </li>
-                <p className="ml-[29px] text-sm">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Ab
-                  recusandae.
-                </p>
-              </div>
-              <div className="pb-5">
-                <li className="flex items-center gap-4">
-                  <input
-                    type="radio"
-                    name="groupType"
-                    checked={groupType === "Type 3"}
-                    onChange={() => {
-                      setGroupType("Type 3");
-                      setStepperFormData({
-                        ...stepperFormData,
-                        groupType: "Type 3",
-                      });
-                    }}
-                  />
-                  <h1 className="font-bold">Type 3</h1>
-                </li>
-                <p className="ml-[29px] text-sm">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Ab
-                  recusandae.
-                </p>
-              </div>
+              ))}
             </ul>
           </div>
+       
         );
       case 1:
         return (
@@ -454,14 +409,14 @@ const GroupFormComp = () => {
                 </div>
               </div>
         
-              <div className="flex justify-center gap-5 mt-8">
+             {/* <div className="flex justify-center gap-5 mt-8">
                 <button
                   className="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition duration-300"
                   onClick={handleCreateGroup}
                 >
                   Finish
                 </button>
-              </div>
+              </div> */}
             </div>
          
         );
@@ -511,23 +466,25 @@ const GroupFormComp = () => {
             Next
           </button>
         </div>
-        <button
-          onClick={() => {
-            if (
-              stepperFormData.basics.name !== "" &&
-              stepperFormData.basics.description !== "" &&
-              stepperFormData.owners.length >= 1 &&
-              stepperFormData.members.length >= 2
-            ) {
-              handleCreateGroup();
-            } else {
-              alert("Please complete the process");
-            }
-          }}
-          className="blue-button px-3 py-2 mr-4 rounded-lg h-fit"
-        >
-          Finish
-        </button>
+        {activeStep === 4 && (
+    <button
+      onClick={() => {
+        if (
+          stepperFormData.basics.name !== "" &&
+          stepperFormData.basics.description !== "" &&
+          stepperFormData.owners.length >= 1 &&
+          stepperFormData.members.length >= 2
+        ) {
+          handleCreateGroup();
+        } else {
+          alert("Please complete the process");
+        }
+      }}
+      className="blue-button px-3 py-2 mr-4 rounded-lg h-fit"
+    >
+      Finish
+    </button>
+  )}
       </div>
       {isDialogOpen && (
         <Dialog onClose={() => setIsDialogOpen(false)}>
