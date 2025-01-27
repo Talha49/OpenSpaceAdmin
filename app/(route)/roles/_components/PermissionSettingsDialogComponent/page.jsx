@@ -118,6 +118,37 @@ const PermissionSettingsDialog = ({ onClose }) => {
     };
   });
 
+  const [initialPermissions, setInitialPermissions] = useState(null);
+
+  // Store initial permissions when component mounts
+  useEffect(() => {
+    setInitialPermissions(permissions);
+  }, []);
+
+  // Handle Cancel button click
+  const handleCancel = () => {
+    // Restore the initial permissions state
+    if (initialPermissions) {
+      setPermissions(initialPermissions);
+      // Also restore in localStorage
+      localStorage.setItem("permissions", JSON.stringify(initialPermissions));
+      // Update Redux store with initial permissions
+      dispatch(setStatePermissions(initialPermissions));
+    }
+    // Close the dialog
+    onClose();
+  };
+
+  // Handle Done button click
+  const handleDone = () => {
+    // Save current permissions to localStorage
+    localStorage.setItem("permissions", JSON.stringify(permissions));
+    // Update Redux store with current permissions
+    dispatch(setStatePermissions(permissions));
+    // Close the dialog
+    onClose();
+  };
+
   // Effect to save permissions to localStorage when the permissions state changes
   useEffect(() => {
     localStorage.setItem("permissions", JSON.stringify(permissions));
@@ -406,11 +437,14 @@ const PermissionSettingsDialog = ({ onClose }) => {
                                         index
                                       ]?.included
                                     }
-                                    checked={permissions.menuPermissions.basicMenu[
-                                      index
-                                    ]?.permission.includes(permission) && permissions.menuPermissions.basicMenu[
-                                      index
-                                    ]?.included}
+                                    checked={
+                                      permissions.menuPermissions.basicMenu[
+                                        index
+                                      ]?.permission.includes(permission) &&
+                                      permissions.menuPermissions.basicMenu[
+                                        index
+                                      ]?.included
+                                    }
                                     onChange={() => {
                                       const updatedPermissions =
                                         permissions.menuPermissions.basicMenu.map(
@@ -1597,6 +1631,20 @@ const PermissionSettingsDialog = ({ onClose }) => {
             </div>
           )}
         </div>
+      </div>
+      <div className="flex items-center justify-end gap-2 w-full mt-4 px-4">
+        <button
+          onClick={handleCancel}
+          className="bg-blue-50 hover:bg-blue-100 text-blue-600 border border-blue-600 transition-all px-2 py-1 min-w-20 rounded-lg"
+        >
+          Cancel
+        </button>
+        <button
+          onClick={handleDone}
+          className="bg-blue-500 hover:bg-blue-600 text-white transition-all px-2 py-1 min-w-20 rounded-lg"
+        >
+          Done
+        </button>
       </div>
     </PermissionDialog>
   );
