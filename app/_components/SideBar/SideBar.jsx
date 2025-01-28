@@ -83,7 +83,7 @@ const Menus = [
 ];
 
 const Sidebar = ({ className }) => {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   const [subMenuOpen, setSubMenuOpen] = useState({});
   const [isSmallScreen, setIsSmallScreen] = useState(false);
   // const [locked, setLocked] = useState(true);
