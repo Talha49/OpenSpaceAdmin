@@ -1,6 +1,5 @@
 "use client";
-import { toggleTheme } from "@/lib/Feature/ThemeSlice";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   FaCheck,
   FaCircle,
@@ -8,170 +7,245 @@ import {
   FaUser,
   FaCode,
   FaUsers,
+  FaUserLock,
 } from "react-icons/fa";
-import { useDispatch, useSelector } from "react-redux";
+import { Line, Pie } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  ArcElement,
+} from "chart.js";
+import { SlCursor } from "react-icons/sl";
+import Link from "next/link";
+import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
+import { fetchDeletedUsers, fetchUsers } from "@/lib/Feature/UserSlice";
+import { ImSpinner3 } from "react-icons/im";
+import UserActivityChart from "./_components/UserActivityChart";
+import { fetchDeletedGroups, fetchGroups } from "@/lib/Feature/GroupSlice";
+import { fetchAllRoles } from "@/lib/Feature/RoleSlice";
 
-const cardsData = [
-  {
-    title: "Microsoft Teams",
-    subtitle: "Support remote workers with Teams",
-    description:
-      "Learn how to manage Teams for remote work with setup guidance, short videos, and tips",
-    items: [
-      { text: "Teams is on for your organization", checked: true },
-      { text: "Check setup status for new Teams users", checked: false },
-      { text: "Guest access is on", checked: true },
-    ],
-    buttons: ["Manage Teams", "Learn more"],
-  },
-  {
-    title: "User management",
-    description: "Add, edit, and remove user accounts, and reset passwords.",
-    buttons: ["Add user", "Edit a user"],
-  },
-  {
-    title: "Billing",
-    balance: "$0.00",
-    subtext: "Total balance",
-    buttons: ["Balance", "Subscription"],
-  },
-  {
-    title: "Training & guides",
-    items: [
-      {
-        icon: "user",
-        text: "Training for admins",
-        subtext: "Microsoft 365 tutorials and videos",
-      },
-      {
-        icon: "code",
-        text: "Customized setup guidance",
-        subtext: "Choose a setup path to fit your org",
-      },
-      {
-        icon: "users",
-        text: "Training for users",
-        subtext: "Learn to use Microsoft 365 and the Office apps",
-      },
-    ],
-  },
-];
+// Registering required components in Chart.js
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  ArcElement
+);
 
 const HomeP = () => {
   const dispatch = useDispatch();
-  const isDarkMode = useSelector((state) => state.theme.isDarkMode);
-  return (
-    <div className="min-h-screen p-6">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex justify-between items-center mb-6 bg-white dark:bg-neutral-900 p-4 rounded-lg shadow">
-          <h1 className="text-xl font-semibold text-neutral-800 dark:text-neutral-400">
-            peritus.ae
-          </h1>
-          <div className="flex items-center space-x-4">
-            {/* <button
-              onClick={() => dispatch(toggleTheme())}
-              className="p-2 rounded-md bg-gray-200 dark:bg-gray-700"
-            >
-              {isDarkMode ? "☀️ Light" : "🌙 Dark"}
-            </button> */}
-            <button className="text-blue-600 hover:text-blue-800 flex items-center">
-              <svg
-                className="w-4 h-4 mr-1"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              What's new?
-            </button>
-          </div>
-        </div>
-        <button className="mb-6 text-blue-600 hover:text-blue-800">
-          + Add cards (8 more available)
-        </button>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {cardsData.map((data, index) => (
-            <Card key={index} data={data} />
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-};
+  const [deletedUsers, setDeletedUsers] = useState();
+  const { users } = useSelector((state) => state.user);
+  const { groups, deletedGroups } = useSelector((state) => state.group);
+  const { roles } = useSelector((state) => state.role);
+  // console.log("deletedUsers", deletedUsers);
+  // console.log("activeUsers", users);
+  // console.log("ActiveGroups", groups);
+  // console.log("InactiveGroups", deletedGroups);
+  // console.log(roles)
 
-const Card = ({ data }) => {
+  useEffect(() => {
+    dispatch(fetchUsers());
+    dispatch(fetchDeletedUsers()) // Dispatch the fetchDeletedUsers action immediately on mount
+      .unwrap() // Unwrap the promise to handle success/failure
+      .then((data) => {
+        setDeletedUsers(data); // Update state with fetched data
+      })
+      .catch((error) => {
+        console.error("❌ Error fetching deleted users:", error.message);
+      });
+    dispatch(fetchGroups());
+    dispatch(fetchDeletedGroups());
+    dispatch(fetchAllRoles());
+  }, [dispatch]);
+
+  // Sample data - replace with your actual data
+  const stats = {
+    users: {
+      active: 234,
+      inactive: 45,
+    },
+    groups: {
+      active: 12,
+      inactive: 3,
+    },
+    roles: {
+      total: 8,
+      custom: 3,
+      default: 5,
+    },
+  };
+
+  // Pie chart data for Active & Inactive Groups
+  const groupsChartData = {
+    labels: ["Active", "Inactive"],
+    datasets: [
+      {
+        data: [groups?.length, deletedGroups?.length],
+        backgroundColor: ["#22C55E", "#F43F5E"], // Green and Rose colors
+        hoverBackgroundColor: ["#16A34A", "#E11D48"], // Slightly darker shades for hover
+        hoverOffset: 4,
+        cutout: "70%",
+      },
+    ],
+  };
+
   return (
-    <div className="bg-white dark:bg-neutral-900 text-black dark:text-white rounded-lg shadow-md overflow-hidden flex flex-col">
-      <div className="p-6 flex-grow">
-        <div className="flex justify-between items-start mb-4 pb-4 border-b dark:border-neutral-700">
-          <h2 className="text-base font-semibold text-neutral-500">
-            {data.title}
+    <div className="dark:bg-stone-950">
+      {/* Header */}
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold dark:text-neutral-400 text-neutral-900">
+          Admin Center
+        </h1>
+        <p className="text-neutral-500 mt-2">
+          Manage your organization's users, groups, and roles
+        </p>
+      </div>
+
+      {/* Main Grid Container */}
+      <div className="grid grid-cols-1 gap-6">
+        {/* Quick Actions */}
+        <div className="shadow-md border dark:border-neutral-700 rounded-lg p-4">
+          <h2 className="font-semibold text-xl flex items-center gap-2">
+            <SlCursor className="text-blue-600" />
+            Quick Actions
           </h2>
-          <FaEllipsisH className="text-gray-400" />
-        </div>
-        {data.subtitle && (
-          <h3 className="text-xl font-bold mb-2">{data.subtitle}</h3>
-        )}
-        {data.description && (
-          <p className="text-sm text-neutral-500 mb-4">{data.description}</p>
-        )}
-        {data.balance && (
-          <div className="mb-4">
-            <span className="text-2xl font-bold">{data.balance}</span>
-            <span className="text-xs text-neutral-500 ml-2">
-              {data.subtext}
-            </span>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+            <Link
+              href="/users/main"
+              className="flex flex-col items-center bg-blue-50 dark:bg-blue-500 dark:bg-opacity-10 border border-blue-500 text-blue-500 transition-all hover:scale-105 p-4 rounded-lg"
+            >
+              <FaUser className="text-3xl mb-2" />
+              <span>Manage Users</span>
+            </Link>
+            <Link
+              href="/group/main"
+              className="flex flex-col items-center bg-green-50 dark:bg-green-500 dark:bg-opacity-10 border border-green-500 transition-all text-green-500 hover:scale-105 p-4 rounded-lg"
+            >
+              <FaUsers className="text-3xl mb-2" />
+              <span>Manage Groups</span>
+            </Link>
+            <Link
+              href="/roles"
+              className="flex flex-col items-center bg-rose-50 dark:bg-rose-500 dark:bg-opacity-10 border border-rose-500 transition-all text-rose-500 hover:scale-105 p-4 rounded-lg"
+            >
+              <FaUserLock className="text-3xl mb-2" />
+              <span>Manage Roles</span>
+            </Link>
           </div>
-        )}
-        {data.items && (
-          <ul className="space-y-3 mb-4">
-            {data.items.map((item, index) => (
-              <li key={index} className="flex items-start">
-                {item.checked !== undefined ? (
-                  <span
-                    className={`mr-3 mt-1 ${
-                      item.checked ? "text-green-500" : "text-blue-500"
-                    }`}
-                  >
-                    {item.checked ? <FaCheck /> : <FaCircle size={12} />}
-                  </span>
-                ) : (
-                  <span className="mr-3 mt-1 text-neutral-400 bg-neutral-100 p-1 rounded">
-                    {item.icon === "user" && <FaUser />}
-                    {item.icon === "code" && <FaCode />}
-                    {item.icon === "users" && <FaUsers />}
-                  </span>
-                )}
-                <div>
-                  <p className="text-sm font-medium">{item.text}</p>
-                  {item.subtext && (
-                    <p className="text-xs text-neutral-500">{item.subtext}</p>
+        </div>
+
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* Users Stats */}
+          <div className="dark:bg-neutral-950 border dark:border-neutral-700 rounded-lg shadow-md p-6">
+            <div className="flex items-center gap-2 mb-4">
+              <FaUser className="text-blue-600" />
+              <h2 className="text-xl font-semibold">Users</h2>
+            </div>
+            <div className="flex flex-col gap-4">
+              <div className="flex flex-col items-center justify-center text-center p-4 bg-green-50 dark:bg-green-500 dark:bg-opacity-10 border border-green-500 rounded-lg">
+                <div className="text-2xl font-bold text-green-600">
+                  {users?.length || <ImSpinner3 className="animate-spin" />}
+                </div>
+                <div className="text-sm text-green-600">Active</div>
+              </div>
+              <div className="flex flex-col items-center justify-center text-center p-4 bg-rose-50 dark:bg-rose-500 dark:bg-opacity-10 border border-rose-500 rounded-lg">
+                <div className="text-2xl font-bold text-rose-600">
+                  {deletedUsers?.length || (
+                    <ImSpinner3 className="animate-spin" />
                   )}
                 </div>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-      {data.buttons && (
-        <div className="p-2 bg-gray-50 dark:bg-neutral-800 border-t border-neutrak-200 dark:border-neutral-700 text-xs flex items-center justify-between gap-2">
-          {data.buttons.map((button, index) => (
-            <button
-              key={index}
-              className="py-2 w-full text-gray-700 blue-button  rounded-md  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-            >
-              {button}
-            </button>
-          ))}
+                <div className="text-sm text-rose-600">Inactive</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Users Chart */}
+          <div className="md:col-span-2 lg:col-span-2 border dark:border-neutral-700 shadow-md rounded-lg p-4">
+            <UserActivityChart
+              activeUsers={users}
+              inactiveUsers={deletedUsers}
+            />
+          </div>
+
+          {/* Groups Stats */}
+          <div className="dark:bg-neutral-950 border dark:border-neutral-700 rounded-lg shadow-md p-6">
+            <div className="flex items-center gap-2 mb-4">
+              <FaUsers className="text-blue-600 text-xl" />
+              <h2 className="text-xl font-semibold">Groups</h2>
+            </div>
+            <div className="flex flex-col gap-4">
+              <div className="flex flex-col items-center justify-center text-center p-4 bg-green-50 dark:bg-green-500 dark:bg-opacity-10 border border-green-500 rounded-lg">
+                <div className="text-2xl font-bold text-green-600">
+                  {groups?.length || <ImSpinner3 className="animate-spin" />}
+                </div>
+                <div className="text-sm text-green-600">Active</div>
+              </div>
+              <div className="flex flex-col items-center justify-center text-center p-4 bg-rose-50 dark:bg-rose-500 dark:bg-opacity-10 border border-rose-500 rounded-lg">
+                <div className="text-2xl font-bold text-rose-600">
+                  {deletedGroups?.length || (
+                    <ImSpinner3 className="animate-spin" />
+                  )}
+                </div>
+                <div className="text-sm text-rose-600">Inactive</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Groups Chart */}
+          <div className="border dark:border-neutral-700 shadow-md rounded-lg p-4">
+            <Pie
+              data={groupsChartData}
+              options={{
+                responsive: true,
+                maintainAspectRatio: false,
+              }}
+              height={250}
+            />
+          </div>
+
+          {/* Roles Stats */}
+          <div className="dark:bg-neutral-950 border dark:border-neutral-700 rounded-lg shadow-md p-6">
+            <div className="flex items-center gap-2 mb-4">
+              <FaUserLock className="text-yellow-500 text-lg" />
+              <h2 className="text-xl font-semibold">Roles</h2>
+            </div>
+            <div className="grid grid-cols-1 gap-4">
+              {/* Total Roles Card */}
+              <div className="flex flex-col items-center justify-center gap-3 text-center p-3 bg-blue-50 dark:bg-blue-500 dark:bg-opacity-10 border border-blue-500 rounded-lg shadow-md">
+                <div className="text-6xl font-bold text-blue-600">
+                  {roles?.length || (
+                    <ImSpinner3 className="animate-spin text-4xl text-blue-400" />
+                  )}
+                </div>
+                <div className="text-lg text-neutral-600 dark:text-neutral-400">
+                  Total Roles
+                </div>
+              </div>
+
+              {/* View All Button */}
+              <Link
+                href="/roles"
+                className="flex items-center justify-center h-12 p-2 bg-blue-500 hover:bg-blue-600 transition-all dark:bg-opacity-30 rounded-lg shadow-md text-white"
+              >
+                View All
+              </Link>
+            </div>
+          </div>
         </div>
-      )}
+      </div>
     </div>
   );
 };

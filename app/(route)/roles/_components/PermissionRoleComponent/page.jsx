@@ -117,7 +117,7 @@ const PermissionRolesComponent = () => {
   const paginatedRoles = filteredRoles.slice(startRow, startRow + rowsPerPage);
 
   return (
-    <div className="pl-4 pr-2 py-2 dark:bg-neutral-950">
+    <div className=" dark:bg-neutral-950">
       {loading && <Loader />}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">
         <p className="text-sm sm:text-base dark:text-neutral-500">
@@ -129,7 +129,7 @@ const PermissionRolesComponent = () => {
             Admin Center
           </Link>
         </p>
-        <div className="flex items-center gap-4 flex-wrap mr-3">
+        <div className="flex items-center gap-4 flex-wrap">
           <Link
             href="/users/main"
             className="text-blue-500 font-semibold hover:underline transition-all text-sm sm:text-base"
