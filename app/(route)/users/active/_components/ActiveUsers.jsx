@@ -438,9 +438,9 @@ const TableRoute = () => {
 
 
   return (
-    <div className="">
+    <div className="overflow-hidden">
       <NewHeader>
-        <div className="flex flex-col px-6 ">
+        <div className="flex flex-col ">
           <div className="mb-4 flex flex-col gap-4">
             <h1 className="text-xl font-semibold tracking-wider text-neutral-500">Talha.ae</h1>
             <h2 className="text-lg font-semibold tracking-wider text-neutral-500">
@@ -581,7 +581,7 @@ const TableRoute = () => {
         </div>
       )}
 
-      <div className="pl-4 pr-2 relative shadow-md rounded-lg ">
+      <div className=" relative rounded-lg ">
         <NewTableComponent
           tableColumns={[
             isSelectable || isGroupSelection ? (

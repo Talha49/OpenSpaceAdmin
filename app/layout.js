@@ -1,9 +1,8 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Header from "./_components/Header/Header";
-import Sidebar from "./_components/SideBar/SideBar";
+import LayoutWrapper from "./_components/LayoutWrapper";
 import ClientProvider from "./_components/ClientProvider/ClientProvider";
-import ThemeWrapper from "./_components/ThemeWrapper/ThemeWrapper";
 import { ThemeProvider } from "./_components/ThemeProvider/page";
 import { ToastProvider } from "@/lib/toastContext";
 import SessionWrapper from "./_components/SessionWrapper";
@@ -19,7 +18,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <ClientProvider>
-        <body className={inter.className}>
+        <body className={`${inter.className} flex flex-col h-screen`}>
           <SessionWrapper>
             <ThemeProvider
               attribute="class"
@@ -28,14 +27,9 @@ export default function RootLayout({ children }) {
               disableTransitionOnChange
             >
               <ToastProvider>
+                {/* Header */}
                 <Header />
-
-                <div className="flex gap-4">
-                  <Sidebar />
-                  <main className="w-full ml-14 dark:bg-neutral-950">
-                    {children}
-                  </main>
-                </div>
+                <LayoutWrapper>{children}</LayoutWrapper>
               </ToastProvider>
             </ThemeProvider>
           </SessionWrapper>

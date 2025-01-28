@@ -265,105 +265,160 @@ const CreateNewPermissionForExternalUserDialog = ({
               {/* Menu Permissions */}
               <div className="max-h-[300px] overflow-y-auto custom-scrollbar border dark:border-neutral-700 rounded-lg p-2 bg-neutral-100 dark:bg-neutral-900">
                 <h1 className="font-semibold">Menu Permissions</h1>
-                {Object.keys(permissions?.menuPermissions).map((item, i) => (
-                  <>
-                    <p key={i}>{item}:</p>
-                    {permissions?.menuPermissions[item]
-                      .filter((menu) => menu.included)
-                      .map((menu, i) => (
-                        <li key={i} className="list-disc ml-6">
-                          {menu.name}
-                        </li>
-                      ))}
-                  </>
-                ))}
+                {Object.keys(permissions.menuPermissions).length === 0 ? (
+                  <p className="text-sm">No permissions selected</p>
+                ) : (
+                  Object.keys(permissions.menuPermissions).map((menuKey, i) => {
+                    const includedMenus = permissions.menuPermissions[
+                      menuKey
+                    ].filter((menu) => menu.included);
+                    return (
+                      <div key={i}>
+                        <p className="font-medium">{menuKey}:</p>
+                        {includedMenus.length > 0 ? (
+                          <ul className="ml-6 list-disc">
+                            {includedMenus.map((menu, j) => (
+                              <li key={j}>{menu.name}</li>
+                            ))}
+                          </ul>
+                        ) : (
+                          <p className="ml-6 text-sm text-gray-500">
+                            No included menus
+                          </p>
+                        )}
+                      </div>
+                    );
+                  })
+                )}
               </div>
+
               {/* Form Permissions */}
               <div className="max-h-[300px] overflow-y-auto custom-scrollbar border dark:border-neutral-700 rounded-lg p-2 bg-neutral-100 dark:bg-neutral-900">
                 <h1 className="font-semibold">Form Permissions</h1>
-                {Object.values(permissions.formPermissions).map((form, i) => (
-                  <>
-                    <ul key={i}>{form.name}</ul>
-                    {Object.values(form?.tabs)
-                      ?.filter((tab) => tab?.view)
-                      ?.map((tab, i) => (
-                        <li key={i} className="list-disc ml-6">
-                          {tab.name}
-                        </li>
-                      ))}
-                  </>
-                ))}
+                {Object.values(permissions.formPermissions).length === 0 ? (
+                  <p className="text-sm">No form permissions selected</p>
+                ) : (
+                  Object.values(permissions.formPermissions).map((form, i) => {
+                    const visibleTabs = Object.values(form?.tabs || {}).filter(
+                      (tab) => tab?.view
+                    );
+                    return (
+                      <div key={i}>
+                        <p className="font-medium">{form.name}</p>
+                        {visibleTabs.length > 0 ? (
+                          <ul className="ml-6 list-disc">
+                            {visibleTabs.map((tab, j) => (
+                              <li key={j}>{tab.name}</li>
+                            ))}
+                          </ul>
+                        ) : (
+                          <p className="ml-6 text-sm text-gray-500">
+                            No visible tabs
+                          </p>
+                        )}
+                      </div>
+                    );
+                  })
+                )}
               </div>
+
               {/* Report Permissions */}
               <div className="max-h-[300px] overflow-y-auto custom-scrollbar border dark:border-neutral-700 rounded-lg p-2 bg-neutral-100 dark:bg-neutral-900">
                 <h1 className="font-semibold">Report Permissions</h1>
-                {permissions.reportPermissions
-                  .filter((report) => report.included)
-                  .map((report, i) => (
-                    <ul key={i} className="text-sm">
-                      <li className="font-medium">{report.name}</li>
-                      <ul className="ml-6 list-disc">
-                        {report?.subReports
-                          ?.filter((subreport) => subreport.included)
-                          ?.map((subreport, j) => (
-                            <li key={j}>
-                              {subreport?.name}
-                              <div className="flex items-center gap-1 ml-5">
-                                {subreport.view && (
-                                  <span className="bg-blue-600 text-white px-1 text-xs rounded">
-                                    view
-                                  </span>
-                                )}
-                                {subreport.expport && (
-                                  <span className="bg-blue-600 text-white px-1 text-xs rounded">
-                                    export
-                                  </span>
-                                )}
-                                {subreport.generate && (
-                                  <span className="bg-blue-600 text-white px-1 text-xs rounded">
-                                    generate
-                                  </span>
-                                )}
-                              </div>{" "}
-                            </li>
-                          ))}
-                      </ul>
-                    </ul>
-                  ))}
+                {permissions.reportPermissions.length === 0 ? (
+                  <p className="text-sm">No report permissions selected</p>
+                ) : (
+                  permissions.reportPermissions
+                    .filter((report) => report.included)
+                    .map((report, i) => {
+                      const includedSubReports =
+                        report?.subReports?.filter(
+                          (subreport) => subreport.included
+                        ) || [];
+                      return (
+                        <div key={i} className="mb-4">
+                          {/* Report Name */}
+                          <p className="font-medium">{report.name}</p>
+
+                          {/* Sub-Reports */}
+                          {includedSubReports.length > 0 ? (
+                            <ul className="ml-6 list-disc">
+                              {includedSubReports.map((subreport, j) => (
+                                <li key={j} className="mb-2">
+                                  {/* Sub-Report Name */}
+                                  <p>{subreport?.name}</p>
+
+                                  {/* Sub-Report Permissions */}
+                                  <div className="flex items-center gap-2 ml-6">
+                                    {subreport.view && (
+                                      <span className="bg-blue-600 text-white px-2 py-1 text-xs rounded">
+                                        View
+                                      </span>
+                                    )}
+                                    {subreport.expport && (
+                                      <span className="bg-blue-600 text-white px-2 py-1 text-xs rounded">
+                                        Export
+                                      </span>
+                                    )}
+                                    {subreport.generate && (
+                                      <span className="bg-blue-600 text-white px-2 py-1 text-xs rounded">
+                                        Generate
+                                      </span>
+                                    )}
+                                  </div>
+                                </li>
+                              ))}
+                            </ul>
+                          ) : (
+                            <p className="ml-6 text-sm text-gray-500">
+                              No sub-reports included
+                            </p>
+                          )}
+                        </div>
+                      );
+                    })
+                )}
               </div>
 
               {/* Workflow Permissions */}
               <div className="max-h-[300px] overflow-y-auto custom-scrollbar border dark:border-neutral-700 rounded-lg p-2 bg-neutral-100 dark:bg-neutral-900">
                 <h1 className="font-semibold">Workflow Permissions</h1>
-                <div>
-                  {permissions.workflowPermissions.map((diagram, i) => (
-                    <li key={i} className="ml-6 list-disc text-sm">
-                      {diagram.name}
-                      <div className="flex items-center gap-1 ml-5">
-                        {diagram.view && (
-                          <span className="bg-blue-600 text-white px-1 text-xs rounded">
-                            view
-                          </span>
-                        )}
-                        {diagram.create && (
-                          <span className="bg-blue-600 text-white px-1 text-xs rounded">
-                            create
-                          </span>
-                        )}
-                        {diagram.edit && (
-                          <span className="bg-blue-600 text-white px-1 text-xs rounded">
-                            edit
-                          </span>
-                        )}
-                        {diagram.delete && (
-                          <span className="bg-blue-600 text-white px-1 text-xs rounded">
-                            delete
-                          </span>
-                        )}
-                      </div>{" "}
-                    </li>
-                  ))}
-                </div>
+                {permissions.workflowPermissions.length === 0 ? (
+                  <p className="text-sm">No workflow permissions available</p>
+                ) : (
+                  <ul className="list-disc ml-4">
+                    {permissions.workflowPermissions.map((diagram, i) => (
+                      <li key={i} className="text-sm mb-2">
+                        {/* Diagram Name */}
+                        <p className="font-medium">{diagram.name}</p>
+
+                        {/* Diagram Permissions */}
+                        <div className="flex items-center gap-2 ml-6">
+                          {diagram.view && (
+                            <span className="bg-blue-600 text-white px-2 py-1 text-xs rounded">
+                              View
+                            </span>
+                          )}
+                          {diagram.create && (
+                            <span className="bg-blue-600 text-white px-2 py-1 text-xs rounded">
+                              Create
+                            </span>
+                          )}
+                          {diagram.edit && (
+                            <span className="bg-blue-600 text-white px-2 py-1 text-xs rounded">
+                              Edit
+                            </span>
+                          )}
+                          {diagram.delete && (
+                            <span className="bg-blue-600 text-white px-2 py-1 text-xs rounded">
+                              Delete
+                            </span>
+                          )}
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
             </div>
           </div>
@@ -408,14 +463,14 @@ const CreateNewPermissionForExternalUserDialog = ({
                 <p className="text-sm">No group selected</p>
               )}
               <div>
-                  {groups
-                    .filter((item) => selectedGroupsForRole.includes(item._id))
-                    .map((group, i) => (
-                      <div key={i} className="flex items-center gap-1">
-                        <li className="list-disc ml-6">{group?.groupName}</li>
-                      </div>
-                    ))}
-                </div>
+                {groups
+                  .filter((item) => selectedGroupsForRole.includes(item._id))
+                  .map((group, i) => (
+                    <div key={i} className="flex items-center gap-1">
+                      <li className="list-disc ml-6">{group?.groupName}</li>
+                    </div>
+                  ))}
+              </div>
             </div>
           </div>
         </div>

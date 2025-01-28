@@ -119,6 +119,7 @@ const PermissionSettingsDialog = ({ onClose }) => {
   });
 
   const [initialPermissions, setInitialPermissions] = useState(null);
+  const [openIndex, setOpenIndex] = useState(0);
 
   // Store initial permissions when component mounts
   useEffect(() => {
@@ -162,8 +163,8 @@ const PermissionSettingsDialog = ({ onClose }) => {
 
   const role = useSelector((state) => state.role);
 
-  console.log("Permissions =>", permissions);
-  console.log("Role =>", role);
+  // console.log("Permissions =>", permissions);
+  // console.log("Role =>", role);
 
   // Handle checkbox change (View, etc.)
   const handleCheckboxChange = (path, checked) => {
@@ -260,7 +261,7 @@ const PermissionSettingsDialog = ({ onClose }) => {
         </p>
       </div>
 
-      <div
+      {/* <div
         className="flex items-center gap-2 w-fit my-1 text-blue-500 cursor-pointer"
         onClick={() => {
           setIsSidebarOpen(!isSidebarOpen);
@@ -269,11 +270,12 @@ const PermissionSettingsDialog = ({ onClose }) => {
         <span className="flex items-center justify-center bg-blue-100 dark:bg-neutral-800 w-8 h-8 rounded-lg hover:bg-blue-200 transition-all">
           <CiMenuFries />
         </span>
-      </div>
+      </div> */}
 
       <div className="flex gap-2">
         <div
-          className={`w-[350px] h-[350px] custom-scrollbar py-2 overflow-y-auto bg-neutral-100 dark:bg-neutral-800 dark:text-neutral-300 lg:static absolute z-50 ${
+          className={`w-[350px] h-[350px] custom-scrollbar py-2 overflow-y-auto bg-neutral-100 dark:bg-neutral-800 dark:text-neutral-300 z-50 ${
+            // lg:static absolute
             !isSidebarOpen && "hidden"
           }`}
         >
@@ -866,7 +868,12 @@ const PermissionSettingsDialog = ({ onClose }) => {
                         <div>
                           {selectedContent.tabs.map((tab, tabIndex) => (
                             <div key={tabIndex} className="px-2">
-                              <h1 className="flex item py-1 items-center justify-between gap-1 font-semibold cursor-pointer hover:bg-blue-50 dark:hover:bg-neutral-800">
+                              <h1
+                                className="flex item py-1 items-center justify-between gap-1 font-semibold cursor-pointer hover:bg-blue-50 dark:hover:bg-neutral-800"
+                                onClick={() => {
+                                  setOpenIndex(tabIndex);
+                                }}
+                              >
                                 <span className="flex items-center gap-3">
                                   <FaArrowRight />
                                   <span className="bg-blue-700 px-2 rounded-r-full text-xs font-normal text-white">
@@ -893,7 +900,11 @@ const PermissionSettingsDialog = ({ onClose }) => {
                                   </label>
                                 </span>
                               </h1>
-                              <div>
+                              <div
+                                className={
+                                  openIndex === tabIndex ? "" : "hidden"
+                                }
+                              >
                                 {tab.sections.map((section, sectionIndex) => (
                                   <div
                                     key={sectionIndex}

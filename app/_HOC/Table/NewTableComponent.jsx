@@ -1,10 +1,11 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { IoIosAddCircleOutline } from "react-icons/io";
 import { MdNavigateBefore, MdNavigateNext } from "react-icons/md";
 import { LuChevronFirst, LuChevronLast } from "react-icons/lu";
+import { useSelector } from "react-redux";
 
 const NewTableComponent = ({
   children,
@@ -31,8 +32,33 @@ const NewTableComponent = ({
     }
   };
 
+  function useScreenWidth() {
+    const [screenWidth, setScreenWidth] = useState(window.innerWidth);
+
+    useEffect(() => {
+      const handleResize = () => {
+        setScreenWidth(window.innerWidth);
+      };
+
+      window.addEventListener("resize", handleResize);
+
+      // Clean up the event listener on component unmount
+      return () => {
+        window.removeEventListener("resize", handleResize);
+      };
+    }, []);
+
+    return screenWidth;
+  }
+
+  const screenWidth = useScreenWidth();
+  const { locked } = useSelector((state) => state.lock);
+
   return (
-    <div className="bg-blue-100 dark:bg-neutral-700 mt-4 rounded p-2 my-2">
+    <div
+      className="bg-blue-100 dark:bg-neutral-700 mt-4 rounded p-2 my-2"
+      style={{ maxWidth: `${locked ? screenWidth - 330 : screenWidth - 75}px` }}
+    >
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-1">
         <div className="flex flex-col sm:flex-row md:items-center gap-4">
           {buttons}

@@ -129,24 +129,18 @@ const PermissionRolesComponent = () => {
             Admin Center
           </Link>
         </p>
-        <div className="flex items-center gap-4 flex-wrap">
+        <div className="flex items-center gap-4 flex-wrap mr-3">
           <Link
-            href="/"
+            href="/users/main"
             className="text-blue-500 font-semibold hover:underline transition-all text-sm sm:text-base"
           >
-            Customer Community
+            Manage Users
           </Link>
           <Link
-            href="/"
+            href="/group/main"
             className="text-blue-500 font-semibold hover:underline transition-all text-sm sm:text-base"
           >
-            Admin Resources
-          </Link>
-          <Link
-            href="/"
-            className="text-blue-500 font-semibold hover:underline transition-all text-sm sm:text-base"
-          >
-            Handout Builder
+            Manage Groups
           </Link>
         </div>
       </div>

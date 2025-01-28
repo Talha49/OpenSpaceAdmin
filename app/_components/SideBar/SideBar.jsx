@@ -16,6 +16,9 @@ import { Tooltip } from "react-tooltip";
 import Link from "next/link";
 import { IoMdMenu } from "react-icons/io";
 import { CiLock, CiUnlock } from "react-icons/ci";
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { toggleLockSidebar } from "@/lib/Feature/LockSidebarSlice";
 
 const Menus = [
   {
@@ -79,11 +82,15 @@ const Menus = [
   },
 ];
 
-const Sidebar = () => {
+const Sidebar = ({ className }) => {
   const [open, setOpen] = useState(false);
   const [subMenuOpen, setSubMenuOpen] = useState({});
   const [isSmallScreen, setIsSmallScreen] = useState(false);
-  const [locked, setLocked] = useState(false);
+  // const [locked, setLocked] = useState(true);
+
+  const dispatch = useDispatch();
+
+  const { locked } = useSelector((state) => state.lock);
 
   // Check screen size and update state
   useEffect(() => {
@@ -92,7 +99,8 @@ const Sidebar = () => {
     };
 
     if (isSmallScreen) {
-      setLocked(false);
+      // setLocked(false);
+      dispatch(toggleLockSidebar());
     }
 
     checkScreenSize();
@@ -121,7 +129,8 @@ const Sidebar = () => {
   };
 
   const toggleLock = () => {
-    setLocked(!locked);
+    // setLocked(!locked);
+    dispatch(toggleLockSidebar());
     if (!locked) {
       setOpen(true);
     }
@@ -129,9 +138,9 @@ const Sidebar = () => {
 
   return (
     <div
-      className={`h-full ${locked ? "relative h-screen" : "fixed top-[60px]"}  z-10`}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
+      className={`h-full fixed top-[60px] z-10`}
+      onMouseEnter={!locked && handleMouseEnter}
+      onMouseLeave={!locked && handleMouseLeave}
     >
       <button
         onClick={toggleLock}
