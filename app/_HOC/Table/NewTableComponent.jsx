@@ -57,7 +57,7 @@ const NewTableComponent = ({
   return (
     <div
       className="bg-blue-100 dark:bg-neutral-700 mt-4 rounded p-2 my-2"
-      style={{ maxWidth: `${locked ? screenWidth - 330 : screenWidth - 75}px` }}
+      style={{ maxWidth: `${locked ? screenWidth - 305 : screenWidth - 75}px` }}
     >
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-1">
         <div className="flex flex-col sm:flex-row md:items-center gap-4">

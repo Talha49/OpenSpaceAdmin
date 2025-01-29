@@ -9,15 +9,25 @@ const RoleDetailDialog = ({ isOpen, onClose, children, role }) => {
       <>
         <h1 className="text-center text-lg font-semibold">Basic Menu</h1>
         {role?.permissions?.menuPermissions?.basicMenu
-          ?.filter((menu) => menu.included === true)
+          // ?.filter((menu) => menu.included === true)
           .map((menu) => (
             <div
               key={menu.id}
-              className="bg-neutral-100 dark:bg-neutral-900 p-4 rounded-lg mb-4 text-neutral-950 dark:text-neutral-400 border dark:border-neutral-700 shadow-md"
+              className={`${
+                menu.permission.length === 0
+                  ? "bg-rose-50 dark:bg-rose-500 dark:bg-opacity-10 border-rose-600"
+                  : " bg-blue-50 dark:bg-blue-500 dark:bg-opacity-10 border-blue-600"
+              } p-4 rounded-lg mb-4 border shadow-md`}
             >
               <div className="flex items-center gap-2">
                 <h3 className="text-lg font-semibold flex items-center gap-1">
-                  <FaArrowRight className="text-sm text-blue-600" />
+                  <FaArrowRight
+                    className={`text-sm ${
+                      menu.permission.length === 0
+                        ? "text-rose-600"
+                        : "text-blue-600"
+                    } `}
+                  />
                   {menu?.name}
                 </h3>
                 <div className="flex items-center gap-1 flex-wrap">
@@ -27,8 +37,8 @@ const RoleDetailDialog = ({ isOpen, onClose, children, role }) => {
                     </p>
                   ))}
                   {menu.permission.length === 0 && (
-                    <p className="bg-blue-600 text-white rounded text-xs px-2">
-                      view
+                    <p className="bg-rose-600 text-white rounded text-xs px-2">
+                      No Permissions
                     </p>
                   )}
                 </div>
@@ -43,17 +53,27 @@ const RoleDetailDialog = ({ isOpen, onClose, children, role }) => {
                   ))}
               </ul>
               {menu.submenus?.length > 0 && (
-                <div className="mt-2">
+                <div className="mt-2 ml-4">
                   {menu.submenus
                     ?.filter((submenu) => submenu.included === true)
                     .map((submenu) => (
                       <div
                         key={submenu.id}
-                        className="bg-neutral-50 dark:bg-neutral-800 p-2 border dark:border-neutral-700 rounded-lg mt-2 ml-5 shadow-sm"
+                        className={`${
+                          submenu?.permission?.length === 0
+                            ? "bg-rose-50 dark:bg-rose-500 dark:bg-opacity-10 border-rose-600"
+                            : " bg-blue-50 dark:bg-blue-500 dark:bg-opacity-10 border-blue-600"
+                        } p-4 rounded-lg mb-4 border shadow-md`}
                       >
                         <div className="flex items-center gap-2">
                           <h4 className="text-md  flex items-center gap-1">
-                            <MdOutlineSubdirectoryArrowRight className="text-lg text-blue-600" />
+                            <MdOutlineSubdirectoryArrowRight
+                              className={`text-lg ${
+                                submenu?.permission?.length === 0
+                                  ? "text-rose-600"
+                                  : "text-blue-600"
+                              } `}
+                            />
                             {submenu?.name}
                           </h4>
                           <div className="flex items-center gap-1 flex-wrap">
@@ -78,15 +98,25 @@ const RoleDetailDialog = ({ isOpen, onClose, children, role }) => {
 
         <h1 className="text-center text-lg font-semibold">Admin Menu</h1>
         {role?.permissions?.menuPermissions?.adminMenu
-          ?.filter((menu) => menu.included === true)
+          // ?.filter((menu) => menu.included === true)
           .map((menu) => (
             <div
               key={menu.id}
-              className="bg-neutral-100 dark:bg-neutral-900 p-4 rounded-lg mb-4 text-neutral-950 dark:text-neutral-400 border dark:border-neutral-700 shadow-md"
+              className={`${
+                menu.permission.length === 0
+                  ? "bg-rose-50 dark:bg-rose-500 dark:bg-opacity-10 border-rose-600"
+                  : " bg-blue-50 dark:bg-blue-500 dark:bg-opacity-10 border-blue-600"
+              } p-4 rounded-lg mb-4 border shadow-md`}
             >
               <div className="flex items-center gap-2">
                 <h3 className="text-lg font-semibold flex items-center gap-1">
-                  <FaArrowRight className="text-sm text-blue-600" />
+                  <FaArrowRight
+                    className={`text-sm ${
+                      menu.permission.length === 0
+                        ? "text-rose-600"
+                        : "text-blue-600"
+                    } `}
+                  />
                   {menu?.name}
                 </h3>
                 <div className="flex items-center gap-1 flex-wrap">
@@ -96,8 +126,8 @@ const RoleDetailDialog = ({ isOpen, onClose, children, role }) => {
                     </p>
                   ))}
                   {menu.permission.length === 0 && (
-                    <p className="bg-blue-600 text-white rounded text-xs px-2">
-                      view
+                    <p className="bg-rose-600 text-white rounded text-xs px-2">
+                      No Permissions
                     </p>
                   )}
                 </div>
@@ -112,17 +142,27 @@ const RoleDetailDialog = ({ isOpen, onClose, children, role }) => {
                   ))}
               </ul>
               {menu.submenus?.length > 0 && (
-                <div className="mt-2">
+                <div className="mt-2 ml-4">
                   {menu.submenus
-                    ?.filter((submenu) => submenu.included === true)
+                    // ?.filter((submenu) => submenu.included === true)
                     .map((submenu) => (
                       <div
                         key={submenu.id}
-                        className="bg-neutral-50 dark:bg-neutral-800 p-2 border dark:border-neutral-700 rounded-lg mt-2 ml-5 shadow-sm"
+                        className={`${
+                          submenu?.permission?.length === 0
+                            ? "bg-rose-50 dark:bg-rose-500 dark:bg-opacity-10 border-rose-600"
+                            : " bg-blue-50 dark:bg-blue-500 dark:bg-opacity-10 border-blue-600"
+                        } p-4 rounded-lg mb-4 border shadow-md`}
                       >
                         <div className="flex items-center gap-2">
                           <h4 className="text-md  flex items-center gap-1">
-                            <MdOutlineSubdirectoryArrowRight className="text-lg text-blue-600" />
+                            <MdOutlineSubdirectoryArrowRight
+                              className={`text-lg ${
+                                submenu?.permission?.length === 0
+                                  ? "text-rose-600"
+                                  : "text-blue-600"
+                              } `}
+                            />
                             {submenu?.name}
                           </h4>
                           <div className="flex items-center gap-1 flex-wrap">
@@ -131,9 +171,9 @@ const RoleDetailDialog = ({ isOpen, onClose, children, role }) => {
                                 {perm}
                               </p>
                             ))}
-                            {submenu.permission.length === 0 && (
-                              <p className="bg-blue-600 text-white rounded text-xs px-2">
-                                view
+                            {submenu?.permission?.length === 0 && (
+                              <p className="bg-rose-600 text-white rounded text-xs px-2">
+                                No Permissions
                               </p>
                             )}
                           </div>
@@ -156,66 +196,115 @@ const RoleDetailDialog = ({ isOpen, onClose, children, role }) => {
         return (
           <div
             key={formKey}
-            className="bg-neutral-100 dark:bg-neutral-900 text-neutral-950 dark:text-neutral-400 p-4 rounded-lg border dark:border-neutral-700 shadow-md mb-6"
+            className="bg-neutral-100 dark:bg-neutral-900 text-neutral-950 dark:text-neutral-100 p-4 rounded-lg border dark:border-neutral-700 shadow-md mb-6"
           >
             <h3 className="text-xl font-semibold flex items-center gap-1">
-              <FaArrowRight className="text-blue-600 text-sm" />
+              <FaArrowRight className="text-sm" />
               {form?.name}
             </h3>
             {Object.keys(form.tabs || {}).map((tabKey) => {
               const tab = form.tabs[tabKey];
-              if (tab.view === true) {
-                return (
-                  <div
-                    key={tabKey}
-                    className="mt-4 bg-white dark:bg-neutral-950 border dark:border-neutral-700 p-2 ml-5 rounded-lg shadow-md"
-                  >
-                    <h4 className="text-lg font-medium flex items-center gap-1">
-                      <MdOutlineSubdirectoryArrowRight className="text-blue-600 text-lg" />
-                      {tab?.name}
-                    </h4>
-                    {Object.keys(tab.sections || {}).map((sectionKey) => {
-                      const section = tab.sections[sectionKey];
-                      if (section.view === true) {
-                        return (
-                          <div
-                            key={sectionKey}
-                            className="mt-2 ml-6 bg-neutral-100 dark:bg-neutral-900 border dark:border-neutral-700 p-2 rounded-lg"
-                          >
-                            <h5 className="font-semibold flex items-center gap-1">
-                              <MdOutlineSubdirectoryArrowRight className="text-blue-600 text-lg" />
-                              {section?.name}
-                            </h5>
-                            <div className="bg-white dark:bg-neutral-950 border dark:border-neutral-700 p-2 rounded-lg mt-2 ml-6">
-                              {Object.keys(section.fields || {}).map(
-                                (fieldKey) => {
-                                  const field = section.fields[fieldKey];
-                                  return (
+              return (
+                <div
+                  key={tabKey}
+                  className={`mt-4 ${
+                    tab.view
+                      ? "bg-blue-50 dark:bg-blue-500 dark:bg-opacity-10 border-blue-600"
+                      : "bg-rose-50 dark:bg-rose-500 dark:bg-opacity-10 border-rose-600"
+                  } border p-2 ml-5 rounded-lg shadow-md`}
+                >
+                  <h4 className="text-lg font-medium flex items-center gap-1">
+                    <MdOutlineSubdirectoryArrowRight
+                      className={`${
+                        tab.view ? "text-blue-600" : "text-rose-600"
+                      } text-lg`}
+                    />
+                    {tab?.name}
+                  </h4>
+                  {Object.keys(tab.sections || {}).map((sectionKey) => {
+                    const section = tab.sections[sectionKey];
+                    return (
+                      <div
+                        key={sectionKey}
+                        className={`mt-2 ml-6 ${
+                          section.view
+                            ? "bg-blue-50 dark:bg-blue-500 dark:bg-opacity-10 border-blue-600"
+                            : "bg-rose-50 dark:bg-rose-500 dark:bg-opacity-10 border-rose-600"
+                        } border p-2 rounded-lg`}
+                      >
+                        <h5 className="font-semibold flex items-center gap-1">
+                          <MdOutlineSubdirectoryArrowRight
+                            className={`${
+                              section.view ? "text-blue-600" : "text-rose-600"
+                            } text-lg`}
+                          />
+                          {section?.name}
+                        </h5>
+                        <div className="bg-white dark:bg-neutral-950 border dark:border-neutral-700 p-2 rounded-lg mt-2 ml-6">
+                          {Object.keys(section.fields || {}).length === 0 ? (
+                            <p className="text-neutral-500">No fields</p>
+                          ) : (
+                            Object.keys(section.fields || {}).map(
+                              (fieldKey) => {
+                                const field = section.fields[fieldKey];
+                                return (
+                                  <div
+                                    key={fieldKey}
+                                    className="text-neutral-500 mt-1"
+                                  >
                                     <div
-                                      key={fieldKey}
-                                      className="text-neutral-500 mt-1"
+                                      className={`flex items-center gap-2 ${
+                                        field.permission === "edit" &&
+                                        "text-blue-600"
+                                      } ${
+                                        field.permission === "readonly" &&
+                                        "text-yellow-600"
+                                      } ${
+                                        field.permission === "hidden" &&
+                                        "text-rose-600"
+                                      }`}
                                     >
-                                      <div className="flex items-center gap-2">
-                                        <p className="flex items-center gap-1">
-                                          <MdOutlineSubdirectoryArrowRight className="text-blue-600 text-lg" />
-                                          {field.name}
-                                        </p>
-                                        <span className="bg-blue-600 text-white rounded text-xs px-2">
-                                          {field?.permission}
-                                        </span>
-                                      </div>
+                                      <p className="flex items-center gap-1">
+                                        <MdOutlineSubdirectoryArrowRight
+                                          className={`${
+                                            field.permission === "edit" &&
+                                            "text-blue-600"
+                                          } ${
+                                            field.permission === "readonly" &&
+                                            "text-yellow-600"
+                                          } ${
+                                            field.permission === "hidden" &&
+                                            "text-rose-600"
+                                          } text-lg`}
+                                        />
+                                        {field.name}
+                                      </p>
+                                      <span
+                                        className={`${
+                                          field.permission === "edit" &&
+                                          "bg-blue-600"
+                                        } ${
+                                          field.permission === "readonly" &&
+                                          "bg-yellow-600"
+                                        } ${
+                                          field.permission === "hidden" &&
+                                          "bg-rose-600"
+                                        }  text-white rounded text-xs px-2`}
+                                      >
+                                        {field?.permission || "No Permission"}
+                                      </span>
                                     </div>
-                                  );
-                                }
-                              )}
-                            </div>
-                          </div>
-                        );
-                      }
-                    })}
-                  </div>
-                );
-              }
+                                  </div>
+                                );
+                              }
+                            )
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              );
             })}
           </div>
         );
@@ -228,19 +317,40 @@ const RoleDetailDialog = ({ isOpen, onClose, children, role }) => {
     return role?.permissions?.reportPermissions?.map((report) => (
       <div
         key={report.id}
-        className="bg-white dark:bg-neutral-900 border dark:border-neutral-700 text-neutral-950 dark:text-neutral-400 p-4 rounded-lg shadow-lg mb-4"
+        className={`${
+          report?.included
+            ? "bg-blue-50 dark:bg-blue-500 dark:bg-opacity-10 border-blue-600"
+            : "bg-rose-50 dark:bg-rose-500 dark:bg-opacity-10 border-rose-600"
+        } border p-4 rounded-lg shadow-lg mb-4`}
       >
         <div className="flex items-center gap-1">
-          <FaArrowRight className="text-sm text-blue-600" />
+          <FaArrowRight
+            className={`text-sm ${
+              report?.included ? "text-blue-600" : "text-rose-600"
+            }`}
+          />
           <h3 className="text-xl font-semibold ">{report?.name}</h3>
         </div>
         {report.subReports?.map((subReport) => (
           <div
             key={subReport.id}
-            className="flex items-center gap-2 mt-2 ml-5 bg-neutral-100 dark:bg-neutral-800 p-2 rounded-lg border dark:border-neutral-700"
+            className={`${
+              subReport?.included &&
+              (subReport?.view || subReport?.generate || subReport?.expport)
+                ? "bg-blue-50 dark:bg-blue-500 dark:bg-opacity-10 border-blue-600"
+                : "bg-rose-50 dark:bg-rose-500 dark:bg-opacity-10 border-rose-600"
+            } flex items-center gap-2 mt-2 ml-5 p-2 rounded-lg border`}
           >
             <h4 className="text-lg font-medium flex items-center gap-1">
-              <MdOutlineSubdirectoryArrowRight className="text-lg text-blue-600" />
+              <MdOutlineSubdirectoryArrowRight
+                className={`text-lg ${
+                  (subReport?.included && subReport.view) ||
+                  subReport.generate ||
+                  subReport.expport
+                    ? "text-blue-600"
+                    : "text-rose-600"
+                }`}
+              />
               {subReport?.name}
             </h4>
             <div className="flex items-center gap-1 flex-wrap text-xs">
@@ -249,7 +359,7 @@ const RoleDetailDialog = ({ isOpen, onClose, children, role }) => {
                   View
                 </span>
               )}
-              {subReport.export && (
+              {subReport.expport && (
                 <span className="text-white bg-blue-600 rounded px-2">
                   Export
                 </span>
@@ -257,6 +367,11 @@ const RoleDetailDialog = ({ isOpen, onClose, children, role }) => {
               {subReport.generate && (
                 <span className="text-white bg-blue-600 rounded px-2">
                   Generate
+                </span>
+              )}
+              {!subReport.view && !subReport.expport && !subReport.generate && (
+                <span className="text-white bg-rose-600 rounded px-2">
+                  No Permissions
                 </span>
               )}
             </div>
@@ -271,10 +386,23 @@ const RoleDetailDialog = ({ isOpen, onClose, children, role }) => {
     return role?.permissions?.workflowPermissions?.map((workflow, index) => (
       <div
         key={index}
-        className="flex items-center gap-2 bg-white dark:bg-neutral-900 border dark:border-neutral-700 text-neutral-950 dark:text-neutral-400 p-4 rounded-lg shadow-lg mb-4"
+        className={`flex items-center gap-2 ${
+          !workflow.view && !workflow.edit && !workflow.delete
+            ? "bg-rose-50 dark:bg-rose-500 dark:bg-opacity-10 border-rose-600"
+            : "bg-blue-50 dark:bg-blue-500 dark:bg-opacity-10 border-blue-600"
+        } border p-4 rounded-lg shadow-lg mb-4`}
       >
-        <h3 className="text-xl font-semibold flex items-center gap-1">
-          <FaArrowRight className="text-blue-600 text-sm" />
+        <h3 className={`text-xl font-semibold flex items-center gap-1`}>
+          <FaArrowRight
+            className={`${
+              !workflow.create &&
+              !workflow.view &&
+              !workflow.edit &&
+              !workflow.delete
+                ? "text-rose-600"
+                : "text-blue-600"
+            } text-sm`}
+          />
           {workflow?.name}
         </h3>
         <div className="flex items-center gap-1 flex-wrap text-xs">
@@ -290,6 +418,14 @@ const RoleDetailDialog = ({ isOpen, onClose, children, role }) => {
           {workflow.delete && (
             <span className="text-white bg-blue-600 rounded px-2">Delete</span>
           )}
+          {!workflow.create &&
+            !workflow.view &&
+            !workflow.edit &&
+            !workflow.delete && (
+              <span className="text-white bg-rose-600 rounded px-2">
+                No Permissions
+              </span>
+            )}
         </div>
       </div>
     ));

@@ -27,7 +27,7 @@ const Header = () => {
   };
 
   return (
-    <div className="flex w-full justify-between leading-[60px] border-b dark:border-neutral-800 px-8 bg-white dark:bg-neutral-950 text-black dark:text-white sticky top-0 z-50 cursor-pointer">
+    <div className="flex w-full justify-between leading-[60px] border-b dark:border-neutral-800 px-8 bg-white dark:bg-neutral-950 text-black dark:text-white sticky top-0 z-10 cursor-pointer">
       <Link href="/" className="flex gap-2 items-center">
         <div>
           {/* <GiSpaceShuttle className="md:text-[35px] sm:text-sm text-blue-400" /> */}
