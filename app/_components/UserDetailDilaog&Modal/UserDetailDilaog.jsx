@@ -199,7 +199,7 @@ const UserDetailDialog = ({ user: initialUser, onClose, onSave }) => {
               name="email"
               value={user.email}
               readOnly
-              className="mt-1 block w-full px-4 py-2 border bg-gray-100 dark:bg-neutral-800 border-neutral-300 dark:border-neutral-800 rounded-md text-neutral-700 dark:text-neutral-300 cursor-not-allowed"
+              className="mt-1 block w-full px-4 py-2 border bg-gray-100 dark:bg-neutral-800 border-neutral-300 dark:border-neutral-800 rounded-md focus:outline-none text-neutral-700 dark:text-neutral-300 cursor-not-allowed"
             />
           </div>
 

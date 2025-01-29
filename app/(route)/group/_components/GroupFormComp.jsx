@@ -18,9 +18,8 @@ const Dialog = ({ children, onClose }) => {
           onClick={onClose}
         >
           <IoMdClose />
-          
         </div>
-        
+
         {children}
       </div>
     </div>
@@ -83,13 +82,13 @@ const GroupFormComp = () => {
             alert("Please fill out the fields");
           }
           break;
-          case 2:
-            if (stepperFormData.owners.length > 0) {
-              setActiveStep((prevStep) => prevStep + 1);
-            } else {
-              alert("Please select at least 1 owner");
-            }
-            break;
+        case 2:
+          if (stepperFormData.owners.length > 0) {
+            setActiveStep((prevStep) => prevStep + 1);
+          } else {
+            alert("Please select at least 1 owner");
+          }
+          break;
         case 3:
           if (stepperFormData.members.length >= 2) {
             setActiveStep((prevStep) => prevStep + 1);
@@ -124,18 +123,17 @@ const GroupFormComp = () => {
       const updatedList = prevData[type].includes(user)
         ? prevData[type].filter((userObj) => userObj !== user)
         : [...prevData[type], user];
-  
+
       return {
         ...prevData,
         [type]: updatedList,
       };
     });
   };
-  
 
   const handleCreateGroup = async () => {
     console.log("Frontend: Preparing group data:", stepperFormData);
-  
+
     // Validate required fields
     if (stepperFormData.owners.length === 0) {
       alert("At least one owner must be selected.");
@@ -149,15 +147,15 @@ const GroupFormComp = () => {
       alert("Group name and description are required.");
       return;
     }
-  
+
     // Map data for the API
     const requestData = {
       basics: stepperFormData.basics,
       owners: stepperFormData.owners, // These objects include `_id`
       members: stepperFormData.members, // These objects include `_id`
-      groupType: stepperFormData.groupType // Include groupType here
+      groupType: stepperFormData.groupType, // Include groupType here
     };
-  
+
     try {
       const response = await fetch("/api/Groups/createGroup", {
         method: "POST",
@@ -166,16 +164,16 @@ const GroupFormComp = () => {
         },
         body: JSON.stringify(requestData),
       });
-  
+
       console.log("Frontend: API response received. Status:", response.status);
-  
+
       if (!response.ok) {
         throw new Error("Failed to create group");
       }
-  
+
       const data = await response.json();
       console.log("Frontend: Group successfully created. Data:", data);
-  
+
       alert("Group created successfully!");
       router.push("/group/ActiveGroups");
     } catch (error) {
@@ -183,8 +181,6 @@ const GroupFormComp = () => {
       alert("An error occurred while creating the group.");
     }
   };
-  
-  
 
   const renderContent = () => {
     switch (activeStep) {
@@ -195,7 +191,7 @@ const GroupFormComp = () => {
             <p className="my-7">
               Choose the group type that best meets your team's needs.
             </p>
-            <ul>
+            <ul className="h-60 overflow-y-auto custom-scrollbar">
               {groupTypes.map((type) => (
                 <li key={type.id} className="pb-5">
                   <div className="flex items-center gap-4">
@@ -205,7 +201,10 @@ const GroupFormComp = () => {
                       checked={groupType === type.name}
                       onChange={() => {
                         setGroupType(type.name);
-                        setStepperFormData({ ...stepperFormData, groupType: type.name });
+                        setStepperFormData({
+                          ...stepperFormData,
+                          groupType: type.name,
+                        });
                       }}
                     />
                     <h1 className="font-bold">{type.name}</h1>
@@ -215,12 +214,10 @@ const GroupFormComp = () => {
               ))}
             </ul>
           </div>
-       
         );
       case 1:
         return (
           <div>
-            
             <h1 className="text-2xl font-bold">Set up the basics</h1>
             <p className="my-7">
               To get started, fill out the basic info about the group you'd like
@@ -279,7 +276,7 @@ const GroupFormComp = () => {
             <ul className="mt-4">
               {stepperFormData.owners.length > 0 ? (
                 stepperFormData.owners.map((owner) => {
-                 // const myOwner = users.find((user) => user.id === owner.id);
+                  // const myOwner = users.find((user) => user.id === owner.id);
                   return (
                     <li
                       key={owner.id}
@@ -332,9 +329,9 @@ const GroupFormComp = () => {
               <ul>
                 {stepperFormData.members.length > 0 ? (
                   stepperFormData.members.map((member) => {
-                 //   const myMember = users.find(
-                 //     (user) => user.id === member.id
-                 //   );
+                    //   const myMember = users.find(
+                    //     (user) => user.id === member.id
+                    //   );
                     return (
                       <li
                         key={member.id}
@@ -354,62 +351,85 @@ const GroupFormComp = () => {
             </div>
           </div>
         );
-        case 4:
-          return (
-            <div className="flex flex-col items-center justify-center w-full p-10 bg-gray-50 dark:bg-neutral-800 rounded-lg shadow-lg">
-              <img
-                src="/images/Checklist.png"
-                width="40%"
-                height={300}
-                alt="Checklist"
-                className="mix-blend-multiply mb-8"
-              />
-              
-              <h1 className="text-2xl font-bold text-gray-800 dark:text-white mb-5">All Steps Completed</h1>
-        
-              <div className="w-full max-w-2xl bg-white dark:bg-neutral-900 p-6 rounded-lg shadow-md">
-                <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">Group Details</h2>
-        
-                <div className="space-y-3">
-                  <p className="text-gray-600 dark:text-gray-300"><strong>Group Type:</strong> {stepperFormData.groupType}</p>
-                  <p className="text-gray-600 dark:text-gray-300"><strong>Group Name:</strong> {stepperFormData.basics.name}</p>
-                  <p className="text-gray-600 dark:text-gray-300"><strong>Description:</strong> {stepperFormData.basics.description}</p>
-                  
-                  <div>
-                    <h3 className="font-semibold text-lg text-gray-800 dark:text-white mt-5">Owners:</h3>
-                    {stepperFormData.owners.length > 0 ? (
-                      <ul className="space-y-2">
-                        {stepperFormData.owners.map((owner, index) => (
-                          <li key={index} className="flex justify-between p-3 bg-gray-100 dark:bg-neutral-700 rounded-md">
-                            <span>{owner.fullName}</span>
-                            <span className="text-gray-500">{owner.email}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    ) : (
-                      <p className="text-gray-500 dark:text-gray-400">No owners selected</p>
-                    )}
-                  </div>
-        
-                  <div>
-                    <h3 className="font-semibold text-lg text-gray-800 dark:text-white mt-5">Members:</h3>
-                    {stepperFormData.members.length > 0 ? (
-                      <ul className="space-y-2">
-                        {stepperFormData.members.map((member, index) => (
-                          <li key={index} className="flex justify-between p-3 bg-gray-100 dark:bg-neutral-700 rounded-md">
-                            <span>{member.fullName}</span>
-                            <span className="text-gray-500">{member.email}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    ) : (
-                      <p className="text-gray-500 dark:text-gray-400">No members selected</p>
-                    )}
-                  </div>
-                </div>
+      case 4:
+        return (
+          <div className="flex flex-col items-center justify-center w-full p-4 bg-gray-50 dark:bg-neutral-800 rounded-lg shadow-lg">
+            {/* <img
+              src="/images/Checklist.png"
+              width="40%"
+              height={300}
+              alt="Checklist"
+              className="mix-blend-multiply mb-3"
+            />
+
+            <h1 className="text-2xl font-bold text-gray-800 dark:text-white mb-5">
+              All Steps Completed
+            </h1> */}
+
+            <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">
+              Group Details
+            </h2>
+
+            <div className="h-72 w-full overflow-y-auto custom-scrollbar">
+              <p className="text-gray-600 dark:text-gray-300">
+                <strong>Group Type:</strong> {stepperFormData.groupType}
+              </p>
+              <p className="text-gray-600 dark:text-gray-300">
+                <strong>Group Name:</strong> {stepperFormData.basics.name}
+              </p>
+              <p className="text-gray-600 dark:text-gray-300">
+                <strong>Description:</strong>{" "}
+                {stepperFormData.basics.description}
+              </p>
+
+              <div>
+                <h3 className="font-semibold text-lg text-gray-800 dark:text-white mt-5">
+                  Owners:
+                </h3>
+                {stepperFormData.owners.length > 0 ? (
+                  <ul className="space-y-2">
+                    {stepperFormData.owners.map((owner, index) => (
+                      <li
+                        key={index}
+                        className="flex justify-between p-3 bg-gray-100 dark:bg-neutral-700 rounded-md"
+                      >
+                        <span>{owner.fullName}</span>
+                        <span className="text-gray-500">{owner.email}</span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-gray-500 dark:text-gray-400">
+                    No owners selected
+                  </p>
+                )}
               </div>
-        
-             {/* <div className="flex justify-center gap-5 mt-8">
+
+              <div>
+                <h3 className="font-semibold text-lg text-gray-800 dark:text-white mt-5">
+                  Members:
+                </h3>
+                {stepperFormData.members.length > 0 ? (
+                  <ul className="space-y-2">
+                    {stepperFormData.members.map((member, index) => (
+                      <li
+                        key={index}
+                        className="flex justify-between p-3 bg-gray-100 dark:bg-neutral-700 rounded-md"
+                      >
+                        <span>{member.fullName}</span>
+                        <span className="text-gray-500">{member.email}</span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-gray-500 dark:text-gray-400">
+                    No members selected
+                  </p>
+                )}
+              </div>
+            </div>
+
+            {/* <div className="flex justify-center gap-5 mt-8">
                 <button
                   className="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition duration-300"
                   onClick={handleCreateGroup}
@@ -417,13 +437,14 @@ const GroupFormComp = () => {
                   Finish
                 </button>
               </div> */}
-            </div>
-         
+          </div>
         );
       default:
         return <div>Unknown Step</div>;
     }
   };
+
+  console.log(activeStep)
 
   return (
     <div className="pl-4">
@@ -441,12 +462,12 @@ const GroupFormComp = () => {
       </div>
       <div className="flex justify-between items-center py-4 w-full border-t border-gray-300 dark:border-neutral-800">
         <div className="flex gap-4">
-        <button
-          onClick={handleClose}
-          className="border bg-gray-300 text-white h-fit  px-3 py-2 rounded-lg"
-        >
-         Cancel
-        </button>
+          <button
+            onClick={handleClose}
+            className="border bg-gray-300 text-white h-fit  px-3 py-2 rounded-lg"
+          >
+            Cancel
+          </button>
           <button
             onClick={handleBack}
             disabled={activeStep === 0}
@@ -466,29 +487,27 @@ const GroupFormComp = () => {
             Next
           </button>
         </div>
-        {activeStep === 4 && (
-    <button
-      onClick={() => {
-        if (
-          stepperFormData.basics.name !== "" &&
-          stepperFormData.basics.description !== "" &&
-          stepperFormData.owners.length >= 1 &&
-          stepperFormData.members.length >= 2
-        ) {
-          handleCreateGroup();
-        } else {
-          alert("Please complete the process");
-        }
-      }}
-      className="blue-button px-3 py-2 mr-4 rounded-lg h-fit"
-    >
-      Finish
-    </button>
-  )}
+        <button
+          onClick={() => {
+            if (
+              stepperFormData.basics.name !== "" &&
+              stepperFormData.basics.description !== "" &&
+              stepperFormData.owners.length >= 1 &&
+              stepperFormData.members.length >= 2
+            ) {
+              handleCreateGroup();
+            } else {
+              alert("Please complete the process");
+            }
+          }}
+          className="blue-button px-3 py-2 mr-4 rounded-lg h-fit disabled:bg-gray-500 disabled:cursor-not-allowed"
+          disabled={activeStep !== 4}
+        >
+          Finish
+        </button>
       </div>
       {isDialogOpen && (
         <Dialog onClose={() => setIsDialogOpen(false)}>
-          
           <ul className="w-fit h-[400px] overflow-y-auto relative">
             <div className="w-full flex items-center justify-between sticky top-0 bg-white dark:bg-neutral-800">
               <h1 className="text-2xl font-bold">
@@ -513,27 +532,25 @@ const GroupFormComp = () => {
                   <span className="text-center">{user.contact}</span>
                 </div>
               </li>
-              
             ))}
-             {/* Save Button */}
-      <div className="mt-4 flex justify-end">
-        <button
-          className="blue-button px-4 py-2 rounded-lg"
-          onClick={() => {
-            // Logic to save selected owners or members
-            if (dialogType === "owners") {
-              console.log("Owners selected:", stepperFormData.owners);
-            } else if (dialogType === "members") {
-              console.log("Members selected:", stepperFormData.members);
-            }
-            setIsDialogOpen(false); // Close the dialog after saving
-          }}
-        >
-          Save
-        </button>
-      </div>
+            {/* Save Button */}
+            <div className="mt-4 flex justify-end">
+              <button
+                className="blue-button px-4 py-2 rounded-lg"
+                onClick={() => {
+                  // Logic to save selected owners or members
+                  if (dialogType === "owners") {
+                    console.log("Owners selected:", stepperFormData.owners);
+                  } else if (dialogType === "members") {
+                    console.log("Members selected:", stepperFormData.members);
+                  }
+                  setIsDialogOpen(false); // Close the dialog after saving
+                }}
+              >
+                Save
+              </button>
+            </div>
           </ul>
-          
         </Dialog>
       )}
     </div>

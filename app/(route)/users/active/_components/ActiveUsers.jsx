@@ -1,4 +1,3 @@
-
 "use client";
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import UserUpdateDialog from "@/app/_components/UserDetailDilaog&Modal/UserUpdateDialog"; // Import the new component
@@ -99,7 +98,6 @@ const TableRoute = () => {
     { label: "Contact", key: "contact", width: "150px" },
   ];
 
-
   const [isModalOpen, setIsModalOpen] = useState(null);
   console.log("isModalOpen:", isModalOpen);
 
@@ -126,22 +124,22 @@ const TableRoute = () => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false); // Declare state for the modal
   const [selectedUser, setSelectedUser] = useState(null); // State for the selected user
-  const [isLoading, setIsLoading] = useState(true);  // Loading state
+  const [isLoading, setIsLoading] = useState(true); // Loading state
   const [isUpdatingPassword, setIsUpdatingPassword] = useState(false); // Loading state while updating
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const [activeUsers, setActiveUsers] = useState([]);
-  const [isUpdatePasswordDialogOpen, setIsUpdatePasswordDialogOpen] = useState(false);
-  const [newPassword, setNewPassword] = useState('');
+  const [isUpdatePasswordDialogOpen, setIsUpdatePasswordDialogOpen] =
+    useState(false);
+  const [newPassword, setNewPassword] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [userDetails, setUserDetails] = useState(null);
+  const [deleting, setDeleting] = useState(false);
 
   const handleRowClick = (user) => {
-    setClickedUser(user);  // Set the clicked user for the modal
-    setShowInfoModal(false)
+    setClickedUser(user); // Set the clicked user for the modal
+    setShowInfoModal(false);
     setIsUpdateModalOpen(true); // Open the modal
-
-
   };
 
   // Handle icon click to open/close the 3-dot menu
@@ -156,7 +154,7 @@ const TableRoute = () => {
     }
   };
   const handlePasswordUpdateModalOpen = (user) => {
-    setNewPassword(''); // Clear previous password when opening the modal
+    setNewPassword(""); // Clear previous password when opening the modal
     setSelectedUser(user);
     setIsUpdatePasswordDialogOpen(true);
   };
@@ -176,7 +174,7 @@ const TableRoute = () => {
 
   // Open the modal to update passwords for active users
   const handlePasswordModalOpen = () => {
-    const activeUsersList = users.filter(user => user.status === 'active');
+    const activeUsersList = users.filter((user) => user.status === "active");
     setActiveUsers(activeUsersList);
     setIsPasswordModalOpen(true);
   };
@@ -187,14 +185,14 @@ const TableRoute = () => {
       setIsUpdatingPassword(true); // Set loading state to true
       const encryptedPassword = await encryptPassword(newPassword); // Encrypt the password (if required)
 
-      const response = await fetch('/api/Users/updatePassword', {
-        method: 'POST',
+      const response = await fetch("/api/Users/updatePassword", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          userId,  // The user's ID
-          newPassword: encryptedPassword,  // The encrypted new password
+          userId, // The user's ID
+          newPassword: encryptedPassword, // The encrypted new password
         }),
       });
 
@@ -212,20 +210,16 @@ const TableRoute = () => {
       console.error("Error updating password:", error);
       setIsUpdatingPassword(false); // Set loading state to false on error
       alert("Error updating password!");
-    }
-    finally {
+    } finally {
       setIsUpdatingPassword(false); // End loading state
     }
   };
-
 
   const handleOpenUpdateModal = (user) => {
     setSelectedUser(user); // Set the selected user
     setShowInfoModal(false);
     setIsUpdateModalOpen(true); // Open the update modal
   };
-
-
 
   //save user details update user all details functionalities
   const handleSaveUserDetails = (updatedUser) => {
@@ -239,12 +233,10 @@ const TableRoute = () => {
 
   useEffect(() => {
     setIsLoading(true); // Set loading to true when fetching starts
-    dispatch(fetchUsers())
-      .finally(() => {
-        setIsLoading(false); // Set loading to false after fetch is complete
-      });
+    dispatch(fetchUsers()).finally(() => {
+      setIsLoading(false); // Set loading to false after fetch is complete
+    });
   }, [dispatch]);
-
 
   const handleSort = (key) => {
     let direction = "ascending";
@@ -305,10 +297,7 @@ const TableRoute = () => {
         return [...prevSelected, user];
       }
     });
-
-
   };
-
 
   const handleSelectAll = () => {
     const allSelected = paginatedUsers.every((user) =>
@@ -333,10 +322,7 @@ const TableRoute = () => {
         ),
       ]);
     }
-
-
   };
-
 
   const handleRowsPerPageChange = (e) => {
     setRowsPerPage(Number(e.target.value));
@@ -352,14 +338,16 @@ const TableRoute = () => {
     {
       icon: <FaUserFriends />,
       label: "Group",
-
     },
-    { icon: <FaShieldAlt />, label: "Multifactor authentication", onClick: () => setIsMFAModalOpen(true) },
+    {
+      icon: <FaShieldAlt />,
+      label: "Multifactor authentication",
+      onClick: () => setIsMFAModalOpen(true),
+    },
     // Add other header items here
     {
       icon: <MdDelete />,
       label: "Delete User",
-
     },
     {
       icon: <IoMdRefresh />,
@@ -371,19 +359,21 @@ const TableRoute = () => {
     {
       icon: <FaKey />,
       label: "Password",
-      onClick: () => handlePasswordModalOpen(true)
+      onClick: () => handlePasswordModalOpen(true),
     },
     {
       icon: <FaFileExport />,
       label: "Export Users",
       onClick: () => {
-        exportToExcel(users.map((user) => ({
-          "Display Name": user.fullName,
-          Email: user.email,
-          Address: user.address,
-          City: user.city,
-          Contact: user.contact,
-        })));
+        exportToExcel(
+          users.map((user) => ({
+            "Display Name": user.fullName,
+            Email: user.email,
+            Address: user.address,
+            City: user.city,
+            Contact: user.contact,
+          }))
+        );
       },
     },
   ];
@@ -405,7 +395,11 @@ const TableRoute = () => {
     XLSX.utils.book_append_sheet(workbook, worksheet, "Users");
 
     // Add a header row for clarity
-    XLSX.utils.sheet_add_aoa(worksheet, [["Display Name", "Email", "Address", "City", "Contact"]], { origin: "A1" });
+    XLSX.utils.sheet_add_aoa(
+      worksheet,
+      [["Display Name", "Email", "Address", "City", "Contact"]],
+      { origin: "A1" }
+    );
 
     XLSX.writeFile(workbook, filename);
   };
@@ -433,17 +427,16 @@ const TableRoute = () => {
     setIsGroupSelection(false); // Assuming you're using local state for isSelectable
 
     // Redirect the user
-
   };
 
   // Inside your TableRoute component
 
   const handleManageGroupsClick = (user) => {
     if (!user || !user._id) {
-      console.error('Invalid user or user ID');
+      console.error("Invalid user or user ID");
       return;
     }
-    console.log('User ID passed to dialog:', user._Id); // Check userId here
+    console.log("User ID passed to dialog:", user._Id); // Check userId here
     setSelectedUserId(user._id); // Set the userId for the dialog
     setIsDialogOpen(true); // Open the dialog
   };
@@ -453,13 +446,14 @@ const TableRoute = () => {
     setSelectedUserId(null); // Reset the user ID when dialog is closed
   };
 
-
   return (
     <div className="overflow-hidden">
       <NewHeader>
         <div className="flex flex-col ">
           <div className="mb-4 flex flex-col gap-4">
-            <h1 className="text-xl font-semibold tracking-wider text-neutral-500">Talha.ae</h1>
+            <h1 className="text-xl font-semibold tracking-wider text-neutral-500">
+              Talha.ae
+            </h1>
             <h2 className="text-lg font-semibold tracking-wider text-neutral-500">
               Active Users
             </h2>
@@ -545,7 +539,6 @@ const TableRoute = () => {
               } else {
                 // Set loading state before deletion (optional)
                 setIsLoading(true); // Optionally show a loading state during the deletion process
-
                 // Loop through selected users and delete them
                 for (const user of selectedUsers) {
                   await dispatch(deleteUserAsync(user.id)); // Await deletion of user
@@ -567,9 +560,9 @@ const TableRoute = () => {
               }
             }}
           >
-            Delete
+            {isLoading ? "Deleting..." : "Delete"}
+            
           </button>
-
         </div>
       )}
 
@@ -588,18 +581,17 @@ const TableRoute = () => {
           >
             Group
           </button>
-          <button type="button" // Prevent the form from submitting
+          <button
+            type="button" // Prevent the form from submitting
             className="px-3 rounded-lg ml-1 py-2 bg-gray-400 text-white  hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             onClick={handleCancel} // Use onClick instead of onSubmit
           >
-
             Cancel
           </button>
         </div>
       )}
 
-      <div className="pl-4 pr-2 relative shadow-md rounded-lg ">
-
+      <div className="relative shadow-md rounded-lg ">
         <NewTableComponent
           tableColumns={[
             isSelectable || isGroupSelection ? (
@@ -607,7 +599,10 @@ const TableRoute = () => {
                 <input
                   type="checkbox"
                   className="custom-circle-checkbox"
-                  checked={paginatedUsers.length > 0 && selectedUsers.length === paginatedUsers.length}
+                  checked={
+                    paginatedUsers.length > 0 &&
+                    selectedUsers.length === paginatedUsers.length
+                  }
                   onChange={handleSelectAll}
                 />
               </th>
@@ -636,7 +631,10 @@ const TableRoute = () => {
                 <span className="text-sm">Add User</span>
                 {isLoading && (
                   <div className="flex justify-center items-center ">
-                    <FaSpinner className="animate-spin text-blue-500" size={20} />
+                    <FaSpinner
+                      className="animate-spin text-blue-500"
+                      size={20}
+                    />
                   </div>
                 )}
               </button>
@@ -660,7 +658,9 @@ const TableRoute = () => {
                   <input
                     type="checkbox"
                     className="mx-2 custom-circle-checkbox"
-                    checked={selectedUsers.some((selectedUser) => selectedUser._id === user._id)}
+                    checked={selectedUsers.some(
+                      (selectedUser) => selectedUser._id === user._id
+                    )}
                     onChange={(e) => {
                       e.stopPropagation(); // Prevent triggering row click
                       handleCheckboxChange(user);
@@ -715,7 +715,7 @@ const TableRoute = () => {
                             onClick={(e) => {
                               e.stopPropagation();
                               setShowInfoModal(false); // Close the User Info Modal
-                              handleManageGroupsClick(user);  // Navigate to Manage Groups
+                              handleManageGroupsClick(user); // Navigate to Manage Groups
                             }}
                             className="cursor-pointer flex items-center gap-2 text-gray-700 dark:text-neutral-300 hover:bg-gray-100 dark:hover:bg-neutral-700 p-2 rounded-md"
                           >
@@ -744,7 +744,10 @@ const TableRoute = () => {
               <td className="p-3 text-gray-700 dark:text-neutral-400 w-[250px]">
                 {user.email}
               </td>
-              <td className="p-3 text-gray-700 dark:text-neutral-400 max-w-[300px] truncate" title={user.address}>
+              <td
+                className="p-3 text-gray-700 dark:text-neutral-400 max-w-[300px] truncate"
+                title={user.address}
+              >
                 {user.address}
               </td>
               <td className="p-3 text-gray-700 dark:text-neutral-400 w-[200px]">
@@ -754,7 +757,6 @@ const TableRoute = () => {
                 {user.contact}
               </td>
             </tr>
-
           ))}
           <MFAModal
             isOpen={isMFAModalOpen}
@@ -772,16 +774,28 @@ const TableRoute = () => {
           {isPasswordModalOpen && (
             <div className="fixed inset-0 bg-gray-900 bg-opacity-50 backdrop-blur-sm flex justify-center items-center z-50 overflow-auto scrollbar-hidden">
               <div className="bg-white dark:bg-neutral-900 rounded-lg w-full md:w-[80%] lg:w-[70%] xl:w-[60%] 2xl:w-[50%] h-[80vh] p-6 overflow-y-auto relative scrollbar-hidden">
-
                 {/* Modal Header */}
                 <div className="flex justify-between items-center mb-4 border-b border-gray-200 dark:border-neutral-800 pb-4">
-                  <h2 className="text-2xl font-semibold text-gray-800 dark:text-white">Manage User Passwords</h2>
+                  <h2 className="text-2xl font-semibold text-gray-800 dark:text-white">
+                    Manage User Passwords
+                  </h2>
                   <button
                     onClick={() => setIsPasswordModalOpen(false)}
                     className="text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-white focus:outline-none"
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-6 w-6"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M6 18L18 6M6 6l12 12"
+                      />
                     </svg>
                   </button>
                 </div>
@@ -801,11 +815,20 @@ const TableRoute = () => {
                 <div className="max-h-[60vh] overflow-y-auto scrollbar-hidden">
                   {activeUsers.length > 0 ? (
                     activeUsers
-                      .filter(user => user.fullName.toLowerCase().includes(searchTerm.toLowerCase())) // Filter users by search term
+                      .filter((user) =>
+                        user.fullName
+                          .toLowerCase()
+                          .includes(searchTerm.toLowerCase())
+                      ) // Filter users by search term
                       .map((user) => (
-                        <div key={user._id} className="flex justify-between items-center p-4 mb-2 bg-gray-50 dark:bg-neutral-800 rounded-lg shadow-md hover:bg-gray-100 dark:hover:bg-neutral-700 transition-all duration-200">
+                        <div
+                          key={user._id}
+                          className="flex justify-between items-center p-4 mb-2 bg-gray-50 dark:bg-neutral-800 rounded-lg shadow-md hover:bg-gray-100 dark:hover:bg-neutral-700 transition-all duration-200"
+                        >
                           <div className="flex items-center space-x-4">
-                            <span className="text-lg font-semibold text-gray-700 dark:text-white">{user.fullName}</span>
+                            <span className="text-lg font-semibold text-gray-700 dark:text-white">
+                              {user.fullName}
+                            </span>
                           </div>
                           <button
                             onClick={() => handlePasswordUpdateModalOpen(user)}
@@ -816,11 +839,11 @@ const TableRoute = () => {
                         </div>
                       ))
                   ) : (
-                    <p className="text-center text-gray-500 dark:text-neutral-400">No active users found</p>
+                    <p className="text-center text-gray-500 dark:text-neutral-400">
+                      No active users found
+                    </p>
                   )}
                 </div>
-
-
               </div>
             </div>
           )}
@@ -851,14 +874,17 @@ const TableRoute = () => {
 
                 {/* Update password button */}
                 <button
-                  onClick={() => handlePasswordUpdate(selectedUser._id, newPassword)}
-                  className={`mt-2 w-full py-2 text-white rounded-lg hover:bg-green-600 dark:hover:bg-green-600 ${newPassword
-                    ? 'bg-green-500 dark:bg-green-700'
-                    : 'bg-gray-400 cursor-not-allowed'
-                    }`}
+                  onClick={() =>
+                    handlePasswordUpdate(selectedUser._id, newPassword)
+                  }
+                  className={`mt-2 w-full py-2 text-white rounded-lg hover:bg-green-600 dark:hover:bg-green-600 ${
+                    newPassword
+                      ? "bg-green-500 dark:bg-green-700"
+                      : "bg-gray-400 cursor-not-allowed"
+                  }`}
                   disabled={!newPassword || isUpdatingPassword} // Disable button if newPassword is empty or updating
                 >
-                  {isUpdatingPassword ? 'Updating...' : 'Update Password'}
+                  {isUpdatingPassword ? "Updating..." : "Update Password"}
                 </button>
 
                 {/* Cancel button */}
@@ -872,11 +898,9 @@ const TableRoute = () => {
             </div>
           )}
 
-
           {/* Update User Modal */}
           {isUpdateModalOpen && (
             <UserUpdateDialog
-            
               user={selectedUser}
               onClose={() => setIsUpdateModalOpen(false)}
               onSave={handleSaveUserDetails}
@@ -884,12 +908,10 @@ const TableRoute = () => {
           )}
         </NewTableComponent>
 
-        
         <Dialog
           isOpen={isDialogOpen}
           onClose={closeDialog}
           userId={selectedUserId}
-
         />
         <UserDetailDialog
           onClose={() => setShowInfoModal(false)}
@@ -903,7 +925,6 @@ const TableRoute = () => {
         )}
       </div>
     </div>
-
   );
 };
 

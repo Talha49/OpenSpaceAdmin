@@ -310,7 +310,7 @@ const Dialog = ({ isOpen, onClose, userId }) => {
                   <div className="fixed bottom-8 right-56">
                     <button
                       onClick={handleSaveChanges}
-                      className="px-1 py-0 h-6  bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition-colors"
+                      className="py-2 px-3 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition-colors"
                     >
                       Save Changes
                     </button>
