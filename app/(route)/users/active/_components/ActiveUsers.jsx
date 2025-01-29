@@ -136,9 +136,25 @@ const TableRoute = () => {
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [userDetails, setUserDetails] = useState(null);
 
+  const handleRowClick = (user) => {
+    setClickedUser(user);  // Set the clicked user for the modal
+    setShowInfoModal(false)
+    setIsUpdateModalOpen(true); // Open the modal
 
 
+  };
 
+  // Handle icon click to open/close the 3-dot menu
+  const handleIconClick = (rowIndex) => {
+    if (isModalOpen === rowIndex) {
+      // If the same row's menu is open, close it
+      setIsModalOpen(null);
+      setShowInfoModal(false);
+    } else {
+      // If the different row is clicked, open its menu
+      setIsModalOpen(rowIndex);
+    }
+  };
   const handlePasswordUpdateModalOpen = (user) => {
     setNewPassword(''); // Clear previous password when opening the modal
     setSelectedUser(user);
@@ -197,11 +213,15 @@ const TableRoute = () => {
       setIsUpdatingPassword(false); // Set loading state to false on error
       alert("Error updating password!");
     }
+    finally {
+      setIsUpdatingPassword(false); // End loading state
+    }
   };
 
 
   const handleOpenUpdateModal = (user) => {
     setSelectedUser(user); // Set the selected user
+    setShowInfoModal(false);
     setIsUpdateModalOpen(true); // Open the update modal
   };
 
@@ -225,9 +245,6 @@ const TableRoute = () => {
       });
   }, [dispatch]);
 
-  const handleIconClick = (rowIndex) => {
-    setIsModalOpen(isModalOpen === rowIndex ? null : rowIndex);
-  };
 
   const handleSort = (key) => {
     let direction = "ascending";
@@ -540,11 +557,11 @@ const TableRoute = () => {
                 setIsSelectable(false); // Exit selection mode
 
                 // After all deletions are done, refresh the users list
-                await dispatch(fetchUsers());
+                dispatch(fetchUsers());
 
                 // Navigate to the active users page
                 router.push("/users/active");
-
+                dispatch(fetchUsers());
                 // Set loading state to false after deletion and fetch are done
                 setIsLoading(false);
               }
@@ -581,23 +598,19 @@ const TableRoute = () => {
         </div>
       )}
 
-      <div className=" relative rounded-lg ">
+      <div className="pl-4 pr-2 relative shadow-md rounded-lg ">
+
         <NewTableComponent
           tableColumns={[
             isSelectable || isGroupSelection ? (
-
               <th className="flex items-center justify-between w-[50px]">
                 <input
                   type="checkbox"
                   className="custom-circle-checkbox"
-                  checked={
-                    paginatedUsers.length > 0 &&
-                    selectedUsers.length === paginatedUsers.length
-                  }
+                  checked={paginatedUsers.length > 0 && selectedUsers.length === paginatedUsers.length}
                   onChange={handleSelectAll}
                 />
               </th>
-
             ) : null,
             ...tableColumns.map((col) => (
               <div
@@ -621,7 +634,6 @@ const TableRoute = () => {
               >
                 <IoMdPersonAdd className="text-blue-500" />
                 <span className="text-sm">Add User</span>
-                {/* Loader above the table */}
                 {isLoading && (
                   <div className="flex justify-center items-center ">
                     <FaSpinner className="animate-spin text-blue-500" size={20} />
@@ -635,9 +647,10 @@ const TableRoute = () => {
           currentPage={currentPage}
           onPageChange={(page) => setCurrentPage(page)}
           handleRowsPerPageChange={handleRowsPerPageChange}
-
         >
           {paginatedUsers.map((user, rowIndex) => (
+            // Assume we already have state variables like `showInfoModal`, `clickedUser`, `isUpdateModalOpen`, etc.
+
             <tr
               key={user.id}
               className="odd:bg-gray-100 even:bg-white dark:odd:bg-neutral-800 dark:even:bg-neutral-900 cursor-pointer hover:bg-gray-300 dark:hover:bg-neutral-600 hover:text-blue-700 transition-all duration-200 h-[50px]"
@@ -646,11 +659,8 @@ const TableRoute = () => {
                 <td>
                   <input
                     type="checkbox"
-
                     className="mx-2 custom-circle-checkbox"
-                    checked={selectedUsers.some(
-                      (selectedUser) => selectedUser._id === user._id
-                    )}
+                    checked={selectedUsers.some((selectedUser) => selectedUser._id === user._id)}
                     onChange={(e) => {
                       e.stopPropagation(); // Prevent triggering row click
                       handleCheckboxChange(user);
@@ -660,11 +670,24 @@ const TableRoute = () => {
               ) : null}
               <td className="p-3 text-gray-700 dark:text-neutral-400 w-[200px]">
                 <div className="flex items-center justify-between relative">
-                  <span className="hover:text-blue-600">{user.fullName}</span>
+                  <span
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevent triggering row click
+                      // If the User Info Modal is not already open for this user, open it
+                      if (clickedUser?._id !== user._id || !showInfoModal) {
+                        setShowInfoModal(true); // Open the User Info Modal
+                        setClickedUser(user); // Set the clicked user as the one whose details we want to show
+                      }
+                    }}
+                    className="hover:text-blue-600 cursor-pointer"
+                  >
+                    {user.fullName}
+                  </span>
                   <span
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleIconClick(rowIndex, user);
+                      setShowInfoModal(false); // Close the User Info Modal when interacting with the 3-dot menu
+                      handleIconClick(rowIndex); // Toggle the 3-dot menu
                     }}
                     className="cursor-pointer relative"
                   >
@@ -673,16 +696,17 @@ const TableRoute = () => {
                       <div
                         ref={(ref) => (modalRef.current = ref)} // For detecting clicks outside
                         className="absolute top-full left-0 mt-2 w-64 bg-white dark:bg-neutral-950 border border-gray-300 dark:border-neutral-800 rounded-lg shadow-lg z-50"
-
                       >
                         <ul className="flex flex-col gap-2 p-2">
                           <li
                             onClick={(e) => {
                               e.stopPropagation();
-                              handleOpenUpdateModal(user);
-                              setIsModalOpen(null); // Close the modal after selection
+                              setShowInfoModal(false); // Ensure Info Modal is closed before opening the Update Modal
+                              handleOpenUpdateModal(user); // Open the User Update Modal
+                              setIsModalOpen(null); // Close the 3-dot menu
+                              setShowInfoModal(false); // Close the User Info Modal before opening another modal
                             }}
-                            className="cursor-pointer flex items-center gap-2 text-gray-700  dark:text-neutral-300 hover:bg-gray-100 dark:hover:bg-neutral-700 p-2 rounded-md"
+                            className="cursor-pointer flex items-center gap-2 text-gray-700 dark:text-neutral-300 hover:bg-gray-100 dark:hover:bg-neutral-700 p-2 rounded-md"
                           >
                             <MdEventNote className="text-lg text-gray-500 dark:text-blue-500" />
                             <span>Manage username & password</span>
@@ -690,7 +714,7 @@ const TableRoute = () => {
                           <li
                             onClick={(e) => {
                               e.stopPropagation();
-                              console.log("Manage Groups clicked"); // Placeholder for your action
+                              setShowInfoModal(false); // Close the User Info Modal
                               handleManageGroupsClick(user);  // Navigate to Manage Groups
                             }}
                             className="cursor-pointer flex items-center gap-2 text-gray-700 dark:text-neutral-300 hover:bg-gray-100 dark:hover:bg-neutral-700 p-2 rounded-md"
@@ -701,16 +725,14 @@ const TableRoute = () => {
                           <li
                             onClick={(e) => {
                               e.stopPropagation();
-                              setShowInfoModal(false);
-                              setTimeout(() => {
-                                setClickedUser(user);
-                                setShowInfoModal(true);
-                              }, 0);
-                              setIsModalOpen(null);
+                              setIsUpdateModalOpen(false); // Ensure Update Modal is closed
+                              setClickedUser(user);
+                              setShowInfoModal(true); // Show the User Info Modal
+                              setIsModalOpen(null); // Close the 3-dot menu
                             }}
-                            className="cursor-pointer flex items-center gap-2 text-gray-700  dark:text-neutral-300 hover:bg-gray-100 dark:hover:bg-neutral-700 p-2 rounded-md"
+                            className="cursor-pointer flex items-center gap-2 text-gray-700 dark:text-neutral-300 hover:bg-gray-100 dark:hover:bg-neutral-700 p-2 rounded-md"
                           >
-                            <FaInfoCircle className="text-lg  dark:text-blue-500 text-gray-500" />
+                            <FaInfoCircle className="text-lg dark:text-blue-500 text-gray-500" />
                             <span>View Details</span>
                           </li>
                         </ul>
@@ -722,10 +744,7 @@ const TableRoute = () => {
               <td className="p-3 text-gray-700 dark:text-neutral-400 w-[250px]">
                 {user.email}
               </td>
-              <td
-                className="p-3 text-gray-700 dark:text-neutral-400 max-w-[300px] truncate"
-                title={user.address}
-              >
+              <td className="p-3 text-gray-700 dark:text-neutral-400 max-w-[300px] truncate" title={user.address}>
                 {user.address}
               </td>
               <td className="p-3 text-gray-700 dark:text-neutral-400 w-[200px]">
@@ -735,8 +754,8 @@ const TableRoute = () => {
                 {user.contact}
               </td>
             </tr>
-          ))}
 
+          ))}
           <MFAModal
             isOpen={isMFAModalOpen}
             onClose={() => setIsMFAModalOpen(false)}
@@ -809,7 +828,9 @@ const TableRoute = () => {
           {isUpdatePasswordDialogOpen && (
             <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
               <div className="bg-white dark:bg-neutral-900 dark:text-white rounded-lg p-6 w-96">
-                <h3 className="text-xl font-semibold">Update Password for {selectedUser?.fullName}</h3>
+                <h3 className="text-xl font-semibold">
+                  Update Password for {selectedUser?.fullName}
+                </h3>
 
                 {/* Password input */}
                 <input
@@ -831,8 +852,11 @@ const TableRoute = () => {
                 {/* Update password button */}
                 <button
                   onClick={() => handlePasswordUpdate(selectedUser._id, newPassword)}
-                  className="mt-2 w-full py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 dark:bg-green-700 dark:hover:bg-green-600"
-                  disabled={isUpdatingPassword} // Disable button while updating
+                  className={`mt-2 w-full py-2 text-white rounded-lg hover:bg-green-600 dark:hover:bg-green-600 ${newPassword
+                    ? 'bg-green-500 dark:bg-green-700'
+                    : 'bg-gray-400 cursor-not-allowed'
+                    }`}
+                  disabled={!newPassword || isUpdatingPassword} // Disable button if newPassword is empty or updating
                 >
                   {isUpdatingPassword ? 'Updating...' : 'Update Password'}
                 </button>
@@ -848,15 +872,19 @@ const TableRoute = () => {
             </div>
           )}
 
+
           {/* Update User Modal */}
           {isUpdateModalOpen && (
             <UserUpdateDialog
+            
               user={selectedUser}
               onClose={() => setIsUpdateModalOpen(false)}
               onSave={handleSaveUserDetails}
             />
           )}
         </NewTableComponent>
+
+        
         <Dialog
           isOpen={isDialogOpen}
           onClose={closeDialog}

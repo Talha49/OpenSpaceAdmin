@@ -4,21 +4,21 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "lh3.googleusercontent.com",
+        hostname: "lh3.googleusercontent.com", // Google profile images
         port: "",
-        pathname: "/**",
+        pathname: "/**", // Allow all paths within this domain
       },
       {
         protocol: "https",
-        hostname: "firebasestorage.googleapis.com", // Add Firebase Storage domain here
+        hostname: "firebasestorage.googleapis.com", // Firebase Storage domain
         port: "",
-        pathname: "/**",
+        pathname: "/**", // Allow all paths within this domain
       },
       {
         protocol: "https",
-        hostname: "platform-lookaside.fbsbx.com", // Add Facebook platform domain here
+        hostname: "platform-lookaside.fbsbx.com", // Facebook platform domain
         port: "",
-        pathname: "/**",
+        pathname: "/**", // Allow all paths within this domain
       },
     ],
   },
@@ -30,9 +30,9 @@ const nextConfig = {
           { key: "Access-Control-Allow-Credentials", value: "true" },
           {
             key: "Access-Control-Allow-Origin",
-            value: "http://localhost:3000",
+            value: "http://localhost:3000", // You may want to adjust this based on your environment
           },
-          // Add other necessary CORS headers
+          // Add other necessary CORS headers if needed
         ],
       },
     ];
