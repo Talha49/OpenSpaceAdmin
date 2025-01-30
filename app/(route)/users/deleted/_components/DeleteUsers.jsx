@@ -18,6 +18,7 @@ import { fetchDeletedUsers } from "@/lib/Feature/UserSlice";
 import DeleteFilterModal from "@/app/_components/UserDetailDilaog&Modal/DeleteFilterModal";
 import * as XLSX from "xlsx";
 import UserStatusUpdateModal from "@/app/_components/UserDetailDilaog&Modal/UserStatusUpdateModal";
+import { CiExport } from "react-icons/ci";
 
 const DeletedUsers = () => {
   const dispatch = useDispatch();
@@ -127,7 +128,7 @@ const DeletedUsers = () => {
 
   const headerItems = [
     {
-      icon: <IoMdRefresh />,
+      icon: <IoMdRefresh className="text-blue-500" />,
       label: "Refresh",
       onClick: () => {
         dispatch(fetchDeletedUsers())
@@ -142,7 +143,7 @@ const DeletedUsers = () => {
       },
     },
     {
-      icon: <FaFileExport />,
+      icon: <CiExport className="text-blue-500" />,
       label: "Export Delete Users",
       onClick: () => {
         exportDeletedUsersToExcel(
@@ -237,7 +238,7 @@ const DeletedUsers = () => {
                   onClick={item.onClick || undefined} // Execute onClick if available
                 >
                   <span className="text-lg">{item.icon}</span>
-                  <p>{item.label}</p>
+                  <p className="text-sm">{item.label}</p>
                 </div>
               ))}
             </div>
