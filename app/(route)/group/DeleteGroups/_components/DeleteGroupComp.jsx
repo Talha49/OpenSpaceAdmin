@@ -7,12 +7,17 @@ import NewHeader from "@/app/_HOC/NewHeader/NewHeader";
 import NewTableComponent from "@/app/_HOC/Table/NewTableComponent";
 import { fetchDeletedGroups } from "@/lib/Feature/GroupSlice";
 import React, { useState, useEffect, useMemo } from "react";
-import { FaFileExport, FaUserFriends, FaSort, FaFilter, FaSpinner } from "react-icons/fa";
+import { CiExport } from "react-icons/ci";
+import {
+  FaFileExport,
+  FaUserFriends,
+  FaSort,
+  FaFilter,
+  FaSpinner,
+} from "react-icons/fa";
 import { IoMdRefresh } from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
 import * as XLSX from "xlsx"; // Import the xlsx library
-
-  
 
 const DeleteGroupComponent = () => {
   const dispatch = useDispatch();
@@ -22,14 +27,13 @@ const DeleteGroupComponent = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [clickedGroup, setClickedGroup] = useState(null);
   const [filterCriteria, setFilterCriteria] = useState({ groupType: "" });
-    const [isLoading, setIsLoading] = useState(true);  // Loading state
+  const [isLoading, setIsLoading] = useState(true); // Loading state
   const [sortConfig, setSortConfig] = useState({
     key: null,
     direction: "ascending",
   });
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
- 
 
   const handleOpenFilterModal = () => setIsFilterModalOpen(true);
   const handleCloseFilterModal = () => setIsFilterModalOpen(false);
@@ -40,45 +44,42 @@ const DeleteGroupComponent = () => {
   };
 
   const handleExportExcel = () => {
-    console.log('Preparing to export...');
-    console.log(deletedGroups);  // Check if data is available
-  
+    console.log("Preparing to export...");
+    console.log(deletedGroups); // Check if data is available
+
     const exportData = deletedGroups.map((group) => ({
       "Group Name": group.groupName,
-      "Owner": group.groupOwrnerID?.map((owner) => owner.fullName).join(", "),
-      "Type": group.groupType,
-      "Members": group.groupTargetID?.length || 0,
+      Owner: group.groupOwrnerID?.map((owner) => owner.fullName).join(", "),
+      Type: group.groupType,
+      Members: group.groupTargetID?.length || 0,
     }));
-  
-    console.log('Export Data:', exportData);  // Log the mapped export data
-  
+
+    console.log("Export Data:", exportData); // Log the mapped export data
+
     const ws = XLSX.utils.json_to_sheet(exportData);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Deleted Groups");
-  
+
     // Check if workbook creation is successful
-    console.log('Workbook created:', wb);
-    
+    console.log("Workbook created:", wb);
+
     XLSX.writeFile(wb, "deleted_groups.xlsx");
   };
-  
 
-
-const headerItems = [
-  {
-    icon: <IoMdRefresh />,
-    label: "Refresh",
-    onClick:()=>
+  const headerItems = [
     {
-      fetchDeletedGroups();
+      icon: <IoMdRefresh className="text-blue-500" />,
+      label: "Refresh",
+      onClick: () => {
+        fetchDeletedGroups();
+      },
     },
-  },
-  {
-    icon: <FaFileExport />,
-    label: "Export Groups",
-    onClick: handleExportExcel, // Add export functionality here
-  },
-];
+    {
+      icon: <CiExport className="text-blue-500" />,
+      label: "Export Groups",
+      onClick: handleExportExcel, // Add export functionality here
+    },
+  ];
   // Handle items per page change
   const handleRowsPerPageChange = (e) => {
     setRowsPerPage(Number(e.target.value));
@@ -88,24 +89,23 @@ const headerItems = [
     const fetchDeletedGroups = async () => {
       setIsLoading(true); // Set loading to true when fetching starts
       try {
-        const response = await fetch('/api/Groups/getDeletedGroups'); // Assuming this is your API endpoint
+        const response = await fetch("/api/Groups/getDeletedGroups"); // Assuming this is your API endpoint
         const data = await response.json();
-        console.log('Fetched Deleted Groups:', data); // Log the data to check
+        console.log("Fetched Deleted Groups:", data); // Log the data to check
 
         if (data && Array.isArray(data)) {
           setDeletedGroups(data);
         } else {
-          console.error('No valid data returned');
+          console.error("No valid data returned");
         }
       } catch (error) {
-        console.error('Error fetching deleted groups:', error);
+        console.error("Error fetching deleted groups:", error);
       }
       setIsLoading(false); // Set loading to false after fetch is complete
     };
 
     fetchDeletedGroups();
   }, []);
-
 
   console.log("Deleted Groups:", deletedGroups);
 
@@ -145,12 +145,14 @@ const headerItems = [
             break;
           case "owner":
             // Ensure 'owners' array exists and has at least one owner
-            aValue = a.groupOwrnerID && a.groupOwrnerID[0]?.fullName
-              ? a.groupOwrnerID[0]?.fullName.toLowerCase()
-              : "";
-            bValue = b.groupOwrnerID && b.groupOwrnerID[0]?.fullName
-              ? b.groupOwrnerID[0]?.fullName.toLowerCase()
-              : "";
+            aValue =
+              a.groupOwrnerID && a.groupOwrnerID[0]?.fullName
+                ? a.groupOwrnerID[0]?.fullName.toLowerCase()
+                : "";
+            bValue =
+              b.groupOwrnerID && b.groupOwrnerID[0]?.fullName
+                ? b.groupOwrnerID[0]?.fullName.toLowerCase()
+                : "";
             break;
           case "type":
             // Ensure 'groupType' exists before trying to access it
@@ -180,7 +182,6 @@ const headerItems = [
     return result;
   }, [deletedGroups, searchTerm, filterCriteria, sortConfig]);
 
-
   // Pagination Logic
   const paginatedGroups = filteredAndSortedGroups.slice(
     (currentPage - 1) * rowsPerPage,
@@ -199,7 +200,9 @@ const headerItems = [
       <NewHeader>
         <div className="flex flex-col px-4">
           <div className="mb-4 flex flex-col gap-4">
-            <h1 className="text-xl font-semibold tracking-wider dark:text-neutral-500">Talha.ae</h1>
+            <h1 className="text-xl font-semibold tracking-wider dark:text-neutral-500">
+              Talha.ae
+            </h1>
             <h2 className="text-lg font-semibold tracking-wider dark:text-neutral-500">
               Deleted Groups
             </h2>
@@ -213,7 +216,7 @@ const headerItems = [
                   className="flex items-center gap-1 cursor-pointer hover:text-blue-500 transition-all"
                 >
                   <span className="text-lg">{item.icon}</span>
-                  <p>{item.label}</p>
+                  <p className="text-sm">{item.label}</p>
                 </div>
               ))}
             </div>
@@ -241,11 +244,11 @@ const headerItems = [
       </NewHeader>
 
       <div className="pl-4 pr-2">
-      {isLoading && (
-        <div className="flex justify-center items-center ">
-          <FaSpinner className="animate-spin text-blue-500" size={20} />
-        </div>
-      )}
+        {isLoading && (
+          <div className="flex justify-center items-center ">
+            <FaSpinner className="animate-spin text-blue-500" size={20} />
+          </div>
+        )}
         <NewTableComponent
           tableColumns={tableColumns.map((col) => (
             <div
@@ -256,9 +259,7 @@ const headerItems = [
               <span>{col.label}</span>
               <FaSort className="ml-1" onClick={() => handleSort(col.key)} />
             </div>
-            
           ))}
-          
           rowsPerPage={rowsPerPage}
           totalRows={filteredAndSortedGroups.length}
           currentPage={currentPage}
@@ -266,20 +267,25 @@ const headerItems = [
           handleRowsPerPageChange={handleRowsPerPageChange}
         >
           {paginatedGroups.map((group) => (
-            
             <tr
               key={group.id}
-               className="odd:bg-gray-100 even:bg-white dark:odd:bg-neutral-800 dark:even:bg-neutral-900 cursor-pointer hover:bg-gray-300 dark:hover:bg-neutral-600 hover:text-blue-700 transition-all duration-200 "
+              className="odd:bg-gray-100 even:bg-white dark:odd:bg-neutral-800 dark:even:bg-neutral-900 cursor-pointer hover:bg-gray-300 dark:hover:bg-neutral-600 hover:text-blue-700 transition-all duration-200 "
               onClick={() => {
                 setIsOpen(true);
                 setClickedGroup(group);
               }}
             >
-               <td className="p-3 text-gray-700 dark:text-neutral-400 w-[250]">{group?.groupName}</td>
-              <td className="p-3 text-gray-700 dark:text-neutral-400 w-[300]">
-                {group?.groupOwrnerID?.map((owner) => owner.fullName).join(", ")}
+              <td className="p-3 text-gray-700 dark:text-neutral-400 w-[250]">
+                {group?.groupName}
               </td>
-              <td className="p-3 text-gray-700 dark:text-neutral-400 w-[200]">{group?.groupType}</td>
+              <td className="p-3 text-gray-700 dark:text-neutral-400 w-[300]">
+                {group?.groupOwrnerID
+                  ?.map((owner) => owner.fullName)
+                  .join(", ")}
+              </td>
+              <td className="p-3 text-gray-700 dark:text-neutral-400 w-[200]">
+                {group?.groupType}
+              </td>
               <td className="p-3 text-gray-700 dark:text-neutral-400 w-[200]">
                 {group?.groupTargetID?.length || 0}
               </td>
@@ -296,11 +302,9 @@ const headerItems = [
 
         {isFilterModalOpen && (
           <GetDeleteFilterModal
-          
             onClose={handleCloseFilterModal}
             onApplyFilter={handleApplyFilter}
           />
-          
         )}
 
         {/* {

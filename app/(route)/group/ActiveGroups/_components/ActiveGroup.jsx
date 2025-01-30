@@ -240,6 +240,7 @@ import {
 } from "@/lib/Feature/GroupSlice";
 import { useRouter } from "next/navigation";
 import React, { useState, useEffect, useMemo } from "react";
+import { CiExport } from "react-icons/ci";
 import {
   FaFileExport,
   FaUserFriends,
@@ -253,7 +254,7 @@ import { useDispatch, useSelector } from "react-redux";
 import * as XLSX from "xlsx"; // Import the xlsx library
 
 const ActiveGroup = () => {
-  const router = useRouter()
+  const router = useRouter();
   const dispatch = useDispatch();
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -265,14 +266,14 @@ const ActiveGroup = () => {
     direction: "ascending",
   });
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
-  
+
   const [searchTerm, setSearchTerm] = useState("");
   const [isSelectable, setIsSelectable] = useState(false);
   const [selectedGroups, setSelectedGroups] = useState([]);
   const groups = useSelector((state) => state.group.groups);
   const [optionsGroup, setOptionsGroup] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false); // Track the deletion state
-  const [isLoading, setIsLoading] = useState(true);  // Loading state
+  const [isLoading, setIsLoading] = useState(true); // Loading state
   const handleOpenFilterModal = () => setIsFilterModalOpen(true);
   const handleCloseFilterModal = () => setIsFilterModalOpen(false);
   const handleApplyFilter = (criteria) => {
@@ -281,27 +282,24 @@ const ActiveGroup = () => {
     handleCloseFilterModal();
   };
 
-//handle export in xlx on icon click export 
-const handleExportExcel = () => {
-  // Convert groups data to an array of objects that are compatible with Excel format
-  const exportData = groups.map((group) => ({
-    "Group Name": group.groupName,
-    "Owner": group.groupOwrnerID?.map((owner) => owner.fullName).join(", "),
-    "Type": group.groupType,
-    "Members": group.groupTargetID?.length || 0,
-  }));
+  //handle export in xlx on icon click export
+  const handleExportExcel = () => {
+    // Convert groups data to an array of objects that are compatible with Excel format
+    const exportData = groups.map((group) => ({
+      "Group Name": group.groupName,
+      Owner: group.groupOwrnerID?.map((owner) => owner.fullName).join(", "),
+      Type: group.groupType,
+      Members: group.groupTargetID?.length || 0,
+    }));
 
-  // Create a new workbook and add the exportData as a worksheet
-  const ws = XLSX.utils.json_to_sheet(exportData);
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, "Groups");
+    // Create a new workbook and add the exportData as a worksheet
+    const ws = XLSX.utils.json_to_sheet(exportData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Groups");
 
-  // Export the workbook to an Excel file
-  XLSX.writeFile(wb, "groups.xlsx");
-};
-
-
-
+    // Export the workbook to an Excel file
+    XLSX.writeFile(wb, "groups.xlsx");
+  };
 
   // Handle items per page change
   const handleRowsPerPageChange = (e) => {
@@ -311,9 +309,10 @@ const handleExportExcel = () => {
 
   useEffect(() => {
     setIsLoading(true); // Set loading to true when fetching starts
-    dispatch(fetchGroups()).then(() => {
-      console.log("Groups fetched:", groups); // Log the groups from Redux
-    })
+    dispatch(fetchGroups())
+      .then(() => {
+        console.log("Groups fetched:", groups); // Log the groups from Redux
+      })
       .finally(() => {
         setIsLoading(false); // Set loading to false after fetch is complete
       });
@@ -355,12 +354,14 @@ const handleExportExcel = () => {
             break;
           case "owner":
             // Ensure 'owners' array exists and has at least one owner
-            aValue = a.groupOwrnerID && a.groupOwrnerID[0]?.fullName
-              ? a.groupOwrnerID[0]?.fullName.toLowerCase()
-              : "";
-            bValue = b.groupOwrnerID && b.groupOwrnerID[0]?.fullName
-              ? b.groupOwrnerID[0]?.fullName.toLowerCase()
-              : "";
+            aValue =
+              a.groupOwrnerID && a.groupOwrnerID[0]?.fullName
+                ? a.groupOwrnerID[0]?.fullName.toLowerCase()
+                : "";
+            bValue =
+              b.groupOwrnerID && b.groupOwrnerID[0]?.fullName
+                ? b.groupOwrnerID[0]?.fullName.toLowerCase()
+                : "";
             break;
           case "type":
             // Ensure 'groupType' exists before trying to access it
@@ -404,9 +405,13 @@ const handleExportExcel = () => {
   ];
   const handleCheckboxChange = (group) => {
     setSelectedGroups((prevSelected) => {
-      const isSelected = prevSelected.some((selectedGroup) => selectedGroup._id === group._id);
+      const isSelected = prevSelected.some(
+        (selectedGroup) => selectedGroup._id === group._id
+      );
       if (isSelected) {
-        return prevSelected.filter((selectedGroup) => selectedGroup._id !== group._id);
+        return prevSelected.filter(
+          (selectedGroup) => selectedGroup._id !== group._id
+        );
       } else {
         return [...prevSelected, group];
       }
@@ -421,21 +426,25 @@ const handleExportExcel = () => {
     if (allSelected) {
       setSelectedGroups((prevSelected) =>
         prevSelected.filter(
-          (selectedGroup) => !paginatedGroups.some((group) => group._id === selectedGroup._id)
+          (selectedGroup) =>
+            !paginatedGroups.some((group) => group._id === selectedGroup._id)
         )
       );
     } else {
       setSelectedGroups((prevSelected) => [
         ...prevSelected,
         ...paginatedGroups.filter(
-          (group) => !prevSelected.some((selectedGroup) => selectedGroup._id === group._id)
+          (group) =>
+            !prevSelected.some(
+              (selectedGroup) => selectedGroup._id === group._id
+            )
         ),
       ]);
     }
   };
 
   const handleDeleteGroups = async () => {
-    setIsDeleting(true);  // Set to true when deletion starts
+    setIsDeleting(true); // Set to true when deletion starts
     if (selectedGroups.length === 0) {
       alert("Please select groups to delete.");
     } else {
@@ -450,49 +459,46 @@ const handleExportExcel = () => {
         const { error } = actionResult;
 
         if (error) {
-          throw new Error('Failed to delete groups');
+          throw new Error("Failed to delete groups");
         }
 
-        alert('Groups Deleted successfully.');
+        alert("Groups Deleted successfully.");
 
         // Optionally, update the UI or state after successful deletion
         dispatch(fetchGroups());
         setSelectedGroups([]); // Clear selected groups
         setIsSelectable(false); // Disable selection mode
       } catch (error) {
-        console.error('Failed to delete groups:', error);
-        alert('Failed to delete groups');
-      }
-      finally {
+        console.error("Failed to delete groups:", error);
+        alert("Failed to delete groups");
+      } finally {
         setIsDeleting(false); // Set back to false after the operation is complete
       }
     }
-
   };
-
 
   const headerItems = [
     {
-      icon: <FaUserFriends />,
+      icon: <FaUserFriends className="text-blue-500" />,
       label: "Add Group",
       onClick: () => {
         router.push("/group");
       },
     },
     {
-      icon: <IoMdRefresh />,
+      icon: <IoMdRefresh className="text-blue-500" />,
       label: "Refresh",
       onClick: () => {
         dispatch(fetchGroups());
       },
     },
     {
-      icon: <FaFileExport />,
+      icon: <CiExport className="text-blue-500" />,
       label: "Export Groups",
       onClick: handleExportExcel, // Add export functionality here
     },
     {
-      icon: <FaFileExport />,
+      icon: <CiExport className="text-blue-500" />,
       label: "Delete Groups",
       onClick: () => {
         setIsSelectable(!isSelectable);
@@ -507,15 +513,14 @@ const handleExportExcel = () => {
   }, [dispatch]);
   console.log("Selected Groups:", selectedGroups);
 
-
-
-
   return (
     <div>
       <NewHeader>
         <div className="flex flex-col px-4">
           <div className="mb-4 flex flex-col gap-4">
-            <h1 className="text-xl font-semibold tracking-wider text-neutral-500">Talha.ae</h1>
+            <h1 className="text-xl font-semibold tracking-wider text-neutral-500">
+              Talha.ae
+            </h1>
             <h2 className="text-lg font-semibold tracking-wider text-neutral-500  ">
               Active Groups
             </h2>
@@ -530,7 +535,7 @@ const handleExportExcel = () => {
                   onClick={item.onClick}
                 >
                   <span className="text-lg">{item.icon}</span>
-                  <p>{item.label}</p>
+                  <p className="text-sm">{item.label}</p>
                 </div>
               ))}
             </div>
@@ -572,7 +577,7 @@ const handleExportExcel = () => {
           <button
             className="bg-red-500 px-3 py-2 rounded-lg text-white"
             onClick={handleDeleteGroups}
-            disabled={isDeleting}  // Disable the button while deleting
+            disabled={isDeleting} // Disable the button while deleting
           >
             {isDeleting ? "Deleting..." : "Delete"}
           </button>
@@ -588,12 +593,12 @@ const handleExportExcel = () => {
                   type="checkbox"
                   className="custom-circle-checkbox"
                   checked={paginatedGroups.every((group) =>
-                    selectedGroups.some((selectedGroup) => selectedGroup._id === group._id)
+                    selectedGroups.some(
+                      (selectedGroup) => selectedGroup._id === group._id
+                    )
                   )}
                   onChange={handleSelectAll}
                 />
-
-
               </th>
             ) : null,
             ...tableColumns.map((col) => (
@@ -648,24 +653,30 @@ const handleExportExcel = () => {
                   <input
                     type="checkbox"
                     className="custom-circle-checkbox mx-2"
-                    checked={selectedGroups.some((selectedGroup) => selectedGroup._id === group._id)} // Use the correct property for checking
+                    checked={selectedGroups.some(
+                      (selectedGroup) => selectedGroup._id === group._id
+                    )} // Use the correct property for checking
                     onChange={(e) => {
                       e.stopPropagation(); // Prevent row click event
                       handleCheckboxChange(group); // Ensure group is passed correctly
                     }}
                   />
                 </td>
-
               )}
-              <td className="p-3 text-gray-700 dark:text-neutral-400 w-[250]">{group?.groupName}</td>
-              <td className="p-3 text-gray-700 dark:text-neutral-400 w-[300]">
-                {group?.groupOwrnerID?.map((owner) => owner.fullName).join(", ")}
+              <td className="p-3 text-gray-700 dark:text-neutral-400 w-[250]">
+                {group?.groupName}
               </td>
-              <td className="p-3 text-gray-700 dark:text-neutral-400 w-[200]">{group?.groupType}</td>
+              <td className="p-3 text-gray-700 dark:text-neutral-400 w-[300]">
+                {group?.groupOwrnerID
+                  ?.map((owner) => owner.fullName)
+                  .join(", ")}
+              </td>
+              <td className="p-3 text-gray-700 dark:text-neutral-400 w-[200]">
+                {group?.groupType}
+              </td>
               <td className="p-3 text-gray-700 dark:text-neutral-400 w-[200]">
                 {group?.groupTargetID?.length || 0}
               </td>
-
             </tr>
           ))}
         </NewTableComponent>
