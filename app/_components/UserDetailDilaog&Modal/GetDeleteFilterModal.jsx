@@ -35,7 +35,7 @@ const GetDeleteFilterModal = ({ onClose, onApplyFilter }) => {
         <h2 className="text-lg font-semibold mb-4 text-neutral-50">Filter Groups</h2>
 
         <div className="mb-4">
-          <label className="block text-sm font-medium text-neutral-50">Group Type</label>
+          <label className="block text-sm font-medium dark:text-neutral-50">Group Type</label>
           <select
             className="mt-1 block w-full py-2 px-3 border border-gray-300 dark:border-neutral-600 bg-white dark:bg-neutral-900 rounded-md shadow-sm focus:outline-none max-h-40 overflow-y-auto"
             value={deletegroupType}

@@ -1,17 +1,13 @@
-"use client"
-import React from 'react'
-import FormComp from './_Components/FormComp'
-
-
+"use client";
+import React from "react";
+import FormComp from "./_Components/FormComp";
 
 const users = () => {
-    
-     
-    return (
-        <div>
-            <FormComp/>
-        </div>
-    )
-}
+  return (
+    <div>
+      <FormComp />
+    </div>
+  );
+};
 
-export default users
+export default users;

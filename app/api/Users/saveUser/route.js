@@ -116,6 +116,7 @@ export async function POST(request) {
       email: data.email,
       address: data.address,
       city: data.city,
+      country: data.country,
       contact: data.contact,
       status: data.createdByAdmin ? "active" : "pending",
       createdByAdmin: data.createdByAdmin || false,

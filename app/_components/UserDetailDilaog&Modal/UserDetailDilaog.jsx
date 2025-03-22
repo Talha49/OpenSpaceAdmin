@@ -4,10 +4,16 @@ import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { Transition } from "@headlessui/react";
 import { FaTimes, FaCamera } from "react-icons/fa";
-import { ref, uploadBytes, getDownloadURL, uploadBytesResumable } from "firebase/storage";
+import {
+  ref,
+  uploadBytes,
+  getDownloadURL,
+  uploadBytesResumable,
+} from "firebase/storage";
 import { storage } from "@/lib/firebase/firebaseConfig"; // Firebase config file
 import { useDispatch } from "react-redux";
 import { fetchUsers } from "@/lib/Feature/UserSlice";
+import Loader from "../Loader/Loader";
 const UserDetailDialog = ({ user: initialUser, onClose, onSave }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -43,7 +49,7 @@ const UserDetailDialog = ({ user: initialUser, onClose, onSave }) => {
         setIsEditing(false);
         setImagePreview(null);
         setHasChanges(false);
-      }, );
+      });
     }
   };
 
@@ -59,16 +65,18 @@ const UserDetailDialog = ({ user: initialUser, onClose, onSave }) => {
       const reader = new FileReader();
       reader.onloadend = () => setImagePreview(reader.result);
       reader.readAsDataURL(file);
-  
+
       setIsUploading(true);
       const storageRef = ref(storage, `users/${initialUser.id}/${file.name}`);
-  
+
       const uploadTask = uploadBytesResumable(storageRef, file);
-      uploadTask.on('state_changed', 
+      uploadTask.on(
+        "state_changed",
         (snapshot) => {
           // Get the upload progress
-          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          console.log('Upload is ' + progress + '% done');
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          console.log("Upload is " + progress + "% done");
         },
         (error) => {
           console.error("Error uploading image:", error);
@@ -83,9 +91,9 @@ const UserDetailDialog = ({ user: initialUser, onClose, onSave }) => {
       );
     }
   };
-  
+
   useEffect(() => {
-       dispatch(fetchUsers())
+    dispatch(fetchUsers());
   }, []);
 
   const handleSave = async () => {
@@ -148,7 +156,9 @@ const UserDetailDialog = ({ user: initialUser, onClose, onSave }) => {
       >
         {/* Header */}
         <div className="flex justify-between items-center p-4 border-b border-neutral-300 dark:border-neutral-800">
-          <h2 className="text-lg font-semibold text-neutral-700 dark:text-neutral-300">User Details</h2>
+          <h2 className="text-lg font-semibold text-neutral-700 dark:text-neutral-300">
+            User Details
+          </h2>
           <button
             onClick={handleClose}
             className="text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-400"
@@ -183,14 +193,19 @@ const UserDetailDialog = ({ user: initialUser, onClose, onSave }) => {
               </label>
             )}
           </div>
-          <h3 className="text-xl font-semibold text-neutral-800 dark:text-neutral-200">{user.fullName}</h3>
+          <h3 className="text-xl font-semibold text-neutral-800 dark:text-neutral-200">
+            {user.fullName}
+          </h3>
         </div>
 
         {/* User Details Form */}
         <div className="p-6 space-y-6">
           {/* Email */}
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-neutral-600 dark:text-neutral-400">
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-neutral-600 dark:text-neutral-400"
+            >
               Email
             </label>
             <input
@@ -205,7 +220,10 @@ const UserDetailDialog = ({ user: initialUser, onClose, onSave }) => {
 
           {/* Address */}
           <div>
-            <label htmlFor="address" className="block text-sm font-medium text-neutral-600 dark:text-neutral-400">
+            <label
+              htmlFor="address"
+              className="block text-sm font-medium text-neutral-600 dark:text-neutral-400"
+            >
               Address
             </label>
             <input
@@ -216,14 +234,19 @@ const UserDetailDialog = ({ user: initialUser, onClose, onSave }) => {
               onChange={handleInputChange}
               disabled={!isEditing}
               className={`mt-1 block w-full px-4 py-2 border ${
-                isEditing ? "bg-white dark:bg-neutral-700" : "bg-gray-100 dark:bg-neutral-800"
+                isEditing
+                  ? "bg-white dark:bg-neutral-700"
+                  : "bg-gray-100 dark:bg-neutral-800"
               } border-neutral-300 dark:border-neutral-800 rounded-md text-neutral-700 dark:text-neutral-300`}
             />
           </div>
 
           {/* City */}
           <div>
-            <label htmlFor="city" className="block text-sm font-medium text-neutral-600 dark:text-neutral-400">
+            <label
+              htmlFor="city"
+              className="block text-sm font-medium text-neutral-600 dark:text-neutral-400"
+            >
               City
             </label>
             <input
@@ -234,14 +257,19 @@ const UserDetailDialog = ({ user: initialUser, onClose, onSave }) => {
               onChange={handleInputChange}
               disabled={!isEditing}
               className={`mt-1 block w-full px-4 py-2 border ${
-                isEditing ? "bg-white dark:bg-neutral-700" : "bg-gray-100 dark:bg-neutral-800"
+                isEditing
+                  ? "bg-white dark:bg-neutral-700"
+                  : "bg-gray-100 dark:bg-neutral-800"
               } border-neutral-300 dark:border-neutral-800 rounded-md text-neutral-700 dark:text-neutral-300`}
             />
           </div>
 
           {/* Contact */}
           <div>
-            <label htmlFor="contact" className="block text-sm font-medium text-neutral-600 dark:text-neutral-400">
+            <label
+              htmlFor="contact"
+              className="block text-sm font-medium text-neutral-600 dark:text-neutral-400"
+            >
               Contact
             </label>
             <input
@@ -252,14 +280,19 @@ const UserDetailDialog = ({ user: initialUser, onClose, onSave }) => {
               onChange={handleInputChange}
               disabled={!isEditing}
               className={`mt-1 block w-full px-4 py-2 border ${
-                isEditing ? "bg-white dark:bg-neutral-700" : "bg-gray-100 dark:bg-neutral-800"
+                isEditing
+                  ? "bg-white dark:bg-neutral-700"
+                  : "bg-gray-100 dark:bg-neutral-800"
               } border-neutral-300 dark:border-neutral-800 rounded-md text-neutral-700 dark:text-neutral-300`}
             />
           </div>
 
           {/* MFA Toggle */}
           <div>
-            <label htmlFor="mfa" className="block text-sm font-medium text-neutral-600 dark:text-neutral-400">
+            <label
+              htmlFor="mfa"
+              className="block text-sm font-medium text-neutral-600 dark:text-neutral-400"
+            >
               MFA Status
             </label>
             <div className="mt-1 flex items-center">
@@ -267,12 +300,16 @@ const UserDetailDialog = ({ user: initialUser, onClose, onSave }) => {
                 onClick={handleMfaToggle}
                 disabled={!isEditing}
                 className={`relative inline-flex items-center h-6 rounded-full w-11 ${
-                  tempUser.multifactorAuthentication ? "bg-blue-600" : "bg-gray-200"
+                  tempUser.multifactorAuthentication
+                    ? "bg-blue-600"
+                    : "bg-gray-200"
                 } ${isEditing ? "cursor-pointer" : "cursor-not-allowed"}`}
               >
                 <span
                   className={`${
-                    tempUser.multifactorAuthentication ? "translate-x-6" : "translate-x-1"
+                    tempUser.multifactorAuthentication
+                      ? "translate-x-6"
+                      : "translate-x-1"
                   } inline-block w-4 h-4 transform bg-white rounded-full transition-transform`}
                 />
               </button>
@@ -296,14 +333,15 @@ const UserDetailDialog = ({ user: initialUser, onClose, onSave }) => {
               <button
                 onClick={handleSave}
                 disabled={!hasChanges || isSaving}
-                className={`px-4 py-2 text-sm font-medium rounded-md ${
+                className={`px-4 py-2 text-sm rounded-md ${
                   hasChanges && !isSaving
                     ? "text-white bg-blue-500 hover:bg-blue-600"
-                    : "text-gray-500 bg-gray-300 cursor-not-allowed"
+                    : "text-gray-500 bg-gray-200 cursor-not-allowed"
                 }`}
               >
                 {isSaving ? "Saving..." : "Save"}
               </button>
+              {isSaving && <Loader />}
             </div>
           ) : (
             <button

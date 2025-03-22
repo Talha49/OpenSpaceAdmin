@@ -31,7 +31,7 @@ const Menus = [
     icon: <MdPeople />,
     link: "/users/main",
     subMenus: [
-      { title: "Create / Manage", link: "/users" },
+      { title: "Create", link: "/users" },
       { title: "Active users", link: "/users/active" },
       { title: "Deleted users", link: "/users/deleted" },
     ],
@@ -86,28 +86,31 @@ const Sidebar = ({ className }) => {
   const [open, setOpen] = useState(true);
   const [subMenuOpen, setSubMenuOpen] = useState({});
   const [isSmallScreen, setIsSmallScreen] = useState(false);
-  // const [locked, setLocked] = useState(true);
 
   const dispatch = useDispatch();
-
   const { locked } = useSelector((state) => state.lock);
 
   // Check screen size and update state
   useEffect(() => {
     const checkScreenSize = () => {
-      setIsSmallScreen(window.innerWidth < 640); // small screens considered below 640px (tailwind sm breakpoint)
+      const smallScreen = window.innerWidth < 640; // small screens considered below 640px (tailwind sm breakpoint)
+      setIsSmallScreen(smallScreen);
+      
+      // Only update lock state if screen size changes to small
+      if (smallScreen && locked) {
+        dispatch(toggleLockSidebar());
+      }
     };
 
-    if (isSmallScreen) {
-      // setLocked(false);
-      dispatch(toggleLockSidebar());
-    }
-
+    // Run initially
     checkScreenSize();
+    
+    // Add event listener
     window.addEventListener("resize", checkScreenSize);
 
+    // Cleanup
     return () => window.removeEventListener("resize", checkScreenSize);
-  }, []);
+  }, [dispatch, locked]); // Add dependencies
 
   const handleSubMenuToggle = (index) => {
     setSubMenuOpen((prevState) => ({
@@ -129,7 +132,6 @@ const Sidebar = ({ className }) => {
   };
 
   const toggleLock = () => {
-    // setLocked(!locked);
     dispatch(toggleLockSidebar());
     if (!locked) {
       setOpen(true);
@@ -139,13 +141,13 @@ const Sidebar = ({ className }) => {
   return (
     <div
       className={`h-full fixed top-[60px] z-10`}
-      onMouseEnter={!locked && handleMouseEnter}
-      onMouseLeave={!locked && handleMouseLeave}
+      onMouseEnter={!locked ? handleMouseEnter : undefined}
+      onMouseLeave={!locked ? handleMouseLeave : undefined}
     >
       <button
         onClick={toggleLock}
         className={`${
-          isSmallScreen && "hidden"
+          isSmallScreen ? "hidden" : ""
         } absolute top-2 right-2 z-50 p-2 rounded-full bg-blue-100 dark:bg-neutral-800 text-blue-500 dark:text-blue-400 hover:bg-blue-200 dark:hover:bg-neutral-700 transition-all duration-200 ${
           open ? "opacity-100" : "opacity-0"
         }`}
@@ -162,7 +164,12 @@ const Sidebar = ({ className }) => {
           {/* Hamburger Menu for small screens */}
           <li
             className="p-2 px-5 my-2 w-6 h-6 text-xl text-blue-500 block sm:hidden cursor-pointer"
-            onClick={() => setOpen(!open)}
+            onClick={() => {
+              if (isSmallScreen) {
+                toggleLock();
+                setOpen(!open);
+              }
+            }}
           >
             <IoMdMenu />
           </li>
@@ -173,7 +180,7 @@ const Sidebar = ({ className }) => {
                 className={`flex items-center cursor-pointer px-5 hover:bg-blue-200 dark:hover:bg-neutral-700 text-neutral-800 dark:text-neutral-400 text-sm gap-x-4 ${
                   Menu.gap ? "mt-9" : "mt-2"
                 }`}
-                data-tooltip-id={index}
+                data-tooltip-id={index.toString()}
               >
                 <Link href={Menu?.link || ""} passHref className="py-2 w-full">
                   <div className="flex items-center gap-x-4">
@@ -193,7 +200,7 @@ const Sidebar = ({ className }) => {
                   <BsChevronDown
                     onClick={() => handleSubMenuToggle(index)}
                     className={`ml-auto ${
-                      subMenuOpen[index] && "rotate-180"
+                      subMenuOpen[index] ? "rotate-180" : ""
                     } transition-all`}
                   />
                 )}
@@ -206,7 +213,6 @@ const Sidebar = ({ className }) => {
                   {Menu.subMenus.map((subMenuItem, idx) => (
                     <Link href={subMenuItem.link} key={idx} passHref>
                       <li
-                        key={idx}
                         className="flex gap-1 pl-14 min-w-48 cursor-pointer text-center text-sm text-neutral-800 dark:text-neutral-400 hover:bg-blue-200 dark:hover:bg-neutral-700 py-1"
                       >
                         <MdOutlineSubdirectoryArrowRight className="text-lg text-blue-500" />

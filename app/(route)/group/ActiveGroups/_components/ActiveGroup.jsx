@@ -229,6 +229,8 @@
 
 "use client";
 import GroupDetailDialog from "@/app/_components/GroupDetailDialog/GroupDetailDialog";
+import Loader from "@/app/_components/Loader/Loader";
+import PageHeader from "@/app/_components/PageHeader/PageHeader";
 import GenericFilterModal from "@/app/_components/UserDetailDilaog&Modal/GerenicFilterModal";
 import GroupFilterModal from "@/app/_components/UserDetailDilaog&Modal/GroupFilterModal";
 import NewHeader from "@/app/_HOC/NewHeader/NewHeader";
@@ -238,6 +240,7 @@ import {
   fetchGroups,
   storeDeletedGroups,
 } from "@/lib/Feature/GroupSlice";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState, useEffect, useMemo } from "react";
 import { CiExport } from "react-icons/ci";
@@ -248,6 +251,8 @@ import {
   FaFilter,
   FaUsers,
   FaSpinner,
+  FaSortAlphaDown,
+  FaSortAlphaDownAlt,
 } from "react-icons/fa";
 import { IoMdRefresh } from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
@@ -476,29 +481,36 @@ const ActiveGroup = () => {
       }
     }
   };
-
+  console.log(groups);
   const headerItems = [
     {
-      icon: <FaUserFriends className="text-blue-500" />,
+      icon: <FaUserFriends className="" />,
       label: "Add Group",
       onClick: () => {
         router.push("/group");
       },
     },
     {
-      icon: <IoMdRefresh className="text-blue-500" />,
+      icon: <IoMdRefresh className="" />,
       label: "Refresh",
       onClick: () => {
-        dispatch(fetchGroups());
+        setIsLoading(true); // Set loading to true when fetching starts
+        dispatch(fetchGroups())
+          .then(() => {
+            console.log("Groups fetched:", groups); // Log the groups from Redux
+          })
+          .finally(() => {
+            setIsLoading(false); // Set loading to false after fetch is complete
+          });
       },
     },
     {
-      icon: <CiExport className="text-blue-500" />,
+      icon: <CiExport className="" />,
       label: "Export Groups",
       onClick: handleExportExcel, // Add export functionality here
     },
     {
-      icon: <CiExport className="text-blue-500" />,
+      icon: <CiExport className="" />,
       label: "Delete Groups",
       onClick: () => {
         setIsSelectable(!isSelectable);
@@ -516,54 +528,63 @@ const ActiveGroup = () => {
   return (
     <div>
       <NewHeader>
-        <div className="flex flex-col px-4">
-          <div className="mb-4 flex flex-col gap-4">
-            <h1 className="text-xl font-semibold tracking-wider text-neutral-500">
-              Talha.ae
-            </h1>
-            <h2 className="text-lg font-semibold tracking-wider text-neutral-500  ">
-              Active Groups
-            </h2>
-          </div>
+        <div className="flex flex-col">
+          <PageHeader
+            title={"Active Groups"}
+            description={
+              "View and manage all currently active groups within the system. Monitor group members, roles, and recent activities to ensure smooth collaboration. Keep your teams organized and engaged effortlessly."
+            }
+          />
 
-          <div className="flex flex-col sm:flex-row sm:gap-0 gap-6 sm:items-center justify-between border-t-2 dark:border-neutral-700 pt-2">
-            <div className="flex items-center sm:gap-x-6 gap-x-4 text-[8px]">
-              {headerItems.map((item, i) => (
-                <div
-                  key={i}
-                  className="flex items-center gap-1 cursor-pointer hover:text-blue-500 transition-all"
-                  onClick={item.onClick}
-                >
-                  <span className="text-lg">{item.icon}</span>
-                  <p className="text-sm">{item.label}</p>
-                </div>
-              ))}
+          <div className="flex flex-col rounded-lg border shadow-md dark:border-neutral-500 p-2 gap-4">
+            {/* Main container with improved flex-col layout on mobile, flex-row on larger screens */}
+            <div className="flex flex-col lg:flex-row justify-between gap-4">
+              {/* Left side - Action buttons with proper wrapping */}
+              <div className="flex flex-wrap gap-2 overflow-visible">
+                {headerItems.map((item, i) => (
+                  <div key={i} className="flex-none">
+                    <div
+                      onClick={item?.onClick}
+                      className="flex items-center gap-2 group border dark:border-neutral-700 rounded p-2 cursor-pointer hover:bg-blue-500 dark:hover:bg-blue-500 transition-colors"
+                    >
+                      <span className="text-lg text-blue-500 group-hover:text-white">
+                        {item.icon}
+                      </span>
+                      <span className="text-sm whitespace-nowrap group-hover:text-white">
+                        {item.label}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
-            <div className="flex items-center gap-4 w-[250px] mr-6">
-              <span
-                className="flex items-center text-sm gap-1 cursor-pointer"
+            <div className="flex items-center gap-3 w-full lg:w-auto min-w-0 dark:shadow-neutral-700 rounded-lg">
+              <div className="relative flex-grow min-w-0">
+                <input
+                  type="text"
+                  placeholder="Search users list"
+                  onChange={(e) => {
+                    setSearchTerm(e.target.value);
+                    setCurrentPage(1);
+                  }}
+                  value={searchTerm}
+                  className="w-full p-2 border dark:border-neutral-700 border-gray-300 rounded placeholder:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <button
                 onClick={handleOpenFilterModal}
+                className="flex items-center text-blue-600 text-sm gap-2 whitespace-nowrap cursor-pointer group hover:bg-blue-500 hover:text-white dark:hover:text-white dark:hover:bg-blue-500 transition-all border dark:border-neutral-700 rounded px-3 py-2 flex-none"
               >
-                <FaFilter />
-                <p>Filter</p>
-              </span>
-              <input
-                type="text"
-                placeholder="Search groups list"
-                onChange={(e) => {
-                  setSearchTerm(e.target.value);
-                  setCurrentPage(1);
-                }}
-                value={searchTerm}
-                className="w-full p-1 border border-gray-300 rounded placeholder:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
+                <FaFilter className="group-hover:text-wrap" />
+                <span className="group-hover:text-wrap">Filter</span>
+              </button>
             </div>
           </div>
         </div>
       </NewHeader>
 
       {isSelectable && groups.length > 0 && (
-        <div className="px-10 w-full flex items-center justify-end gap-2 mb-4">
+        <div className="px-10 w-full flex items-center justify-end gap-2 my-4">
           <button
             className="px-3 py-2 rounded-lg border"
             onClick={() => {
@@ -584,7 +605,7 @@ const ActiveGroup = () => {
         </div>
       )}
 
-      <div className="pl-4 pr-2">
+      <div className="">
         <NewTableComponent
           tableColumns={[
             isSelectable ? (
@@ -606,21 +627,40 @@ const ActiveGroup = () => {
                 key={col.key}
                 style={{ width: col.width }} // Apply consistent width
                 className="flex items-center justify-between cursor-pointer w-full"
+                onClick={() => handleSort(col.key)}
               >
                 <span>{col.label}</span>
-                <FaSort className="ml-1" onClick={() => handleSort(col.key)} />
+                {/* <FaSort className="ml-1" /> */}
+                {sortConfig.direction !== "ascending" &&
+                sortConfig.key === col.key ? (
+                  <FaSortAlphaDownAlt
+                    className={`mx-4 ${
+                      sortConfig.key !== col.key
+                        ? "text-neutral-500"
+                        : "text-blue-600"
+                    }`}
+                  />
+                ) : (
+                  <FaSortAlphaDown
+                    className={`mx-4 ${
+                      sortConfig.key !== col.key
+                        ? "text-neutral-500"
+                        : "text-blue-600"
+                    }`}
+                  />
+                )}
               </div>
             )),
           ]}
           buttons={
             <>
               <button
-                className="flex items-center gap-2 px-2 py-1 rounded hover:bg-blue-200 dark:hover:bg-neutral-800"
+                className="flex items-center gap-2 px-2 py-1 border border-blue-600 rounded group bg-blue-200 hover:bg-blue-500 hover:text-white transition-all dark:bg-neutral-800 dark:hover:bg-blue-500"
                 onClick={() => {
                   router.push("/group");
                 }}
               >
-                <FaUsers className="text-blue-500" />
+                <FaUsers className="text-blue-500 group-hover:text-white" />
                 <span className="text-sm">Create New Group</span>
               </button>
               {/* Loader above the table */}
@@ -694,6 +734,7 @@ const ActiveGroup = () => {
             onApplyFilter={handleApplyFilter}
           />
         )}
+        {isLoading && <Loader />}
       </div>
     </div>
   );

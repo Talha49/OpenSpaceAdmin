@@ -136,7 +136,25 @@ const NewTableComponent = ({
         <button
           onClick={() => handlePageChange(currentPage - 1)}
           disabled={currentPage === 1}
-          className="px-3 py-1 bg-blue-200 dark:bg-neutral-800 border dark:border-none border-blue-400 rounded disabled:opacity-50"
+          className={`
+            px-3 py-1 rounded flex items-center justify-center transition-colors
+            
+            // Light mode styling (enabled)
+            bg-blue-100 text-blue-600 border border-blue-300 hover:bg-blue-600 hover:text-white
+            
+            // Dark mode styling (enabled)
+            dark:bg-gray-700 dark:text-blue-400 dark:border-gray-600 dark:hover:bg-blue-600 dark:hover:text-white
+            
+            // Light mode styling (disabled)
+            disabled:bg-gray-200 disabled:text-gray-400 disabled:border-gray-300 
+            disabled:hover:bg-gray-200 disabled:hover:text-gray-400
+            
+            // Dark mode styling (disabled)
+            disabled:dark:bg-gray-800 disabled:dark:text-gray-600 disabled:dark:border-gray-700
+            disabled:dark:hover:bg-gray-800 disabled:dark:hover:text-gray-600
+            
+            disabled:cursor-not-allowed
+          `}
         >
           <FaChevronLeft />
         </button>
@@ -146,7 +164,25 @@ const NewTableComponent = ({
         <button
           onClick={() => handlePageChange(currentPage + 1)}
           disabled={currentPage === totalPages || totalPages === 0}
-          className="px-3 py-1 bg-blue-200 dark:bg-neutral-800 border dark:border-none border-blue-400 rounded disabled:opacity-50"
+          className={`
+    px-3 py-1 rounded flex items-center justify-center transition-colors
+    
+    // Light mode styling (enabled)
+    bg-blue-100 text-blue-600 border border-blue-300 hover:bg-blue-600 hover:text-white
+    
+    // Dark mode styling (enabled)
+    dark:bg-gray-700 dark:text-blue-400 dark:border-gray-600 dark:hover:bg-blue-600 dark:hover:text-white
+    
+    // Light mode styling (disabled)
+    disabled:bg-gray-200 disabled:text-gray-400 disabled:border-gray-300 
+    disabled:hover:bg-gray-200 disabled:hover:text-gray-400
+    
+    // Dark mode styling (disabled)
+    disabled:dark:bg-gray-800 disabled:dark:text-gray-600 disabled:dark:border-gray-700
+    disabled:dark:hover:bg-gray-800 disabled:dark:hover:text-gray-600
+    
+    disabled:cursor-not-allowed
+  `}
         >
           <FaChevronRight />
         </button>

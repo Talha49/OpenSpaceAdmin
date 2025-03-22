@@ -37,6 +37,7 @@ import Loader from "@/app/_components/Loader/Loader";
 import RoleDetailDialog from "@/app/_components/RoleDetails Dialog/RoleDetailDialog";
 import { RxReload } from "react-icons/rx";
 import ConfirmationDialog from "@/app/_components/ConfirmationDialog/ConfirmationDialog";
+import PageHeader from "@/app/_components/PageHeader/PageHeader";
 
 const PermissionRolesComponent = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -119,41 +120,14 @@ const PermissionRolesComponent = () => {
   return (
     <div className=" dark:bg-neutral-950">
       {loading && <Loader />}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">
-        <p className="text-sm sm:text-base dark:text-neutral-500">
-          Back to{" "}
-          <Link
-            href="/"
-            className="text-blue-500 font-semibold hover:underline transition-all"
-          >
-            Admin Center
-          </Link>
-        </p>
-        <div className="flex items-center gap-4 flex-wrap">
-          <Link
-            href="/users/main"
-            className="text-blue-500 font-semibold hover:underline transition-all text-sm sm:text-base"
-          >
-            Manage Users
-          </Link>
-          <Link
-            href="/group/main"
-            className="text-blue-500 font-semibold hover:underline transition-all text-sm sm:text-base"
-          >
-            Manage Groups
-          </Link>
-        </div>
-      </div>
-      <h1 className="text-2xl sm:text-3xl font-semibold my-2 dark:text-neutral-500">
-        Permission Role List
-      </h1>
-      <p className="text-sm sm:text-base dark:text-neutral-700">
-        Different users should have different access to the information in the
-        application. A role controls the access rights a user (or a group) has
-        in the application or employee data. Each role has its own set of access
-        permissions that you define. You can also limit exactly what a group can
-        access.
-      </p>
+      <PageHeader
+        title={"Permission Role List"}
+        description={
+          "Different users should have different access to the information in the application. A role controls the access rights a user (or a group) has in the application or employee data. Each role has its own set of access permissions that you define. You can also limit exactly what a group can access."
+        }
+        enableExtraLinks={true}
+      />
+
       <div className="flex items-center gap-2 border border-blue-500 shadow-md bg-slate-50 dark:bg-neutral-800 w-full sm:w-fit px-2 py-1 rounded-lg mt-6">
         <input
           type="search"

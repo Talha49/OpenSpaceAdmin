@@ -11,7 +11,8 @@ export default function GroupsPage() {
       </h1>
       {/* Subheading */}
       <p className="text-lg text-gray-600 dark:text-gray-300 mb-12 text-center max-w-2xl">
-        Manage your groups effortlessly with tools to create, organize, and review active or archived groups.
+        Manage your groups effortlessly with tools to create, organize, and
+        review active or archived groups.
       </p>
 
       {/* Link Grid */}
@@ -19,25 +20,26 @@ export default function GroupsPage() {
         {/* Manage & Create Groups */}
         <Link
           href={"/group"}
-          className="cursor-pointer p-8 bg-neutral-100 dark:bg-neutral-800 hover:scale-105 border border-neutral-300 dark:border-neutral-700 rounded-lg text-center hover:shadow-xl transition duration-300"
+          className="cursor-pointer p-8 group bg-neutral-100 hover:bg-blue-500 hover:dark:bg-blue-600 dark:bg-neutral-800 hover:scale-105 border border-neutral-300 dark:border-neutral-700 rounded-lg text-center hover:shadow-xl transition duration-300"
         >
-          <h2 className="text-2xl font-semibold text-blue-700 mb-2">
-            Create Groups
+          <h2 className="text-2xl font-semibold text-blue-700 group-hover:text-white mb-2">
+            Create Group
           </h2>
-          <p className="text-sm text-gray-600 dark:text-gray-400">
-            Create new groups, edit existing ones, and organize group details with ease.
+          <p className="text-sm text-gray-600 dark:text-gray-400 group-hover:text-white">
+            Create new groups, edit existing ones, and organize group details
+            with ease.
           </p>
         </Link>
 
         {/* Active Groups */}
         <Link
           href={"/group/ActiveGroups"}
-          className="cursor-pointer p-8 bg-neutral-100 dark:bg-neutral-800 hover:scale-105 border border-neutral-300 dark:border-neutral-700 rounded-lg text-center hover:shadow-lg transition duration-300"
+          className="cursor-pointer p-8 group bg-neutral-100 hover:bg-blue-500 hover:dark:bg-blue-600 dark:bg-neutral-800 hover:scale-105 border border-neutral-300 dark:border-neutral-700 rounded-lg text-center hover:shadow-xl transition duration-300"
         >
-          <h2 className="text-2xl font-semibold text-blue-700 mb-2">
+          <h2 className="text-2xl font-semibold text-blue-700 group-hover:text-white mb-2">
             Active Groups
           </h2>
-          <p className="text-sm text-gray-600 dark:text-gray-400">
+          <p className="text-sm text-gray-600 dark:text-gray-400 group-hover:text-white">
             View and manage all active groups within your organization.
           </p>
         </Link>
@@ -45,12 +47,12 @@ export default function GroupsPage() {
         {/* Archived Groups */}
         <Link
           href={"/group/DeleteGroups"}
-          className="cursor-pointer p-8 bg-neutral-100 dark:bg-neutral-800 hover:scale-105 border border-neutral-300 dark:border-neutral-700 rounded-lg text-center hover:shadow-xl transition duration-300"
+          className="cursor-pointer p-8 group bg-neutral-100 hover:bg-blue-500 hover:dark:bg-blue-600 dark:bg-neutral-800 hover:scale-105 border border-neutral-300 dark:border-neutral-700 rounded-lg text-center hover:shadow-xl transition duration-300"
         >
-          <h2 className="text-2xl font-semibold text-blue-700 mb-2">
+          <h2 className="text-2xl font-semibold text-blue-700 group-hover:text-white mb-2">
             Deleted Groups
           </h2>
-          <p className="text-sm text-gray-600 dark:text-gray-400">
+          <p className="text-sm text-gray-600 dark:text-gray-400 group-hover:text-white">
             Access and restore groups that have been archived for future use.
           </p>
         </Link>

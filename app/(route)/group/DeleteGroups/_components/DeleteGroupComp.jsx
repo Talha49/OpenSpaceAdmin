@@ -1,11 +1,14 @@
 "use client";
 import DeleteGroupDetailDialog from "@/app/_components/DeleteGroupDetailDialog/DeleteGroupDetailDialog";
 import GroupDetailDialog from "@/app/_components/GroupDetailDialog/GroupDetailDialog";
+import Loader from "@/app/_components/Loader/Loader";
+import PageHeader from "@/app/_components/PageHeader/PageHeader";
 import GenericFilterModal from "@/app/_components/UserDetailDilaog&Modal/GerenicFilterModal";
 import GetDeleteFilterModal from "@/app/_components/UserDetailDilaog&Modal/GetDeleteFilterModal";
 import NewHeader from "@/app/_HOC/NewHeader/NewHeader";
 import NewTableComponent from "@/app/_HOC/Table/NewTableComponent";
 import { fetchDeletedGroups } from "@/lib/Feature/GroupSlice";
+import Link from "next/link";
 import React, { useState, useEffect, useMemo } from "react";
 import { CiExport } from "react-icons/ci";
 import {
@@ -14,6 +17,8 @@ import {
   FaSort,
   FaFilter,
   FaSpinner,
+  FaSortAlphaDown,
+  FaSortAlphaDownAlt,
 } from "react-icons/fa";
 import { IoMdRefresh } from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
@@ -68,14 +73,14 @@ const DeleteGroupComponent = () => {
 
   const headerItems = [
     {
-      icon: <IoMdRefresh className="text-blue-500" />,
+      icon: <IoMdRefresh className="" />,
       label: "Refresh",
       onClick: () => {
         fetchDeletedGroups();
       },
     },
     {
-      icon: <CiExport className="text-blue-500" />,
+      icon: <CiExport className="" />,
       label: "Export Groups",
       onClick: handleExportExcel, // Add export functionality here
     },
@@ -85,25 +90,25 @@ const DeleteGroupComponent = () => {
     setRowsPerPage(Number(e.target.value));
     setCurrentPage(1); // Reset to first page when rows per page changes
   };
-  useEffect(() => {
-    const fetchDeletedGroups = async () => {
-      setIsLoading(true); // Set loading to true when fetching starts
-      try {
-        const response = await fetch("/api/Groups/getDeletedGroups"); // Assuming this is your API endpoint
-        const data = await response.json();
-        console.log("Fetched Deleted Groups:", data); // Log the data to check
 
-        if (data && Array.isArray(data)) {
-          setDeletedGroups(data);
-        } else {
-          console.error("No valid data returned");
-        }
-      } catch (error) {
-        console.error("Error fetching deleted groups:", error);
+  const fetchDeletedGroups = async () => {
+    setIsLoading(true); // Set loading to true when fetching starts
+    try {
+      const response = await fetch("/api/Groups/getDeletedGroups"); // Assuming this is your API endpoint
+      const data = await response.json();
+      console.log("Fetched Deleted Groups:", data); // Log the data to check
+
+      if (data && Array.isArray(data)) {
+        setDeletedGroups(data);
+      } else {
+        console.error("No valid data returned");
       }
-      setIsLoading(false); // Set loading to false after fetch is complete
-    };
-
+    } catch (error) {
+      console.error("Error fetching deleted groups:", error);
+    }
+    setIsLoading(false); // Set loading to false after fetch is complete
+  };
+  useEffect(() => {
     fetchDeletedGroups();
   }, []);
 
@@ -198,68 +203,100 @@ const DeleteGroupComponent = () => {
   return (
     <div>
       <NewHeader>
-        <div className="flex flex-col px-4">
-          <div className="mb-4 flex flex-col gap-4">
-            <h1 className="text-xl font-semibold tracking-wider dark:text-neutral-500">
-              Talha.ae
-            </h1>
-            <h2 className="text-lg font-semibold tracking-wider dark:text-neutral-500">
-              Deleted Groups
-            </h2>
-          </div>
+        <div className="flex flex-col">
+          <PageHeader
+            title={"Deleted Groups"}
+            description={
+              "Review and manage all groups that have been deleted from the system. Track deletion dates, reasons, and restore options if needed. Maintain proper records and ensure data integrity effortlessly."
+            }
+          />
 
-          <div className="flex flex-col sm:flex-row sm:gap-0 gap-6 sm:items-center justify-between border-t-2 dark:border-neutral-500 pt-2">
-            <div className="flex items-center sm:gap-x-6 gap-x-4 text-[8px]">
-              {headerItems.map((item, i) => (
-                <div
-                  key={i}
-                  className="flex items-center gap-1 cursor-pointer hover:text-blue-500 transition-all"
-                >
-                  <span className="text-lg">{item.icon}</span>
-                  <p className="text-sm">{item.label}</p>
-                </div>
-              ))}
+          <div className="flex flex-col rounded-lg border shadow-md dark:border-neutral-500 p-2 gap-4">
+            {/* Main container with improved flex-col layout on mobile, flex-row on larger screens */}
+            <div className="flex flex-col lg:flex-row justify-between gap-4">
+              {/* Left side - Action buttons with proper wrapping */}
+              <div className="flex flex-wrap gap-2 overflow-visible">
+                {headerItems.map((item, i) => (
+                  <div key={i} className="flex-none">
+                    <div
+                      onClick={item?.onClick}
+                      className="flex items-center gap-2 group border dark:border-neutral-700 rounded p-2 cursor-pointer hover:bg-blue-500 dark:hover:bg-blue-500 transition-colors"
+                    >
+                      <span className="text-lg text-blue-500 group-hover:text-white">
+                        {item.icon}
+                      </span>
+                      <span className="text-sm whitespace-nowrap group-hover:text-white">
+                        {item.label}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
-            <div className="flex items-center gap-4 w-[250px] mr-6">
-              <span
-                className="flex items-center text-sm gap-1 cursor-pointer"
+            <div className="flex items-center gap-3 w-full lg:w-auto min-w-0 dark:shadow-neutral-700 rounded-lg">
+              <div className="relative flex-grow min-w-0">
+                <input
+                  type="text"
+                  placeholder="Search users list"
+                  onChange={(e) => {
+                    setSearchTerm(e.target.value);
+                    setCurrentPage(1);
+                  }}
+                  value={searchTerm}
+                  className="w-full p-2 border dark:border-neutral-700 border-gray-300 rounded placeholder:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <button
                 onClick={handleOpenFilterModal}
+                className="flex items-center text-blue-600 text-sm gap-2 whitespace-nowrap cursor-pointer group hover:bg-blue-500 hover:text-white dark:hover:text-white dark:hover:bg-blue-500 transition-all border dark:border-neutral-700 rounded px-3 py-2 flex-none"
               >
-                <FaFilter />
-                <p>Filter</p>
-              </span>
-              <input
-                type="text"
-                placeholder="Search groups list"
-                onChange={(e) => {
-                  setSearchTerm(e.target.value);
-                  setCurrentPage(1);
-                }}
-                value={searchTerm}
-                className="w-full p-1 border border-gray-300 rounded placeholder:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
+                <FaFilter className="group-hover:text-wrap" />
+                <span className="group-hover:text-wrap">Filter</span>
+              </button>
             </div>
           </div>
         </div>
       </NewHeader>
 
-      <div className="pl-4 pr-2">
-        {isLoading && (
-          <div className="flex justify-center items-center ">
-            <FaSpinner className="animate-spin text-blue-500" size={20} />
-          </div>
-        )}
+      <div className="">
         <NewTableComponent
           tableColumns={tableColumns.map((col) => (
             <div
               key={col.key}
               style={{ width: col.width }} // Apply consistent width
               className="flex items-center justify-between cursor-pointer w-full"
+              onClick={() => handleSort(col.key)}
             >
               <span>{col.label}</span>
-              <FaSort className="ml-1" onClick={() => handleSort(col.key)} />
+              {sortConfig.direction !== "ascending" &&
+              sortConfig.key === col.key ? (
+                <FaSortAlphaDownAlt
+                  className={`mx-4 ${
+                    sortConfig.key !== col.key
+                      ? "text-neutral-500"
+                      : "text-blue-600"
+                  }`}
+                />
+              ) : (
+                <FaSortAlphaDown
+                  className={`mx-4 ${
+                    sortConfig.key !== col.key
+                      ? "text-neutral-500"
+                      : "text-blue-600"
+                  }`}
+                />
+              )}
             </div>
           ))}
+          buttons={
+            <button>
+              {isLoading && (
+                <div className="flex justify-center items-center ">
+                  <FaSpinner className="animate-spin text-blue-500" size={20} />
+                </div>
+              )}
+            </button>
+          }
           rowsPerPage={rowsPerPage}
           totalRows={filteredAndSortedGroups.length}
           currentPage={currentPage}
@@ -319,6 +356,7 @@ const DeleteGroupComponent = () => {
             />
           )
         } */}
+        {isLoading && <Loader />}
       </div>
     </div>
   );

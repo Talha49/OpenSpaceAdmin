@@ -11,6 +11,8 @@ import {
   FaFilter,
   FaInfoCircle,
   FaSpinner,
+  FaSortAlphaDownAlt,
+  FaSortAlphaDown,
 } from "react-icons/fa";
 import NewTableComponent from "@/app/_HOC/Table/NewTableComponent";
 import { MdDelete, MdEventNote, MdManageAccounts } from "react-icons/md";
@@ -38,6 +40,8 @@ import * as XLSX from "xlsx";
 import { clearSelectedUser } from "@/lib/Feature/UserSlice";
 import { MFAModal } from "@/app/_components/MfaSetttingDialog/MFAmodal";
 import Dialog from "@/app/_components/ManageGroupModal/Dialog";
+import Loader from "@/app/_components/Loader/Loader";
+import PageHeader from "@/app/_components/PageHeader/PageHeader";
 
 const Modal = ({ user }) => {
   const dispatch = useDispatch();
@@ -353,7 +357,10 @@ const TableRoute = () => {
       icon: <IoMdRefresh />,
       label: "Refresh",
       onClick: () => {
-        dispatch(fetchUsers());
+        setIsLoading(true); // Set loading to true when fetching starts
+        dispatch(fetchUsers()).finally(() => {
+          setIsLoading(false); // Set loading to false after fetch is complete
+        });
       },
     },
     {
@@ -449,62 +456,73 @@ const TableRoute = () => {
   return (
     <div className="overflow-hidden">
       <NewHeader>
-        <div className="flex flex-col ">
-          <div className="mb-4 flex flex-col gap-4">
-            <h1 className="text-xl font-semibold tracking-wider text-neutral-500">
-              Talha.ae
-            </h1>
-            <h2 className="text-lg font-semibold tracking-wider text-neutral-500">
-              Active Users
-            </h2>
-          </div>
-          <div className="flex flex-col sm:flex-row sm:gap-0 gap-6 sm:items-center justify-between border-t-2 dark:border-neutral-500 pt-2">
-            <div className="flex items-center sm:gap-x-6 gap-x-4 text-[9px]">
+        {/* <h1 className="text-2xl font-semibold mb-4">Active Users</h1> */}
+        <PageHeader
+          title={"Active Users"}
+          description={
+            "View and manage all currently active users in your system. Keep track of their status, roles, and recent activities to ensure smooth operations. Stay updated with user engagement and make informed decisions effortlessly."
+          }
+        />
+
+        <div className="flex flex-col rounded-lg border shadow-md dark:border-neutral-500 p-2 gap-4">
+          {/* Main container with improved flex-col layout on mobile, flex-row on larger screens */}
+          <div className="flex flex-col lg:flex-row justify-between gap-4">
+            {/* Left side - Action buttons with proper wrapping */}
+            <div className="flex flex-wrap gap-2 overflow-visible">
               {headerItems.map((item, i) => (
                 <div
                   key={i}
-                  className="flex items-center gap-1 cursor-pointer hover:text-blue-500 transition-all group relative"
+                  className="flex-none"
                   onClick={() => {
                     if (item.onClick) {
-                      item.onClick(); // Trigger the API call for Refresh
+                      item.onClick();
                     } else if (item.link) {
-                      router.push(item.link); // Navigate to the link if provided
+                      router.push(item.link);
                     } else if (item.label === "Delete User") {
                       setIsSelectable(!isSelectable);
                       setIsGroupSelection(false);
                     } else if (item.label === "Group") {
                       setIsGroupSelection(!isGroupSelection);
                       setIsSelectable(false);
+                    } else if (item.label === "Refresh") {
+                      setIsLoading(true); // Set loading to true when fetching starts
+                      dispatch(fetchUsers()).finally(() => {
+                        setIsLoading(false); // Set loading to false after fetch is complete
+                      });
                     }
                   }}
                 >
                   {item.link ? (
-                    <Link href={item.link} className="flex items-center gap-1">
-                      <span className="text-sm text-blue-400">{item.icon}</span>
-                      <p className="hidden lg:inline text-xs">{item.label}</p>
+                    <Link
+                      href={item.link}
+                      className="flex items-center gap-2 group border dark:border-neutral-700 rounded p-2 hover:bg-blue-500 dark:hover:bg-blue-500 transition-colors"
+                    >
+                      <span className="text-lg text-blue-500 group-hover:text-white">
+                        {item.icon}
+                      </span>
+                      <span className="text-sm whitespace-nowrap group-hover:text-white">
+                        {item.label}
+                      </span>
                     </Link>
                   ) : (
-                    <div className="flex items-center gap-1">
-                      <span className="text-sm text-blue-400">{item.icon}</span>
-                      <p className="hidden lg:inline text-xs">{item.label}</p>
+                    <div
+                      onClick={item?.onClick}
+                      className="flex items-center gap-2 group border dark:border-neutral-700 rounded p-2 cursor-pointer hover:bg-blue-500 dark:hover:bg-blue-500 transition-colors"
+                    >
+                      <span className="text-lg text-blue-500 group-hover:text-white">
+                        {item.icon}
+                      </span>
+                      <span className="text-sm whitespace-nowrap group-hover:text-white">
+                        {item.label}
+                      </span>
                     </div>
                   )}
-                  <div className="absolute left-1/2 transform -translate-x-/2 mb-8 hidden group-hover:block bg-gray-700 text-white text-xs rounded py-1 px-2 whitespace-nowrap">
-                    {item.label}
-                  </div>
                 </div>
               ))}
-              <BsThreeDots />
             </div>
-
-            <div className="flex items-center gap-4 w-[250px] mr-6">
-              <span
-                onClick={handleOpenFilterModal}
-                className="flex items-center text-sm gap-1"
-              >
-                <FaFilter />
-                <p>Filter</p>
-              </span>
+          </div>
+          <div className="flex items-center gap-3 w-full lg:w-auto min-w-0 dark:shadow-neutral-700 rounded-lg">
+            <div className="relative flex-grow min-w-0">
               <input
                 type="text"
                 placeholder="Search users list"
@@ -513,15 +531,22 @@ const TableRoute = () => {
                   setCurrentPage(1);
                 }}
                 value={searchTerm}
-                className="w-full p-1 border border-gray-300 rounded placeholder:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full p-2 border dark:border-neutral-700 border-gray-300 rounded placeholder:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
+            <button
+              onClick={handleOpenFilterModal}
+              className="flex items-center text-blue-600 text-sm gap-2 whitespace-nowrap cursor-pointer group hover:bg-blue-500 hover:text-white dark:hover:text-white dark:hover:bg-blue-500 transition-all border dark:border-neutral-700 rounded px-3 py-2 flex-none"
+            >
+              <FaFilter className="group-hover:text-wrap" />
+              <span className="group-hover:text-wrap">Filter</span>
+            </button>
           </div>
         </div>
       </NewHeader>
 
       {isSelectable && (
-        <div className="px-10 w-full flex items-center justify-end gap-2">
+        <div className="px-10 w-full flex items-center justify-end gap-2 mt-4">
           <button
             className="px-3 py-2 rounded-lg border"
             onClick={() => {
@@ -561,13 +586,12 @@ const TableRoute = () => {
             }}
           >
             {isLoading ? "Deleting..." : "Delete"}
-            
           </button>
         </div>
       )}
 
       {isGroupSelection && (
-        <div className="px-10 w-full flex items-center justify-end gap-2">
+        <div className="px-10 w-full flex items-center justify-end gap-2 my-4">
           <button
             className="px-3 py-2 rounded-lg bg-blue-500"
             onClick={() => {
@@ -615,29 +639,43 @@ const TableRoute = () => {
                 onClick={() => handleSort(col.key)}
               >
                 <span>{col.label}</span>
-                <FaSort className="ml-1" />
+                {sortConfig.direction !== "ascending" &&
+                sortConfig.key === col.key ? (
+                  <FaSortAlphaDownAlt
+                    className={`mx-4 ${
+                      sortConfig.key !== col.key
+                        ? "text-neutral-500"
+                        : "text-blue-600"
+                    }`}
+                  />
+                ) : (
+                  <FaSortAlphaDown
+                    className={`mx-4 ${
+                      sortConfig.key !== col.key
+                        ? "text-neutral-500"
+                        : "text-blue-600"
+                    }`}
+                  />
+                )}
               </div>
             )),
           ]}
           buttons={
             <>
               <button
-                className="flex items-center gap-2 px-2 py-1 rounded hover:bg-blue-200 dark:hover:bg-neutral-800"
+                className="flex items-center gap-2 px-2 py-1 border border-blue-600 rounded group bg-blue-200 hover:bg-blue-500 hover:text-white transition-all dark:bg-neutral-800 dark:hover:bg-blue-500"
                 onClick={() => {
                   router.push("/users");
                 }}
               >
-                <IoMdPersonAdd className="text-blue-500" />
+                <IoMdPersonAdd className="text-blue-500 group-hover:text-white" />
                 <span className="text-sm">Add User</span>
-                {isLoading && (
-                  <div className="flex justify-center items-center ">
-                    <FaSpinner
-                      className="animate-spin text-blue-500"
-                      size={20}
-                    />
-                  </div>
-                )}
               </button>
+              {isLoading && (
+                <div className="flex justify-center items-center ">
+                  <FaSpinner className="animate-spin text-blue-500" size={20} />
+                </div>
+              )}
             </>
           }
           rowsPerPage={rowsPerPage}
@@ -923,6 +961,7 @@ const TableRoute = () => {
             onApplyFilter={handleApplyFilter}
           />
         )}
+        {isLoading && <Loader />}
       </div>
     </div>
   );
