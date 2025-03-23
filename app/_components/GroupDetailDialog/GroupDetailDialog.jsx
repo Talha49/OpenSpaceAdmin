@@ -10,6 +10,7 @@ import { fetchUsers } from "@/lib/Feature/UserSlice";
 import { fetchGroups } from "@/lib/Feature/GroupSlice";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { useNotify } from "@/lib/utils";
 const GroupDetailDialog = ({ group = {}, isOpen, onClose }) => {
   const [showDetail, setShowDetail] = useState(false);
   const [showMembers, setShowMembers] = useState(false);
@@ -52,6 +53,7 @@ const GroupDetailDialog = ({ group = {}, isOpen, onClose }) => {
 
   const users = useSelector((state) => state.user.users);
   const dispatch = useDispatch();
+  const notify = useNotify();
 
   useEffect(() => {
     if (users.length === 0) {
@@ -93,7 +95,7 @@ const GroupDetailDialog = ({ group = {}, isOpen, onClose }) => {
         groupTargetID: selectedMembers,
       });
       if (response.status === 200) {
-        alert("Group updated successfully!");
+        notify.success("Group updated successfully!");
         setIsEditOpen(false);
         onClose();
       }
@@ -101,7 +103,7 @@ const GroupDetailDialog = ({ group = {}, isOpen, onClose }) => {
       router.push("/group/ActiveGroups");
     } catch (error) {
       console.error("Error updating group:", error);
-      alert("Error updating group.");
+      notify.error("Error updating group.");
     }
   };
 

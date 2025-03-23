@@ -1,11 +1,13 @@
 import React, { useState } from "react";
-import { useRouter } from "next/navigation";  // Import useRouter from next/router
+import { useRouter } from "next/navigation"; // Import useRouter from next/router
+import { useNotify } from "@/lib/utils";
 
 const UserStatusUpdateModal = ({ user, onClose }) => {
   const [status, setStatus] = useState("inactive"); // Default to inactive status
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const router = useRouter();  // Initialize router
+  const router = useRouter(); // Initialize router
+  const notify = useNotify();
 
   const handleUpdateStatus = async () => {
     setLoading(true);
@@ -30,11 +32,11 @@ const UserStatusUpdateModal = ({ user, onClose }) => {
       const data = await response.json();
 
       if (response.ok) {
-        alert(`User status updated to ${status}`);
+        notify.success(`User status updated to ${status}`); // Show success notification
         onClose(); // Close the modal after successful update
 
         // After update, redirect to the Active Users page
-        router.push("/users/active");  // Change to the route where you want to navigate
+        router.push("/users/active"); // Change to the route where you want to navigate
       } else {
         setError(data.message || "Something went wrong");
       }
@@ -51,7 +53,9 @@ const UserStatusUpdateModal = ({ user, onClose }) => {
         <h2 className="text-2xl font-semibold mb-4">Update User Status</h2>
 
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-600 mb-2">Status</label>
+          <label className="block text-sm font-medium text-gray-600 mb-2">
+            Status
+          </label>
           <select
             className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
             value={status}

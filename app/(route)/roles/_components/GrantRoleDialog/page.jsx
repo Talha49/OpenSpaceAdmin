@@ -165,7 +165,7 @@ const GrantRoleDialog = ({ onClose }) => {
                           id={`user-${user._id}`}
                           checked={selectedUsersForRole?.includes(user._id)}
                           onChange={() => handleUserSelection(user._id)}
-                          className="custom-circle-checkbox"
+                          className=""
                         />
                         <label htmlFor={`user-${user._id}`} className="text-sm">
                           {capitalizeFirstLetter(user.fullName)}
@@ -228,7 +228,7 @@ const GrantRoleDialog = ({ onClose }) => {
                           id={`group-${group._id}`}
                           checked={selectedGroupsForRole.includes(group._id)}
                           onChange={() => handleGroupSelection(group._id)}
-                          className="custom-circle-checkbox"
+                          className=""
                         />
                         <label
                           htmlFor={`group-${group._id}`}

@@ -240,6 +240,7 @@ import {
   fetchGroups,
   storeDeletedGroups,
 } from "@/lib/Feature/GroupSlice";
+import { useNotify } from "@/lib/utils";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState, useEffect, useMemo } from "react";
@@ -279,6 +280,8 @@ const ActiveGroup = () => {
   const [optionsGroup, setOptionsGroup] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false); // Track the deletion state
   const [isLoading, setIsLoading] = useState(true); // Loading state
+  const notify = useNotify();
+
   const handleOpenFilterModal = () => setIsFilterModalOpen(true);
   const handleCloseFilterModal = () => setIsFilterModalOpen(false);
   const handleApplyFilter = (criteria) => {
@@ -451,7 +454,7 @@ const ActiveGroup = () => {
   const handleDeleteGroups = async () => {
     setIsDeleting(true); // Set to true when deletion starts
     if (selectedGroups.length === 0) {
-      alert("Please select groups to delete.");
+      notify.warning("Please select groups to delete.");
     } else {
       const groupIds = selectedGroups.map((group) => group._id); // Use _id instead of id
 
@@ -464,10 +467,10 @@ const ActiveGroup = () => {
         const { error } = actionResult;
 
         if (error) {
-          throw new Error("Failed to delete groups");
+          notify.error("Failed to delete group(s)");
         }
 
-        alert("Groups Deleted successfully.");
+        notify.success("Group(s) deleted successfully.");
 
         // Optionally, update the UI or state after successful deletion
         dispatch(fetchGroups());
@@ -475,7 +478,7 @@ const ActiveGroup = () => {
         setIsSelectable(false); // Disable selection mode
       } catch (error) {
         console.error("Failed to delete groups:", error);
-        alert("Failed to delete groups");
+        notify.error("Failed to delete group(s)");
       } finally {
         setIsDeleting(false); // Set back to false after the operation is complete
       }
@@ -586,7 +589,7 @@ const ActiveGroup = () => {
       {isSelectable && groups.length > 0 && (
         <div className="px-10 w-full flex items-center justify-end gap-2 my-4">
           <button
-            className="px-3 py-2 rounded-lg border"
+            className="px-3 py-1 rounded-md border"
             onClick={() => {
               setIsSelectable(false);
               setSelectedGroups([]);
@@ -596,7 +599,7 @@ const ActiveGroup = () => {
           </button>
 
           <button
-            className="bg-red-500 px-3 py-2 rounded-lg text-white"
+            className="bg-blue-600 hover:bg-blue-500 transition-all px-3 py-1 rounded-md text-white"
             onClick={handleDeleteGroups}
             disabled={isDeleting} // Disable the button while deleting
           >
@@ -612,7 +615,7 @@ const ActiveGroup = () => {
               <th className="flex items-center justify-between">
                 <input
                   type="checkbox"
-                  className="custom-circle-checkbox"
+                  className="scale-125"
                   checked={paginatedGroups.every((group) =>
                     selectedGroups.some(
                       (selectedGroup) => selectedGroup._id === group._id
@@ -692,7 +695,7 @@ const ActiveGroup = () => {
                 <td>
                   <input
                     type="checkbox"
-                    className="custom-circle-checkbox mx-2"
+                    className="scale-125 mx-2"
                     checked={selectedGroups.some(
                       (selectedGroup) => selectedGroup._id === group._id
                     )} // Use the correct property for checking

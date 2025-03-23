@@ -42,6 +42,7 @@ import { MFAModal } from "@/app/_components/MfaSetttingDialog/MFAmodal";
 import Dialog from "@/app/_components/ManageGroupModal/Dialog";
 import Loader from "@/app/_components/Loader/Loader";
 import PageHeader from "@/app/_components/PageHeader/PageHeader";
+import { useNotify } from "@/lib/utils";
 
 const Modal = ({ user }) => {
   const dispatch = useDispatch();
@@ -139,6 +140,7 @@ const TableRoute = () => {
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [userDetails, setUserDetails] = useState(null);
   const [deleting, setDeleting] = useState(false);
+  const notify = useNotify();
 
   const handleRowClick = (user) => {
     setClickedUser(user); // Set the clicked user for the modal
@@ -206,14 +208,15 @@ const TableRoute = () => {
         setIsUpdatingPassword(false); // Set loading state to false on error
         setIsUpdatePasswordDialogOpen(false);
         setIsPasswordModalOpen(false); // Close the modal after updating password
+        notify.success("Password updated successfully!");
       } else {
-        alert(data.message || "Error updating password!");
+        notify.error(data.message || "Error updating password!");
       }
     } catch (error) {
       setIsUpdatingPassword(false); // Set loading state to false on error
       console.error("Error updating password:", error);
       setIsUpdatingPassword(false); // Set loading state to false on error
-      alert("Error updating password!");
+      notify.error("Error updating password!");
     } finally {
       setIsUpdatingPassword(false); // End loading state
     }
@@ -548,7 +551,7 @@ const TableRoute = () => {
       {isSelectable && (
         <div className="px-10 w-full flex items-center justify-end gap-2 mt-4">
           <button
-            className="px-3 py-2 rounded-lg border"
+            className="px-3 py-1 rounded-md border"
             onClick={() => {
               setIsSelectable(false);
               setSelectedUsers([]); // Clear selection when canceling
@@ -557,10 +560,10 @@ const TableRoute = () => {
             Cancel
           </button>
           <button
-            className="bg-red-500 px-3 py-2 rounded-lg"
+            className="bg-blue-600 hover:bg-blue-500 transition-all px-3 py-1 rounded-md text-white"
             onClick={async () => {
               if (selectedUsers.length === 0) {
-                alert("Please select users to delete.");
+                notify.warning("Please select users to delete.");
               } else {
                 // Set loading state before deletion (optional)
                 setIsLoading(true); // Optionally show a loading state during the deletion process
@@ -572,6 +575,7 @@ const TableRoute = () => {
 
                 // Clear selection after deletion
                 setSelectedUsers([]);
+                notify.success("User deleted successfully");
                 setIsSelectable(false); // Exit selection mode
 
                 // After all deletions are done, refresh the users list
@@ -596,7 +600,7 @@ const TableRoute = () => {
             className="px-3 py-2 rounded-lg bg-blue-500"
             onClick={() => {
               if (selectedUsers.length < 2) {
-                alert("Please select multiple users.");
+                notify.warning("Please select multiple users.");
               } else {
                 router.push("/group");
                 dispatch(setSelectedGroupUsers(selectedUsers));
@@ -622,7 +626,7 @@ const TableRoute = () => {
               <th className="flex items-center justify-between w-[50px]">
                 <input
                   type="checkbox"
-                  className="custom-circle-checkbox"
+                  className="scale-125"
                   checked={
                     paginatedUsers.length > 0 &&
                     selectedUsers.length === paginatedUsers.length
@@ -695,7 +699,7 @@ const TableRoute = () => {
                 <td>
                   <input
                     type="checkbox"
-                    className="mx-2 custom-circle-checkbox"
+                    className="mx-2 scale-125"
                     checked={selectedUsers.some(
                       (selectedUser) => selectedUser._id === user._id
                     )}

@@ -9,6 +9,7 @@ import { createGroup } from "@/lib/Feature/GroupSlice";
 import { useRouter } from "next/navigation";
 import { fetchGroups } from "@/lib/Feature/GroupSlice";
 import groupTypes from "./groupType/groupTypes.json";
+import { useNotify } from "@/lib/utils";
 const Dialog = ({ children, onClose }) => {
   return (
     <div className="absolute top-0 h-screen w-[91vw] flex items-center justify-center">
@@ -45,10 +46,11 @@ const GroupFormComp = () => {
   const dispatch = useDispatch();
 
   const router = useRouter();
+  const notify = useNotify();
 
   const handleClose = () => {
     setIsDialogOpen(false); // Close the modal
-    router.push("/group/ActiveGroups"); // Replace "/previousScreen" with the route you want to navigate back to
+    router.push("/group/main"); // Replace "/previousScreen" with the route you want to navigate back to
   };
 
   useEffect(() => {
@@ -79,21 +81,21 @@ const GroupFormComp = () => {
           ) {
             setActiveStep((prevStep) => prevStep + 1);
           } else {
-            alert("Please fill out the fields");
+            notify.warning("Please fill out the fields");
           }
           break;
         case 2:
           if (stepperFormData.owners.length > 0) {
             setActiveStep((prevStep) => prevStep + 1);
           } else {
-            alert("Please select at least 1 owner");
+            notify.warning("Please select at least 1 owner");
           }
           break;
         case 3:
           if (stepperFormData.members.length >= 2) {
             setActiveStep((prevStep) => prevStep + 1);
           } else {
-            alert("Please select at least 2 members");
+            notify.warning("Please select at least 2 members");
           }
           break;
         default:
@@ -136,15 +138,15 @@ const GroupFormComp = () => {
 
     // Validate required fields
     if (stepperFormData.owners.length === 0) {
-      alert("At least one owner must be selected.");
+      notify.warning("At least one owner must be selected");
       return;
     }
     if (stepperFormData.members.length < 2) {
-      alert("At least two members must be selected.");
+      notify.warning("At least two members must be selected");
       return;
     }
     if (!stepperFormData.basics.name || !stepperFormData.basics.description) {
-      alert("Group name and description are required.");
+      notify.warning("Group name and description are required.");
       return;
     }
 
@@ -174,11 +176,11 @@ const GroupFormComp = () => {
       const data = await response.json();
       console.log("Frontend: Group successfully created. Data:", data);
 
-      alert("Group created successfully!");
+      notify.success("Group created successfully!");
       router.push("/group/ActiveGroups");
     } catch (error) {
       console.error("Frontend: Error creating group:", error);
-      alert("An error occurred while creating the group.");
+      notify.error("Failed to create group");
     }
   };
 
@@ -444,7 +446,7 @@ const GroupFormComp = () => {
     }
   };
 
-  console.log(activeStep)
+  console.log(activeStep);
 
   return (
     <div className="pl-4">
@@ -497,7 +499,7 @@ const GroupFormComp = () => {
             ) {
               handleCreateGroup();
             } else {
-              alert("Please complete the process");
+              notify.warning("Please complete the process");
             }
           }}
           className="blue-button px-3 py-2 mr-4 rounded-lg h-fit disabled:bg-gray-500 disabled:cursor-not-allowed"

@@ -49,7 +49,7 @@ input:-webkit-autofill {
   background-color: #0056b3; /* Darker blue on hover */
 }
 /* Hide the default checkbox */
-.custom-circle-checkbox {
+. {
   appearance: none; /* Removes default checkbox styling */
   -webkit-appearance: none; /* Compatibility for WebKit browsers */
   width: 15px;
@@ -66,12 +66,12 @@ input:-webkit-autofill {
 }
 
 /* Checked state: blue background and white tick */
-.custom-circle-checkbox:checked {
+.:checked {
   background-color: #007bff; /* Blue background */
   box-shadow: none; /* Remove shadow when checked */
 }
 
-.custom-circle-checkbox:checked::after {
+.:checked::after {
   content: "";
   position: absolute;
   width: 6px;

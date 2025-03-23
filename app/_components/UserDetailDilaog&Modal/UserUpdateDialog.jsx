@@ -10,6 +10,7 @@ import { storage } from "@/lib/firebase/firebaseConfig";
 import { ref, uploadString, getDownloadURL } from "firebase/storage";
 import { fetchUsers } from "@/lib/Feature/UserSlice";
 import Loader from "../Loader/Loader";
+import { useNotify } from "@/lib/utils";
 const UserUpdateDialog = ({ user, onClose, onSave }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [formData, setFormData] = useState({ ...user });
@@ -24,6 +25,7 @@ const UserUpdateDialog = ({ user, onClose, onSave }) => {
   const [isRefreshing, setIsRefreshing] = useState(false); // Track refresh state
 
   const router = useRouter();
+  const notify = useNotify();
 
   // Remove automatic refresh when formData.email changes
   useEffect(() => {
@@ -106,7 +108,7 @@ const UserUpdateDialog = ({ user, onClose, onSave }) => {
       }
     } catch (error) {
       console.error("Error saving user details:", error);
-      alert("An error occurred while saving. Please try again.");
+      notify.error("An error occurred while saving. Please try again.");
     } finally {
       setIsSaving(false); // Re-enable Save button
       setIsEditable(false); // Exit edit mode if the user confirms
@@ -162,7 +164,7 @@ const UserUpdateDialog = ({ user, onClose, onSave }) => {
         console.error(
           "Email is missing from formData. Cannot refresh user details."
         );
-        alert("Email is required to refresh user details.");
+        notify.warning("Email is required to refresh user details.");
         return;
       }
 
@@ -207,7 +209,7 @@ const UserUpdateDialog = ({ user, onClose, onSave }) => {
       setProfileImage(currentUser.image || "/images/avatar.png");
     } catch (error) {
       console.error("Error refreshing active user details:", error.message);
-      alert(`Failed to refresh user details: ${error.message}`);
+      notify.error("Failed to refresh user details. Please try again.");
     } finally {
       setIsRefreshing(false); // Stop spinning
     }

@@ -14,6 +14,7 @@ import { useToast } from "@/lib/toastContext";
 import Alert from "@/app/_components/Alert/Alert";
 import { fetchUsers } from "@/lib/Feature/UserSlice";
 import { fetchGroups } from "@/lib/Feature/GroupSlice";
+import { useNotify } from "@/lib/utils";
 
 const CreateNewPermissionForExternalUserDialog = ({
   onClose,
@@ -21,6 +22,7 @@ const CreateNewPermissionForExternalUserDialog = ({
   handleOpenGrantRoleDialog,
 }) => {
   const dispatch = useDispatch();
+  const notify = useNotify();
 
   // Get the current role data from the Redux store
   const {
@@ -139,17 +141,12 @@ const CreateNewPermissionForExternalUserDialog = ({
       onClose();
       localStorage.removeItem("permissions");
       // Show success alert
-      setAlert({ message: "Role created successfully!", type: "success" });
-      setTimeout(() => setAlert(null), 3000); // Hide alert after 3 seconds
+      notify.success("Role created successfully!");
     } catch (error) {
       // Handle any errors that occurred during the role creation
       console.error("Error creating role:", error);
       // Show error alert
-      setAlert({
-        message: "Error creating role. Please try again.",
-        type: "error",
-      });
-      setTimeout(() => setAlert(null), 3000); // Hide alert after 3 seconds
+      notify.error("Error creating role. Please try again.");
     }
   };
 
@@ -165,6 +162,7 @@ const CreateNewPermissionForExternalUserDialog = ({
           id: role._id,
         })
       );
+      notify.success("Role updated successfully!");
       onClose();
       localStorage.removeItem("permissions");
       dispatch(resetRole());
@@ -172,6 +170,7 @@ const CreateNewPermissionForExternalUserDialog = ({
       dispatch(setRoleEditing(false));
     } catch (error) {
       console.error("Error updating role:", error);
+      notify.error("Error updating role. Please try again.");
     }
   };
 
@@ -206,13 +205,7 @@ const CreateNewPermissionForExternalUserDialog = ({
       <h1 className="text-2xl font-semibold my-4 dark:text-neutral-300">
         Permission Role Details
       </h1>
-      {alert && (
-        <Alert
-          message={alert.message}
-          type={alert.type}
-          onClose={() => setAlert(null)}
-        />
-      )}{" "}
+
       {/* Display the alert */}
       <div className="shadow-md w-full px-4 py-2 border dark:border-neutral-800 rounded">
         <h1 className="text-lg font-semibold dark:text-neutral-300">

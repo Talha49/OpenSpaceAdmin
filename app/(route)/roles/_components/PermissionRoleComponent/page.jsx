@@ -38,6 +38,7 @@ import RoleDetailDialog from "@/app/_components/RoleDetails Dialog/RoleDetailDia
 import { RxReload } from "react-icons/rx";
 import ConfirmationDialog from "@/app/_components/ConfirmationDialog/ConfirmationDialog";
 import PageHeader from "@/app/_components/PageHeader/PageHeader";
+import { useNotify } from "@/lib/utils";
 
 const PermissionRolesComponent = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -58,6 +59,7 @@ const PermissionRolesComponent = () => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const dispatch = useDispatch();
+  const notify = useNotify();
 
   const { roles, loading, selectedUsersForRole, selectedGroupsForRole } =
     useSelector((state) => state.role);
@@ -327,6 +329,7 @@ const PermissionRolesComponent = () => {
               className="flex items-center gap-1 py-2 px-4 rounded-lg text-sm text-white bg-red-600 hover:bg-red-500 transition-all"
               onClick={() => {
                 dispatch(deleteRole(selectedRoleForDelete?._id));
+                notify.success("Role deleted successfully");
                 setIsOpenConfirmationDialog(false);
               }}
             >
