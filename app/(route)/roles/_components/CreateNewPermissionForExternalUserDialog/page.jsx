@@ -15,6 +15,7 @@ import Alert from "@/app/_components/Alert/Alert";
 import { fetchUsers } from "@/lib/Feature/UserSlice";
 import { fetchGroups } from "@/lib/Feature/GroupSlice";
 import { useNotify } from "@/lib/utils";
+import { useSession } from "next-auth/react";
 
 const CreateNewPermissionForExternalUserDialog = ({
   onClose,
@@ -117,8 +118,9 @@ const CreateNewPermissionForExternalUserDialog = ({
     selectedUsersForRole,
     selectedGroupsForRole,
   ]);
+  const { data: session } = useSession();
 
-  const createdBy = "Abdul Samad";
+  const createdBy = session?.user?.userData.fullName;
 
   const handleCreateRole = async () => {
     try {

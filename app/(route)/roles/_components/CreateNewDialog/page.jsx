@@ -6,6 +6,7 @@ import { userPermissions } from "../UserPermissions";
 import { administratorPermissions } from "../AdministratorPermissions";
 import { CiMenuFries, CiSearch } from "react-icons/ci";
 import axios from "axios";
+import { useSession } from "next-auth/react";
 
 const CreateNewDialog = ({ onClose }) => {
   const [activeStep, setActiveStep] = useState(0);
@@ -18,6 +19,9 @@ const CreateNewDialog = ({ onClose }) => {
   const [selectedPermissionsList, setSelectedPermissionsList] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [errors, setErrors] = useState({}); // State for form errors
+  const { data: session } = useSession();
+
+  const createdBy = session?.user?.userData.fullName;
 
   // Function to handle next button click
   const handleNext = () => {
@@ -79,7 +83,7 @@ const CreateNewDialog = ({ onClose }) => {
           roleName,
           roleDescription,
           permissions: selectedPermissionsList,
-          createdBy: "Abdul Samad",
+          createdBy: createdBy,
         });
         console.log("res =>", res);
       }
