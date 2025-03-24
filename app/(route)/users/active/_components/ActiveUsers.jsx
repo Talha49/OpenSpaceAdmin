@@ -43,6 +43,8 @@ import Dialog from "@/app/_components/ManageGroupModal/Dialog";
 import Loader from "@/app/_components/Loader/Loader";
 import PageHeader from "@/app/_components/PageHeader/PageHeader";
 import { useNotify } from "@/lib/utils";
+import { RiImportFill } from "react-icons/ri";
+import ImportUsersDialog from "./ImportUsersDialog/ImportUsersDialog";
 
 const Modal = ({ user }) => {
   const dispatch = useDispatch();
@@ -141,6 +143,7 @@ const TableRoute = () => {
   const [userDetails, setUserDetails] = useState(null);
   const [deleting, setDeleting] = useState(false);
   const notify = useNotify();
+  const [isImportUsersModelOpen, setIsImportUsersModelOpen] = useState(false);
 
   const handleRowClick = (user) => {
     setClickedUser(user); // Set the clicked user for the modal
@@ -386,6 +389,16 @@ const TableRoute = () => {
         );
       },
     },
+    {
+      icon: <RiImportFill />,
+      label: "Import Users",
+      onClick: () => {
+        setIsImportUsersModelOpen(true);
+        notify.warning(
+          "File should have complete user information like name, email, address, city and contact"
+        );
+      },
+    },
   ];
 
   //export as a excel
@@ -478,7 +491,7 @@ const TableRoute = () => {
                   className="flex-none"
                   onClick={() => {
                     if (item.onClick) {
-                      item.onClick();
+                      // item.onClick();
                     } else if (item.link) {
                       router.push(item.link);
                     } else if (item.label === "Delete User") {
@@ -534,7 +547,7 @@ const TableRoute = () => {
                   setCurrentPage(1);
                 }}
                 value={searchTerm}
-                className="w-full p-2 border dark:border-neutral-700 border-gray-300 rounded placeholder:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-2 py-1.5 border dark:border-neutral-700 border-gray-300 rounded placeholder:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <button
@@ -909,7 +922,7 @@ const TableRoute = () => {
                 {/* Generate password button */}
                 <button
                   onClick={generateRandomPassword}
-                  className="mt-2 w-full py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 dark:bg-blue-700 dark:hover:bg-blue-600"
+                  className="mt-2 w-full py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-500 dark:bg-blue-700 dark:hover:bg-blue-600"
                 >
                   Generate 8-Digit Password
                 </button>
@@ -919,9 +932,9 @@ const TableRoute = () => {
                   onClick={() =>
                     handlePasswordUpdate(selectedUser._id, newPassword)
                   }
-                  className={`mt-2 w-full py-2 text-white rounded-lg hover:bg-green-600 dark:hover:bg-green-600 ${
+                  className={`mt-2 w-full py-2 text-white rounded-lg ${
                     newPassword
-                      ? "bg-green-500 dark:bg-green-700"
+                      ? "bg-blue-600 hover:bg-blue-500"
                       : "bg-gray-400 cursor-not-allowed"
                   }`}
                   disabled={!newPassword || isUpdatingPassword} // Disable button if newPassword is empty or updating
@@ -936,6 +949,7 @@ const TableRoute = () => {
                 >
                   Cancel
                 </button>
+                {isUpdatingPassword && <Loader />}
               </div>
             </div>
           )}
@@ -965,6 +979,17 @@ const TableRoute = () => {
             onApplyFilter={handleApplyFilter}
           />
         )}
+
+        <ImportUsersDialog
+          isOpen={isImportUsersModelOpen}
+          onClose={() => {
+            setIsImportUsersModelOpen(false);
+          }}
+          onSuccess={() => {
+            dispatch(fetchUsers());
+          }}
+        />
+
         {isLoading && <Loader />}
       </div>
     </div>

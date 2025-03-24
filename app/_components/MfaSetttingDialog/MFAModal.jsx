@@ -136,7 +136,6 @@ export function MFAModal({ isOpen, onClose }) {
             {errorMessage}
           </div>
         )}
-
         {/* User List with Scroll */}
         <div className="mt-4 space-y-4 max-h-60 overflow-y-auto scrollbar-hidden">
           {loading ? (

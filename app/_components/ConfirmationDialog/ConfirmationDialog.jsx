@@ -13,7 +13,7 @@ const ConfirmationDialog = ({
     <>
       {/* Background Overlay */}
       <div
-        className={`flex justify-center items-center fixed top-0 left-0 h-screen w-full bg-black bg-opacity-60 z-40 transition-opacity duration-300 p-4 ${
+        className={`flex justify-center items-center fixed top-0 left-0 h-screen w-full bg-black bg-opacity-80 z-40 transition-opacity duration-300 p-4 ${
           isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
         onClick={onClose}
