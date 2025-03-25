@@ -258,6 +258,7 @@ import {
 import { IoMdRefresh } from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
 import * as XLSX from "xlsx"; // Import the xlsx library
+import GroupDetailsPanel from "./SideBarModel/SideBarModel";
 
 const ActiveGroup = () => {
   const router = useRouter();
@@ -729,6 +730,7 @@ const ActiveGroup = () => {
             setIsOpen(false);
           }}
           group={clickedGroup}
+          
         />
 
         {isFilterModalOpen && (

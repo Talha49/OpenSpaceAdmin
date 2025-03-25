@@ -11,11 +11,14 @@ export async function GET(req) {
 
     // Fetch groups and populate owners and members
     const groups = await Group.find({ status: "active" }) // Fetch only active groups
-      .populate("groupOwrnerID", "fullName email") // Populate owners (select only fullName and email fields)
-      .populate("groupTargetID", "fullName email"); // Populate members (select only fullName and email fields)
+      .populate("groupOwrnerID", "fullName email image") // Populate owners (select only fullName and email fields)
+      .populate("groupTargetID", "fullName email image"); // Populate members (select only fullName and email fields)
 
     // Log the fetched groups before returning
-    console.log("API: Groups fetched and populated:", JSON.stringify(groups, null, 2));
+    console.log(
+      "API: Groups fetched and populated:",
+      JSON.stringify(groups, null, 2)
+    );
 
     return NextResponse.json(groups, { status: 200 });
   } catch (error) {

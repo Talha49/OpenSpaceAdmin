@@ -11,6 +11,7 @@ import { fetchDeletedGroups, fetchGroups } from "@/lib/Feature/GroupSlice";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useNotify } from "@/lib/utils";
+import GroupDetailsPanel from "@/app/(route)/group/ActiveGroups/_components/SideBarModel/SideBarModel";
 
 const DeleteGroupDetailDialog = ({ group = {}, isOpen, onClose }) => {
   const [showDetail, setShowDetail] = useState(false);
@@ -80,132 +81,13 @@ const DeleteGroupDetailDialog = ({ group = {}, isOpen, onClose }) => {
   return (
     <div>
       {/* Main Group Details Modal */}
-      <Transition
-        show={isOpen}
-        enter="transition-transform duration-300 ease-in-out"
-        enterFrom="translate-x-full"
-        enterTo="translate-x-0"
-        leave="transition-transform duration-300 ease-in-out"
-        leaveFrom="translate-x-0"
-        leaveTo="translate-x-full"
-        className="fixed top-[4rem] right-0 h-screen z-50"
-      >
-        <div className="bg-white dark:bg-neutral-900 rounded-lg shadow-xl w-full max-w-md h-[90vh] overflow-y-auto  top-0 right-0 flex flex-col">
-          <div className="flex justify-between items-center p-4 border-b">
-            <h2 className="text-lg font-semibold dark:text-neutral-500">
-              Deleted Group Details
-              <button
-                onClick={handleEditButtonClick}
-                className="ml-2 border border-gray-100 text-blue-500 hover:text-blue-700 p-2 rounded-full"
-              >
-                <FaPen className="w-3 h-3" />
-              </button>
-            </h2>
-            <button
-              onClick={() => {
-                onClose();
-                setShowDetail(false);
-                setShowMembers(false);
-              }}
-              className="text-neutral-500 hover:text-neutral-700"
-            >
-              <FaTimes className="w-5 h-5" />
-            </button>
-          </div>
 
-          <div className="p-4">
-            <div className="flex items-center justify-between">
-              <h1 className="text-2xl font-semibold dark:text-neutral-500">
-                {group?.groupName}
-              </h1>
-              <span className="text-sm bg-blue-500 px-3 py-1 rounded-full text-white">
-                {group?.groupType}
-              </span>
-            </div>
-
-            {/* Group Status */}
-            <div className="my-5">
-              <h1 className="text-xl font-semibold dark:text-neutral-500">
-                Status
-              </h1>
-              <span className="text-neutral-500 dark:text-neutral-300">
-                {group?.status}
-              </span>
-            </div>
-
-            {/* Description Section */}
-            <div className="my-5">
-              <h1
-                className={`flex items-center justify-between text-xl bg-gray-300 dark:bg-neutral-800 py-2 px-4 ${
-                  showDetail ? "rounded-t-lg" : "rounded-lg"
-                } border dark:border-neutral-600 cursor-pointer`}
-                onClick={() => setShowDetail(!showDetail)}
-              >
-                Description
-                <span>
-                  <IoIosArrowDown
-                    className={`${showDetail && "rotate-180"} transition-all`}
-                  />
-                </span>
-              </h1>
-              {showDetail && (
-                <p className="text-neutral-500 p-2 bg-gray-100 dark:bg-neutral-800 rounded-b-lg">
-                  {group?.groupDescription}
-                </p>
-              )}
-            </div>
-            {/* Owners Section */}
-            <div className="bg-gray-300 dark:bg-neutral-800 p-2 rounded-lg my-5 text-white">
-              <div className="flex items-center gap-2">
-                <span className="px-2 py-1 rounded-full bg-gray-500 dark:bg-neutral-900">
-                  Owners
-                </span>
-              </div>
-              <div className="flex flex-wrap gap-2 mt-2">
-                {group?.groupOwrnerID.map((owner) => (
-                  <div
-                    key={owner._id}
-                    className="px-3 py-1 rounded-full bg-blue-500 dark:bg-neutral-700 text-sm text-center"
-                  >
-                    {owner.fullName}
-                  </div>
-                ))}
-              </div>
-            </div>
-            {/* Members Section */}
-            <div className="my-5">
-              <h1
-                className={`flex items-center justify-between text-xl bg-gray-300 dark:bg-neutral-800 py-2 px-4 ${
-                  showMembers ? "rounded-t-lg" : "rounded-lg"
-                } border dark:border-neutral-600 cursor-pointer`}
-                onClick={() => setShowMembers(!showMembers)}
-              >
-                Members
-                <span>
-                  <IoIosArrowDown
-                    className={`${showMembers && "rotate-180"} transition-all`}
-                  />
-                </span>
-              </h1>
-              {showMembers && (
-                <div className="text-neutral-500 p-2 bg-gray-100 dark:bg-neutral-800 rounded-b-lg">
-                  {group?.groupTargetID.map((member) => (
-                    <div
-                      key={member._id}
-                      className="p-2 border dark:border-neutral-700 my-1 rounded-lg"
-                    >
-                      <div className="flex items-center justify-between gap-4">
-                        <p>{member.fullName}</p>
-                        <p>{member.email}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </Transition>
+      <GroupDetailsPanel
+        isOpen={isOpen}
+        onClose={onClose}
+        group={group}
+        handleEditButtonClick={handleEditButtonClick}
+      />
 
       {/* Edit Group Modal with Background Blur */}
       {isEditOpen && (

@@ -128,31 +128,20 @@ const UserDetailDialog = ({ user: initialUser, onClose, onSave }) => {
 
   return (
     <>
-      {/* Blurry Background */}
-      <Transition
-        show={isOpen}
-        as="div"
-        className="fixed inset-0 z-40 bg-black bg-opacity-30 backdrop-blur-sm"
-        enter="transition-opacity duration-300"
-        enterFrom="opacity-0"
-        enterTo="opacity-70"
-        leave="transition-opacity duration-300"
-        leaveFrom="opacity-70"
-        leaveTo="opacity-0"
-        onClick={handleClose}
-      />
+      {/* Background Overlay */}
+      {isOpen && (
+        <div className="fixed inset-0 bg-black/55 z-40" onClick={handleClose} />
+      )}
 
-      {/* Sidebar Modal */}
-      <Transition
-        show={isOpen}
-        as="div"
-        className="fixed top-0 right-0 h-full z-50 bg-white dark:bg-neutral-900 shadow-xl w-full max-w-lg overflow-y-auto"
-        enter="transition-transform duration-300 ease-in-out"
-        enterFrom="translate-x-full"
-        enterTo="translate-x-0"
-        leave="transition-transform duration-300 ease-in-out"
-        leaveFrom="translate-x-0"
-        leaveTo="translate-x-full"
+      <div
+        className={`
+          fixed top-0 right-0 h-full z-50 
+          bg-white dark:bg-neutral-900 
+          shadow-xl w-full max-w-lg 
+          overflow-y-auto
+          transform transition-transform duration-300 ease-in-out
+          ${isOpen ? "translate-x-0" : "translate-x-full"}
+        `}
       >
         {/* Header */}
         <div className="flex justify-between items-center p-4 border-b border-neutral-300 dark:border-neutral-800">
@@ -352,7 +341,7 @@ const UserDetailDialog = ({ user: initialUser, onClose, onSave }) => {
             </button>
           )}
         </div>
-      </Transition>
+      </div>
     </>
   );
 };
