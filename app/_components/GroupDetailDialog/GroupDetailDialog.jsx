@@ -12,9 +12,9 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useNotify } from "@/lib/utils";
 import GroupDetailsPanel from "@/app/(route)/group/ActiveGroups/_components/SideBarModel/SideBarModel";
+import Image from "next/image";
+import Loader from "../Loader/Loader";
 const GroupDetailDialog = ({ group = {}, isOpen, onClose }) => {
-  const [showDetail, setShowDetail] = useState(false);
-  const [showMembers, setShowMembers] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [groupName, setGroupName] = useState(group?.groupName || "");
   const [groupDescription, setGroupDescription] = useState(
@@ -34,6 +34,9 @@ const GroupDetailDialog = ({ group = {}, isOpen, onClose }) => {
   const [ownerSearch, setOwnerSearch] = useState("");
   const [memberSearch, setMemberSearch] = useState("");
   const router = useRouter();
+  const [showOwnersRow, setShowOwnersRow] = useState(false);
+  const [showMembersRow, setShowMembersRow] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   // Toggle the owner/member dialogs
   const openOwnerDialog = () => setOwnerDialogOpen(true);
@@ -88,6 +91,7 @@ const GroupDetailDialog = ({ group = {}, isOpen, onClose }) => {
 
   const saveChanges = async () => {
     try {
+      setIsSaving(true);
       const response = await axios.put(`/api/Groups/updateGroupDetail`, {
         groupId: group._id,
         groupName,
@@ -99,18 +103,30 @@ const GroupDetailDialog = ({ group = {}, isOpen, onClose }) => {
         notify.success("Group updated successfully!");
         setIsEditOpen(false);
         onClose();
+        setShowMembersRow(false);
+        setShowOwnersRow(false);
+        setSelectedOwners(group?.groupOwrnerID.map((owner) => owner._id) || []);
+        setSelectedMembers(
+          group?.groupTargetID.map((member) => member._id) || []
+        );
       }
       dispatch(fetchGroups());
       router.push("/group/ActiveGroups");
     } catch (error) {
       console.error("Error updating group:", error);
       notify.error("Error updating group.");
+    } finally {
+      setIsSaving(false);
     }
   };
 
   const cancelChanges = () => {
     setIsEditOpen(false);
     onClose();
+    setShowMembersRow(false);
+    setShowOwnersRow(false);
+    setSelectedOwners(group?.groupOwrnerID.map((owner) => owner._id) || []);
+    setSelectedMembers(group?.groupTargetID.map((member) => member._id) || []);
   };
 
   return (
@@ -127,12 +143,12 @@ const GroupDetailDialog = ({ group = {}, isOpen, onClose }) => {
       {/* Edit Group Modal with Background Blur */}
       {/* Edit Group Modal with Background Blur */}
       {isEditOpen && (
-        <div className="fixed top-0 left-0 h-screen bg-black/80 w-full flex justify-center items-center z-50">
+        <div className="fixed top-0 left-0 h-screen bg-black/40 w-full flex justify-center items-center z-50">
           {/* Modal Container */}
           <div className="bg-white dark:bg-neutral-900 p-8 rounded-2xl w-full max-w-3xl max-h-[90vh] overflow-auto shadow-xl transition-all duration-500 ease-in-out">
             {/* Modal Header */}
             <div className="flex justify-between items-center mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
+              <h2 className="text-2xl font-semibold text-neutral-900 dark:text-white">
                 Edit Group Details
               </h2>
               <button
@@ -145,64 +161,110 @@ const GroupDetailDialog = ({ group = {}, isOpen, onClose }) => {
 
             {/* Group Name */}
             <div className="mb-6">
-              <label className="block text-lg font-medium text-gray-700 dark:text-white">
+              <label className="block text-lg font-medium text-neutral-700 dark:text-white">
                 Group Name
               </label>
               <input
                 type="text"
                 value={groupName}
                 onChange={(e) => setGroupName(e.target.value)}
-                className="w-full mt-2 p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-neutral-800 dark:text-white dark:border-neutral-700"
+                className="w-full mt-2 p-4 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-neutral-800 dark:text-white dark:border-neutral-700"
               />
             </div>
 
             {/* Group Description */}
             <div className="mb-6">
-              <label className="block text-lg font-medium text-gray-700 dark:text-white">
+              <label className="block text-lg font-medium text-neutral-700 dark:text-white">
                 Group Description
               </label>
               <textarea
                 value={groupDescription}
                 onChange={(e) => setGroupDescription(e.target.value)}
-                className="w-full mt-2 p-4 border border-gray-300 rounded-lg h-40 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-neutral-800 dark:text-white dark:border-neutral-700"
+                className="w-full mt-2 p-4 border border-neutral-300 rounded-lg h-40 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-neutral-800 dark:text-white dark:border-neutral-700"
               />
             </div>
 
             {/* Owners Section */}
             <div className="flex justify-between items-center mb-6">
-              <div className="flex flex-col">
-                <label className="text-lg font-medium text-gray-700 dark:text-white">
+              <div className="flex flex-col items-start">
+                <label className="text-lg font-medium text-neutral-700 dark:text-white">
                   Owners
                 </label>
                 <button
                   onClick={openOwnerDialog}
-                  className="mt-2 text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-500"
+                  className="mt-2 hover:underline text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-500"
                 >
                   Manage Owners
                 </button>
-                <span className="mt-1 text-sm text-gray-500 dark:text-gray-300">
+                <button
+                  onClick={() => setShowOwnersRow(!showOwnersRow)}
+                  className="mt-1 text-sm text-neutral-500 dark:text-neutral-300 hover:underline cursor-pointer"
+                >
                   {selectedOwners.length} owner
                   {selectedOwners.length !== 1 ? "s" : ""}
-                </span>
+                </button>
+                {showOwnersRow && (
+                  <div className="flex items-center gap-3 flex-wrap mt-4">
+                    {users
+                      .filter((user) => selectedOwners.includes(user?._id))
+                      .map((user) => (
+                        <span
+                          key={user?._id}
+                          className="flex items-center gap-2 py-2 pl-2 pr-4 rounded-full bg-blue-600/10 border border-blue-600"
+                        >
+                          <Image
+                            src={user?.image || "/images/avatar.png"}
+                            width={30}
+                            height={30}
+                            className="rounded-full"
+                          />
+                          <span>{user?.fullName}</span>
+                        </span>
+                      ))}
+                  </div>
+                )}
               </div>
             </div>
 
             {/* Members Section */}
             <div className="flex justify-between items-center mb-6">
-              <div className="flex flex-col">
-                <label className="text-lg font-medium text-gray-700 dark:text-white">
+              <div className="flex flex-col items-start">
+                <label className="text-lg font-medium text-neutral-700 dark:text-white">
                   Members
                 </label>
                 <button
                   onClick={openMemberDialog}
-                  className="mt-2 text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-500"
+                  className="mt-2 hover:underline text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-500"
                 >
                   Manage Members
                 </button>
-                <span className="mt-1 text-sm text-gray-500 dark:text-gray-300">
+                <button
+                  onClick={() => setShowMembersRow(!showMembersRow)}
+                  className="mt-1 cursor-pointer hover:underline text-sm text-neutral-500 dark:text-neutral-300"
+                >
                   {selectedMembers.length} member
                   {selectedMembers.length !== 1 ? "s" : ""}
-                </span>
+                </button>
+                {showMembersRow && (
+                  <div className="flex items-center gap-3 flex-wrap mt-4">
+                    {users
+                      .filter((user) => selectedMembers.includes(user?._id))
+                      .map((user) => (
+                        <span
+                          key={user?._id}
+                          className="flex items-center gap-2 py-2 pl-2 pr-4 rounded-full bg-blue-600/10 border border-blue-600"
+                        >
+                          <Image
+                            src={user?.image || "/images/avatar.png"}
+                            width={30}
+                            height={30}
+                            className="rounded-full"
+                          />
+                          <span>{user?.fullName}</span>
+                        </span>
+                      ))}
+                  </div>
+                )}
               </div>
             </div>
 
@@ -210,13 +272,13 @@ const GroupDetailDialog = ({ group = {}, isOpen, onClose }) => {
             <div className="flex justify-end gap-6">
               <button
                 onClick={cancelChanges}
-                className="bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700 transition-colors"
+                className="bg-neutral-600 text-white px-6 py-2 rounded-lg hover:bg-neutral-500 transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={saveChanges}
-                className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+                className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-500 transition-colors"
               >
                 Save Changes
               </button>
@@ -227,10 +289,10 @@ const GroupDetailDialog = ({ group = {}, isOpen, onClose }) => {
 
       {/* Owner Dialog */}
       {isOwnerDialogOpen && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-60 backdrop-blur-lg flex justify-center items-center z-50">
+        <div className="fixed inset-0 bg-black/30 flex justify-center items-center z-50">
           <div className="bg-white dark:bg-neutral-900 p-8 rounded-2xl w-full max-w-lg max-h-[90vh] overflow-auto shadow-xl">
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+              <h3 className="text-xl font-semibold text-neutral-900 dark:text-white">
                 Manage Owners
               </h3>
               <button
@@ -242,12 +304,12 @@ const GroupDetailDialog = ({ group = {}, isOpen, onClose }) => {
             </div>
 
             {/* Owner Search */}
-            <div className="mb-6  dark:bg-gray-600 flex items-center bg-gray-100 p-3 rounded-lg">
-              <AiOutlineSearch className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+            <div className="mb-6  dark:bg-neutral-600 flex items-center bg-neutral-100 p-3 rounded-lg">
+              <AiOutlineSearch className="w-5 h-5 text-neutral-600 dark:text-neutral-300" />
               <input
                 type="text"
                 placeholder="Search owners..."
-                className="w-full ml-2 p-3 border-none bg-transparent dark:bg-gray-600 focus:outline-none text-gray-700 dark:text-white"
+                className="w-full ml-2 p-3 border-none bg-transparent dark:bg-neutral-600 focus:outline-none text-neutral-700 dark:text-white"
                 onChange={(e) => setOwnerSearch(e.target.value)}
               />
             </div>
@@ -263,7 +325,7 @@ const GroupDetailDialog = ({ group = {}, isOpen, onClose }) => {
                 .map((user) => (
                   <div
                     key={user._id}
-                    className="flex items-center gap-4 p-4 mb-4 bg-gray-50 rounded-lg shadow-md hover:bg-blue-50 dark:bg-neutral-800 dark:text-white dark:hover:bg-blue-600"
+                    className="flex items-center gap-4 p-4 mb-4 bg-neutral-50 rounded-lg shadow-md hover:bg-blue-50 dark:bg-neutral-800 dark:text-white dark:hover:bg-blue-600"
                   >
                     <input
                       type="checkbox"
@@ -271,7 +333,17 @@ const GroupDetailDialog = ({ group = {}, isOpen, onClose }) => {
                       onChange={() => handleUserSelect(user._id, "owner")}
                       className="h-5 w-5 text-blue-500"
                     />
-                    <span className="text-sm font-medium">{user.fullName}</span>
+                    <div className="flex items-center gap-2">
+                      <Image
+                        src={user?.image || "/images/avatar.png"}
+                        width={30}
+                        height={30}
+                        className="rounded-full"
+                      />
+                      <span className="text-sm font-medium">
+                        {user.fullName}
+                      </span>
+                    </div>
                   </div>
                 ))}
             </div>
@@ -279,7 +351,7 @@ const GroupDetailDialog = ({ group = {}, isOpen, onClose }) => {
             <div className="mt-6 flex justify-end gap-6">
               <button
                 onClick={closeOwnerDialog}
-                className="bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700 transition-colors"
+                className="bg-blue-600 hover:bg-blue-500 transition-all text-white px-6 py-2 rounded-lg"
               >
                 Save
               </button>
@@ -290,10 +362,10 @@ const GroupDetailDialog = ({ group = {}, isOpen, onClose }) => {
 
       {/* Member Dialog */}
       {isMemberDialogOpen && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-60 backdrop-blur-lg flex justify-center items-center z-50">
+        <div className="fixed inset-0 bg-black/30 flex justify-center items-center z-50">
           <div className="bg-white dark:bg-neutral-900 p-8 rounded-2xl w-full max-w-lg max-h-[90vh] overflow-auto shadow-xl">
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+              <h3 className="text-xl font-semibold text-neutral-900 dark:text-white">
                 Manage Members
               </h3>
               <button
@@ -305,12 +377,12 @@ const GroupDetailDialog = ({ group = {}, isOpen, onClose }) => {
             </div>
 
             {/* Member Search */}
-            <div className=" dark:bg-gray-600 mb-6 flex items-center bg-gray-100 p-3 rounded-lg">
-              <AiOutlineSearch className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+            <div className=" dark:bg-neutral-600 mb-6 flex items-center bg-neutral-100 p-3 rounded-lg">
+              <AiOutlineSearch className="w-5 h-5 text-neutral-600 dark:text-neutral-300" />
               <input
                 type="text"
                 placeholder="Search members..."
-                className="w-full ml-2 p-3 border-none  dark:bg-gray-600 bg-transparent focus:outline-none text-gray-700 dark:text-white"
+                className="w-full ml-2 p-3 border-none  dark:bg-neutral-600 bg-transparent focus:outline-none text-neutral-700 dark:text-white"
                 onChange={(e) => setMemberSearch(e.target.value)}
               />
             </div>
@@ -326,7 +398,7 @@ const GroupDetailDialog = ({ group = {}, isOpen, onClose }) => {
                 .map((user) => (
                   <div
                     key={user._id}
-                    className="flex items-center gap-4 p-4 mb-4 bg-gray-50 rounded-lg shadow-md hover:bg-blue-50 dark:bg-neutral-800 dark:text-white dark:hover:bg-blue-600"
+                    className="flex items-center gap-4 p-4 mb-4 bg-neutral-50 rounded-lg shadow-md hover:bg-blue-50 dark:bg-neutral-800 dark:text-white dark:hover:bg-blue-600"
                   >
                     <input
                       type="checkbox"
@@ -334,7 +406,17 @@ const GroupDetailDialog = ({ group = {}, isOpen, onClose }) => {
                       onChange={() => handleUserSelect(user._id, "member")}
                       className="h-5 w-5 text-blue-500"
                     />
-                    <span className="text-sm font-medium">{user.fullName}</span>
+                    <div className="flex items-center gap-2">
+                      <Image
+                        src={user?.image || "/images/avatar.png"}
+                        width={30}
+                        height={30}
+                        className="rounded-full"
+                      />
+                      <span className="text-sm font-medium">
+                        {user.fullName}
+                      </span>
+                    </div>
                   </div>
                 ))}
             </div>
@@ -342,7 +424,7 @@ const GroupDetailDialog = ({ group = {}, isOpen, onClose }) => {
             <div className="mt-6 flex justify-end gap-6">
               <button
                 onClick={closeMemberDialog}
-                className="bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700 transition-colors"
+                className="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2 rounded-lg transition-colors"
               >
                 Save
               </button>
@@ -350,6 +432,7 @@ const GroupDetailDialog = ({ group = {}, isOpen, onClose }) => {
           </div>
         </div>
       )}
+      {isSaving && <Loader />}
     </div>
   );
 };

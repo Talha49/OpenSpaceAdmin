@@ -12,6 +12,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useNotify } from "@/lib/utils";
 import GroupDetailsPanel from "@/app/(route)/group/ActiveGroups/_components/SideBarModel/SideBarModel";
+import Loader from "../Loader/Loader";
 
 const DeleteGroupDetailDialog = ({ group = {}, isOpen, onClose }) => {
   const [showDetail, setShowDetail] = useState(false);
@@ -28,7 +29,7 @@ const DeleteGroupDetailDialog = ({ group = {}, isOpen, onClose }) => {
     group?.groupTargetID.map((member) => member._id) || []
   );
   const [status, setStatus] = useState(group?.status || "active"); // New state for group status
-
+  const [isSaving, setIsSaving] = useState(false);
   const users = useSelector((state) => state.user.users);
   const dispatch = useDispatch();
   const router = useRouter();
@@ -51,6 +52,7 @@ const DeleteGroupDetailDialog = ({ group = {}, isOpen, onClose }) => {
   };
 
   const saveChanges = async () => {
+    setIsSaving(true);
     try {
       const response = await axios.put(`/api/Groups/deleteGroupStatusUpdate`, {
         groupId: group._id,
@@ -70,6 +72,8 @@ const DeleteGroupDetailDialog = ({ group = {}, isOpen, onClose }) => {
     } catch (error) {
       console.error("Error updating group:", error);
       notify.error("Error updating group.");
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -91,7 +95,7 @@ const DeleteGroupDetailDialog = ({ group = {}, isOpen, onClose }) => {
 
       {/* Edit Group Modal with Background Blur */}
       {isEditOpen && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-60 backdrop-blur-lg flex justify-center items-center z-50">
+        <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50">
           {/* Modal Container */}
           <div className="bg-white dark:bg-neutral-900 p-8 rounded-2xl w-full max-w-3xl max-h-[90vh] overflow-auto shadow-xl transition-all duration-500 ease-in-out">
             {/* Modal Header */}
@@ -108,7 +112,7 @@ const DeleteGroupDetailDialog = ({ group = {}, isOpen, onClose }) => {
             </div>
 
             {/* Group Name */}
-            <div className="mb-6">
+            {/* <div className="mb-6">
               <label className="block text-lg font-medium text-gray-700 dark:text-white">
                 Group Name
               </label>
@@ -118,10 +122,10 @@ const DeleteGroupDetailDialog = ({ group = {}, isOpen, onClose }) => {
                 onChange={(e) => setGroupName(e.target.value)}
                 className="w-full mt-2 p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-neutral-800 dark:text-white dark:border-neutral-700"
               />
-            </div>
+            </div> */}
 
             {/* Group Description */}
-            <div className="mb-6">
+            {/* <div className="mb-6">
               <label className="block text-lg font-medium text-gray-700 dark:text-white">
                 Group Description
               </label>
@@ -130,7 +134,7 @@ const DeleteGroupDetailDialog = ({ group = {}, isOpen, onClose }) => {
                 onChange={(e) => setGroupDescription(e.target.value)}
                 className="w-full mt-2 p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-neutral-800 dark:text-white dark:border-neutral-700"
               ></textarea>
-            </div>
+            </div> */}
 
             {/* Group Status */}
             <div className="mb-6">
@@ -165,6 +169,7 @@ const DeleteGroupDetailDialog = ({ group = {}, isOpen, onClose }) => {
           </div>
         </div>
       )}
+      {isSaving && <Loader />}
     </div>
   );
 };
