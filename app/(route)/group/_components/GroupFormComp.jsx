@@ -12,10 +12,10 @@ import groupTypes from "./groupType/groupTypes.json";
 import { useNotify } from "@/lib/utils";
 const Dialog = ({ children, onClose }) => {
   return (
-    <div className="absolute top-0 h-screen w-[91vw] flex items-center justify-center">
+    <div className="fixed top-0 left-0 z-50 bg-black/75 h-screen w-full flex items-center justify-center">
       <div className="bg-white dark:bg-neutral-800 p-4 rounded-lg shadow-lg border dark:border-neutral-800 relative">
         <div
-          className="text-xl cursor-pointer absolute top-2 right-2 scale-110 z-50"
+          className="text-xl cursor-pointer absolute top-5 right-10 scale-110 z-50"
           onClick={onClose}
         >
           <IoMdClose />
@@ -446,67 +446,60 @@ const GroupFormComp = () => {
     }
   };
 
-  console.log(activeStep);
-
   return (
-    <div className="pl-4">
-      <div className="flex w-full pr-4">
-        <aside className="w-[30%] h-full border-r border-r-gray-300 dark:border-neutral-800">
+    <div className="">
+      <div className="flex w-full border rounded-md dark:border-neutral-700">
+        <aside className="w-[30%] h-full pl-4 border-r border-r-gray-300 dark:border-neutral-800">
           <Stepper
             steps={["Group Type", "Basics", "Owners", "Members", "Finish"]}
             activeStep={activeStep}
             onStepChange={handleStepChange}
           />
         </aside>
-        <div className="w-full p-10 flex flex-col justify-between">
+        <div className="w-full p-4 flex flex-col justify-between">
           {renderContent()}
         </div>
       </div>
-      <div className="flex justify-between items-center py-4 w-full border-t border-gray-300 dark:border-neutral-800">
-        <div className="flex gap-4">
+      <div className="flex justify-between items-center py-4 w-full border-gray-300 dark:border-neutral-800">
+        <div className="flex gap-4 items-center justify-end w-full">
           <button
             onClick={handleClose}
-            className="border bg-gray-300 text-white h-fit  px-3 py-2 rounded-lg"
+            className="border border-neutral-600 hover:bg-neutral-100 transition-all h-fit px-6 py-1.5 rounded-lg"
           >
             Cancel
           </button>
           <button
             onClick={handleBack}
             disabled={activeStep === 0}
-            className={`border blue-button px-3 py-2 rounded-lg h-fit ${
+            className={`border border-blue-600 hover:bg-blue-100 transition-all text-blue-600 px-6 py-1.5 rounded-lg h-fit ${
               activeStep === 0 ? "opacity-50 cursor-not-allowed" : ""
             }`}
           >
             Back
           </button>
           <button
-            onClick={handleNext}
-            disabled={activeStep === 4}
-            className={`blue-button px-3 py-2 rounded-lg h-fit ${
-              activeStep === 4 ? "opacity-50 cursor-not-allowed" : ""
-            }`}
+            onClick={
+              activeStep === 4
+                ? () => {
+                    if (
+                      stepperFormData.basics.name !== "" &&
+                      stepperFormData.basics.description !== "" &&
+                      stepperFormData.owners.length >= 1 &&
+                      stepperFormData.members.length >= 2
+                    ) {
+                      handleCreateGroup();
+                    } else {
+                      notify.warning("Please complete the process");
+                    }
+                  }
+                : handleNext
+            }
+            // disabled={activeStep === 4}
+            className={`bg-blue-600 hover:bg-blue-500 text-white transition-all px-6 py-1.5 rounded-lg h-fit`}
           >
-            Next
+            {activeStep === 4 ? "Finish" : "Next"}
           </button>
         </div>
-        <button
-          onClick={() => {
-            if (
-              stepperFormData.basics.name !== "" &&
-              stepperFormData.basics.description !== "" &&
-              stepperFormData.owners.length >= 1 &&
-              stepperFormData.members.length >= 2
-            ) {
-              handleCreateGroup();
-            } else {
-              notify.warning("Please complete the process");
-            }
-          }}
-          className="blue-button px-3 py-2 mr-4 rounded-lg h-fit disabled:bg-gray-500 disabled:cursor-not-allowed"
-          disabled={activeStep !== 4}
-        >
-          Finish
-        </button>
       </div>
       {isDialogOpen && (
         <Dialog onClose={() => setIsDialogOpen(false)}>

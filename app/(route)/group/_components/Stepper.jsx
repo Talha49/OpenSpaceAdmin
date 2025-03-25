@@ -3,7 +3,7 @@ import { TiTick } from "react-icons/ti";
 
 const Stepper = ({ steps, activeStep, onStepChange }) => {
   return (
-    <ul className="flex flex-col py-10">
+    <ul className="flex flex-col py-4">
       {steps.map((step, i) => (
         <div key={i}>
           <li

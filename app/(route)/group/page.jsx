@@ -1,12 +1,12 @@
-import React from 'react'
-import GroupFormComp from './_components/GroupFormComp'
+import React from "react";
+import GroupFormComp from "./_components/GroupFormComp";
 
 const page = () => {
-    return (
-        <div>
-            <GroupFormComp/>
-        </div>
-    )
-}
+  return (
+    <div>
+      <GroupFormComp />
+    </div>
+  );
+};
 
-export default page
+export default page;
