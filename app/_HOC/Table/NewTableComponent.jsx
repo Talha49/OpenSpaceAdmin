@@ -33,18 +33,36 @@ const NewTableComponent = ({
   };
 
   function useScreenWidth() {
-    const [screenWidth, setScreenWidth] = useState(window.innerWidth);
+    // Initialize with 0 or a default value instead of window.innerWidth
+    const [screenWidth, setScreenWidth] = useState(0);
 
     useEffect(() => {
-      const handleResize = () => {
-        setScreenWidth(window.innerWidth);
+      // Set initial width after component mounts (client-side only)
+      const setInitialWidth = () => {
+        if (typeof window !== 'undefined') {
+          setScreenWidth(window.innerWidth);
+        }
       };
 
-      window.addEventListener("resize", handleResize);
+      const handleResize = () => {
+        if (typeof window !== 'undefined') {
+          setScreenWidth(window.innerWidth);
+        }
+      };
+
+      // Set initial width
+      setInitialWidth();
+
+      // Add event listener
+      if (typeof window !== 'undefined') {
+        window.addEventListener("resize", handleResize);
+      }
 
       // Clean up the event listener on component unmount
       return () => {
-        window.removeEventListener("resize", handleResize);
+        if (typeof window !== 'undefined') {
+          window.removeEventListener("resize", handleResize);
+        }
       };
     }, []);
 
@@ -57,7 +75,11 @@ const NewTableComponent = ({
   return (
     <div
       className="bg-blue-100 dark:bg-neutral-700 mt-4 rounded p-2 my-2"
-      style={{ maxWidth: `${locked ? screenWidth - 305 : screenWidth - 75}px` }}
+      style={{ 
+        maxWidth: screenWidth > 0 
+          ? `${locked ? screenWidth - 305 : screenWidth - 75}px` 
+          : 'auto' 
+      }}
     >
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-1">
         <div className="flex flex-col sm:flex-row md:items-center gap-4">

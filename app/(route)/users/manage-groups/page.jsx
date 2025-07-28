@@ -1,8 +1,7 @@
-'use client'; // This makes sure the page is rendered client-side
+"use client"; // This makes sure the page is rendered client-side
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 const ManageGroups = () => {
   const [selectedUser, setSelectedUser] = useState(null);
@@ -65,14 +64,17 @@ const ManageGroups = () => {
   const handleLeaveGroup = async (groupId) => {
     try {
       console.log(`User ${selectedUser._id} leaving group ${groupId}...`);
-      const res = await fetch(`/api/leaveGroup?userId=${selectedUser._id}&groupId=${groupId}`, {
-        method: 'POST',
-      });
+      const res = await fetch(
+        `/api/leaveGroup?userId=${selectedUser._id}&groupId=${groupId}`,
+        {
+          method: "POST",
+        }
+      );
 
       if (res.ok) {
         console.log("User left the group successfully");
         // Update user groups after leaving the group
-        setUserGroups(userGroups.filter(group => group.id !== groupId));
+        setUserGroups(userGroups.filter((group) => group.id !== groupId));
         toast.success("User left the group successfully.");
       } else {
         toast.error("Failed to leave the group.");
@@ -88,16 +90,31 @@ const ManageGroups = () => {
       {/* User Info Section */}
       <div className="bg-white shadow-lg rounded-lg p-8 mb-8">
         <h1 className="text-4xl font-semibold text-gray-900 mb-4">
-          Manage Groups for {selectedUser ? selectedUser.fullName : 'Loading...'}
+          Manage Groups for{" "}
+          {selectedUser ? selectedUser.fullName : "Loading..."}
         </h1>
-        <p className="text-xl text-gray-700">{selectedUser ? `Email: ${selectedUser.email}` : 'Loading user email...'}</p>
-        <p className="text-md text-gray-600 mt-2">{selectedUser ? `Contact: ${selectedUser.contact}` : 'Loading contact...'}</p>
-        <p className="text-md text-gray-600 mt-2">{selectedUser ? `Address: ${selectedUser.address}` : 'Loading address...'}</p>
+        <p className="text-xl text-gray-700">
+          {selectedUser
+            ? `Email: ${selectedUser.email}`
+            : "Loading user email..."}
+        </p>
+        <p className="text-md text-gray-600 mt-2">
+          {selectedUser
+            ? `Contact: ${selectedUser.contact}`
+            : "Loading contact..."}
+        </p>
+        <p className="text-md text-gray-600 mt-2">
+          {selectedUser
+            ? `Address: ${selectedUser.address}`
+            : "Loading address..."}
+        </p>
       </div>
 
       {/* Groups Section */}
       <div className="bg-white shadow-lg rounded-lg p-8 space-y-6">
-        <h2 className="text-2xl font-medium text-gray-800 mb-6">User's Groups</h2>
+        <h2 className="text-2xl font-medium text-gray-800 mb-6">
+          User&lsquo;s Groups
+        </h2>
 
         {userGroups.length > 0 ? (
           <ul className="space-y-4">
@@ -107,12 +124,20 @@ const ManageGroups = () => {
                 className="flex flex-col md:flex-row justify-between items-start md:items-center bg-gray-100 p-5 rounded-lg shadow-md hover:bg-gray-200 transition-all ease-in-out"
               >
                 <div className="flex flex-col space-y-2 md:space-y-0 md:flex-row md:space-x-6 items-start md:items-center">
-                  <span className="text-lg font-semibold text-gray-800">{group.name}</span>
-                  <span className="text-sm text-gray-500">{group.description || 'No description available'}</span>
+                  <span className="text-lg font-semibold text-gray-800">
+                    {group.name}
+                  </span>
+                  <span className="text-sm text-gray-500">
+                    {group.description || "No description available"}
+                  </span>
                 </div>
                 <div className="mt-4 md:mt-0 flex items-center space-x-4">
-                  <span className="text-sm text-gray-600">Owner: {group.owner || 'N/A'}</span>
-                  <span className="text-sm text-gray-600">Members: {group.members.length || 0}</span>
+                  <span className="text-sm text-gray-600">
+                    Owner: {group.owner || "N/A"}
+                  </span>
+                  <span className="text-sm text-gray-600">
+                    Members: {group.members.length || 0}
+                  </span>
                   <button
                     onClick={() => handleLeaveGroup(group.id)}
                     className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition duration-200 ease-in-out"

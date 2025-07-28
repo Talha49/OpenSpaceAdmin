@@ -31,8 +31,8 @@ const RoleDetailDialog = ({ isOpen, onClose, children, role }) => {
                   {menu?.name}
                 </h3>
                 <div className="flex items-center gap-1 flex-wrap">
-                  {menu?.permission?.map((perm) => (
-                    <p className="bg-blue-600 text-white rounded text-xs px-2">
+                  {menu?.permission?.map((perm, i) => (
+                    <p key={i} className="bg-blue-600 text-white rounded text-xs px-2">
                       {perm}
                     </p>
                   ))}
@@ -77,8 +77,8 @@ const RoleDetailDialog = ({ isOpen, onClose, children, role }) => {
                             {submenu?.name}
                           </h4>
                           <div className="flex items-center gap-1 flex-wrap">
-                            {submenu?.permission?.map((perm) => (
-                              <p className="bg-blue-600 text-white rounded text-xs px-2">
+                            {submenu?.permission?.map((perm, i) => (
+                              <p key={i} className="bg-blue-600 text-white rounded text-xs px-2">
                                 {perm}
                               </p>
                             ))}
@@ -120,8 +120,8 @@ const RoleDetailDialog = ({ isOpen, onClose, children, role }) => {
                   {menu?.name}
                 </h3>
                 <div className="flex items-center gap-1 flex-wrap">
-                  {menu?.permission?.map((perm) => (
-                    <p className="bg-blue-600 text-white rounded text-xs px-2">
+                  {menu?.permission?.map((perm, i) => (
+                    <p key={i} className="bg-blue-600 text-white rounded text-xs px-2">
                       {perm}
                     </p>
                   ))}
@@ -166,8 +166,8 @@ const RoleDetailDialog = ({ isOpen, onClose, children, role }) => {
                             {submenu?.name}
                           </h4>
                           <div className="flex items-center gap-1 flex-wrap">
-                            {submenu?.permission?.map((perm) => (
-                              <p className="bg-blue-600 text-white rounded text-xs px-2">
+                            {submenu?.permission?.map((perm, i) => (
+                              <p key={i} className="bg-blue-600 text-white rounded text-xs px-2">
                                 {perm}
                               </p>
                             ))}

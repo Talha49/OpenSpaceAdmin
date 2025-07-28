@@ -191,7 +191,7 @@ const GroupFormComp = () => {
           <div>
             <h1 className="text-2xl font-bold">Choose a group type</h1>
             <p className="my-7">
-              Choose the group type that best meets your team's needs.
+              Choose the group type that best meets your team&lsquo;s needs.
             </p>
             <ul className="h-60 overflow-y-auto custom-scrollbar">
               {groupTypes.map((type) => (
@@ -222,7 +222,7 @@ const GroupFormComp = () => {
           <div>
             <h1 className="text-2xl font-bold">Set up the basics</h1>
             <p className="my-7">
-              To get started, fill out the basic info about the group you'd like
+              To get started, fill out the basic info about the group you&lsquo;d like
               to create.
             </p>
             <form className="flex flex-col max-w-[400px]">

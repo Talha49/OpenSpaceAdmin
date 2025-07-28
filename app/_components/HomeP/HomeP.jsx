@@ -109,7 +109,7 @@ const HomeP = () => {
           Admin Center
         </h1>
         <p className="text-neutral-500 mt-2">
-          Manage your organization's users, groups, and roles
+          Manage your organization&lsquo;s users, groups, and roles
         </p>
       </div>
 
